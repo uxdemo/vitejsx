@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(ls -la src/blade-monitor*)",
+      "Bash(git init:*)",
+      "Bash(git remote:*)"
+    ]
+  }
+}
