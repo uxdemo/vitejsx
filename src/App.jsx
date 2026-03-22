@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import DiagnosticDemo from './diagnostic-demo'
 import BladeMonitorDashboard from './BladeMonitorDashboard'
+import IndustrialVisionPlatform from './industrial-vision-platform'
+import SmartAutoModeling from './smart-auto-modeling'
 import './App.css'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('dashboard')
+  const [currentPage, setCurrentPage] = useState('modeling')
 
   return (
     <div className="app-container">
@@ -14,6 +16,18 @@ function App() {
           <span>🏭 工业监测平台</span>
         </div>
         <div className="nav-links">
+          <button
+            className={`nav-link ${currentPage === 'modeling' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('modeling')}
+          >
+            智能自动建模
+          </button>
+          <button
+            className={`nav-link ${currentPage === 'vision' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('vision')}
+          >
+            工业视觉平台
+          </button>
           <button
             className={`nav-link ${currentPage === 'dashboard' ? 'active' : ''}`}
             onClick={() => setCurrentPage('dashboard')}
@@ -31,6 +45,8 @@ function App() {
 
       {/* 主内容区域 */}
       <main className="app-main">
+        {currentPage === 'modeling' && <SmartAutoModeling />}
+        {currentPage === 'vision' && <IndustrialVisionPlatform />}
         {currentPage === 'dashboard' && <BladeMonitorDashboard />}
         {currentPage === 'diagnostic' && <DiagnosticDemo />}
       </main>

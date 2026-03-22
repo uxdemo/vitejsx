@@ -19,6 +19,15 @@
   --color-background-secondary: rgba(255, 255, 255, 0.05);
   --color-border-tertiary: rgba(255, 255, 255, 0.1);
   --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* CSS Variables for Industrial Vision Platform */
+  --bg: #0f1419;
+  --card: #1a1f2e;
+  --border: #2a3441;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+  --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
 }
 
 @media (prefers-color-scheme: light) {
