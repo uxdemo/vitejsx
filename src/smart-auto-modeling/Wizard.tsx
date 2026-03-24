@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Steps } from "antd";
-import css from "./styles/index.module.less";
-import clsx from "clsx";
-import { TPLS, ALGOS, getPts } from "./constant";
-import type { ModelItem, TplItem } from "./constant";
-import type { ModelStatus } from "./constant";
-import { Ic, Btn, Toggle } from "./ui";
+import React, { useState } from 'react';
+import { Steps } from 'antd';
+import * as css from './styles/index.module.less';
+import clsx from 'clsx';
+import { TPLS, ALGOS, getPts } from './constant';
+import type { ModelItem, TplItem } from './constant';
+import type { ModelStatus } from './constant';
+import { Ic, Btn, Toggle } from './ui';
 
 const AnySteps = Steps as any;
 const AnyStep = Steps.Step as any;
@@ -30,19 +30,16 @@ interface WizardProps {
   onComplete: (models: ModelItem[]) => void;
 }
 
-export const Wizard = ({
-  onBack,
-  onComplete,
-}: WizardProps): React.ReactElement => {
+export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement => {
   const [step, setStep] = useState<number>(0);
   const [cfg, setCfg] = useState<WizardCfg>({
     turbine: null,
     scenes: [],
     points: {},
-    sampleStrategy: "auto",
+    sampleStrategy: 'auto',
     sampleMonths: 6,
     excludeFaults: true,
-    optimizeTarget: "balanced",
+    optimizeTarget: 'balanced',
     maxIter: 10,
     autoThreshold: true,
     autoSuppress: true,
@@ -50,13 +47,7 @@ export const Wizard = ({
   });
 
   const selTpl: TplItem | undefined = TPLS.find((t) => t.id === cfg.turbine);
-  const steps: string[] = [
-    "设备与场景",
-    "配置测点",
-    "采样与算法",
-    "优化策略",
-    "确认启动",
-  ];
+  const steps: string[] = ['设备与场景', '配置测点', '采样与算法', '优化策略', '确认启动'];
 
   const canNext: boolean =
     step === 0
@@ -68,9 +59,7 @@ export const Wizard = ({
   const togScene = (sc: string): void =>
     setCfg((c) => ({
       ...c,
-      scenes: c.scenes.includes(sc)
-        ? c.scenes.filter((s) => s !== sc)
-        : [...c.scenes, sc],
+      scenes: c.scenes.includes(sc) ? c.scenes.filter((s) => s !== sc) : [...c.scenes, sc],
     }));
 
   const togPt = (sc: string, pid: string): void =>
@@ -80,9 +69,7 @@ export const Wizard = ({
         ...c,
         points: {
           ...c.points,
-          [sc]: cur.includes(pid)
-            ? cur.filter((p) => p !== pid)
-            : [...cur, pid],
+          [sc]: cur.includes(pid) ? cur.filter((p) => p !== pid) : [...cur, pid],
         },
       };
     });
@@ -98,17 +85,11 @@ export const Wizard = ({
     const ms: ModelItem[] = cfg.scenes.map((sc, i) => ({
       id: Date.now() + i,
       name: `${sc}预警模型`,
-      plant: "A厂",
-      turb: selTpl
-        ? selTpl.id === "sg42"
-          ? "A01~A12"
-          : selTpl.id === "my166"
-            ? "B01~B08"
-            : "C01~C06"
-        : "A01~A12",
-      type: selTpl ? selTpl.name : "SG4.2-145",
-      status: "training" as ModelStatus,
-      algo: "AutoML",
+      plant: 'A厂',
+      turb: selTpl ? (selTpl.id === 'sg42' ? 'A01~A12' : selTpl.id === 'my166' ? 'B01~B08' : 'C01~C06') : 'A01~A12',
+      type: selTpl ? selTpl.name : 'SG4.2-145',
+      status: 'training' as ModelStatus,
+      algo: 'AutoML',
       p: null,
       r: null,
       f1: null,
@@ -146,10 +127,7 @@ export const Wizard = ({
               {TPLS.map((t) => (
                 <div
                   key={t.id}
-                  className={clsx(
-                    css.turbineCard,
-                    cfg.turbine === t.id && css.turbineCardSelected,
-                  )}
+                  className={clsx(css.turbineCard, cfg.turbine === t.id && css.turbineCardSelected)}
                   onClick={() =>
                     setCfg((c) => ({
                       ...c,
@@ -157,15 +135,12 @@ export const Wizard = ({
                       scenes: [],
                       points: {},
                     }))
-                  }
-                >
+                  }>
                   <div className={css.turbineCardHeader}>
                     <Ic name="wind" size={14} />
                     <span className={css.turbineCardName}>{t.name}</span>
                   </div>
-                  <div className={css.turbineCardSub}>
-                    {t.scenes.length} 故障场景
-                  </div>
+                  <div className={css.turbineCardSub}>{t.scenes.length} 故障场景</div>
                 </div>
               ))}
             </div>
@@ -178,12 +153,8 @@ export const Wizard = ({
                     return (
                       <div
                         key={sc}
-                        className={clsx(
-                          css.sceneItem,
-                          sel && css.sceneItemSelected,
-                        )}
-                        onClick={() => togScene(sc)}
-                      >
+                        className={clsx(css.sceneItem, sel && css.sceneItemSelected)}
+                        onClick={() => togScene(sc)}>
                         <span className={css.sceneItemName}>{sc}</span>
                         {sel && <Ic name="check" size={13} />}
                       </div>
@@ -205,7 +176,7 @@ export const Wizard = ({
                 <div key={sc} className={css.pointSection}>
                   <div className={css.pointSectionHeader}>
                     <span className={css.pointSectionTitle}>
-                      {sc}{" "}
+                      {sc}{' '}
                       <span className={css.pointSectionCount}>
                         ({sel.length}/{pts.length})
                       </span>
@@ -219,25 +190,16 @@ export const Wizard = ({
                       const isOn = sel.includes(pt.id);
                       const impColor =
                         pt.imp > 0.85
-                          ? "var(--primary-color)"
+                          ? 'var(--primary-color)'
                           : pt.imp > 0.7
-                            ? "var(--blue-color)"
-                            : "var(--disabled-color)";
+                            ? 'var(--blue-color)'
+                            : 'var(--disabled-color)';
                       return (
                         <div
                           key={pt.id}
-                          className={clsx(
-                            css.pointRow,
-                            isOn && css.pointRowSelected,
-                          )}
-                          onClick={() => togPt(sc, pt.id)}
-                        >
-                          <div
-                            className={clsx(
-                              css.pointCheckbox,
-                              isOn && css.pointCheckboxChecked,
-                            )}
-                          >
+                          className={clsx(css.pointRow, isOn && css.pointRowSelected)}
+                          onClick={() => togPt(sc, pt.id)}>
+                          <div className={clsx(css.pointCheckbox, isOn && css.pointCheckboxChecked)}>
                             {isOn && <Ic name="check" size={8} />}
                           </div>
                           <div>
@@ -246,9 +208,7 @@ export const Wizard = ({
                             <div className={css.pointTag}>{pt.tag}</div>
                           </div>
                           <span className={css.pointUnit}>{pt.u}</span>
-                          <span className={css.pointImpVal}>
-                            {Math.round(pt.imp * 100)}
-                          </span>
+                          <span className={css.pointImpVal}>{Math.round(pt.imp * 100)}</span>
                           <div className={css.pointImpBar}>
                             <div
                               className={css.pointImpFill}
@@ -275,30 +235,17 @@ export const Wizard = ({
               <div className={css.sectionTitle}>训练样本</div>
               <div className={css.configCard}>
                 {[
-                  { k: "auto", l: "全自动选样", d: "自动识别正常工况段" },
-                  { k: "semi", l: "半自动选样", d: "系统推荐+人工确认" },
-                  { k: "manual", l: "手动指定", d: "手动设定时间范围" },
+                  { k: 'auto', l: '全自动选样', d: '自动识别正常工况段' },
+                  { k: 'semi', l: '半自动选样', d: '系统推荐+人工确认' },
+                  { k: 'manual', l: '手动指定', d: '手动设定时间范围' },
                 ].map((s) => (
                   <div
                     key={s.k}
-                    className={clsx(
-                      css.sampleOption,
-                      cfg.sampleStrategy === s.k && css.sampleOptionSelected,
-                    )}
-                    onClick={() =>
-                      setCfg((c) => ({ ...c, sampleStrategy: s.k }))
-                    }
-                  >
+                    className={clsx(css.sampleOption, cfg.sampleStrategy === s.k && css.sampleOptionSelected)}
+                    onClick={() => setCfg((c) => ({ ...c, sampleStrategy: s.k }))}>
                     <div className={css.sampleOptionHeader}>
-                      <div
-                        className={clsx(
-                          css.radioCircle,
-                          cfg.sampleStrategy === s.k && css.radioCircleSelected,
-                        )}
-                      >
-                        {cfg.sampleStrategy === s.k && (
-                          <div className={css.radioDot} />
-                        )}
+                      <div className={clsx(css.radioCircle, cfg.sampleStrategy === s.k && css.radioCircleSelected)}>
+                        {cfg.sampleStrategy === s.k && <div className={css.radioDot} />}
                       </div>
                       <span className={css.sampleOptionLabel}>{s.l}</span>
                     </div>
@@ -310,12 +257,8 @@ export const Wizard = ({
                   {[3, 6, 12, 24].map((m) => (
                     <button
                       key={m}
-                      className={clsx(
-                        css.rangeBtn,
-                        cfg.sampleMonths === m && css.rangeBtnSelected,
-                      )}
-                      onClick={() => setCfg((c) => ({ ...c, sampleMonths: m }))}
-                    >
+                      className={clsx(css.rangeBtn, cfg.sampleMonths === m && css.rangeBtnSelected)}
+                      onClick={() => setCfg((c) => ({ ...c, sampleMonths: m }))}>
                       {m}月
                     </button>
                   ))}
@@ -323,9 +266,7 @@ export const Wizard = ({
                 <div className={css.switchRow}>
                   <Toggle
                     on={cfg.excludeFaults}
-                    onToggle={() =>
-                      setCfg((c) => ({ ...c, excludeFaults: !c.excludeFaults }))
-                    }
+                    onToggle={() => setCfg((c) => ({ ...c, excludeFaults: !c.excludeFaults }))}
                   />
                   <span className={css.switchLabel}>排除故障工单时段</span>
                 </div>
@@ -368,22 +309,18 @@ export const Wizard = ({
               <div className={css.sectionTitle}>优化目标</div>
               {[
                 {
-                  k: "recall",
-                  l: "召回优先",
-                  d: "宁可多报不漏报",
-                  ic: "alert",
+                  k: 'recall',
+                  l: '召回优先',
+                  d: '宁可多报不漏报',
+                  ic: 'alert',
                 },
-                { k: "precision", l: "精确优先", d: "减少误报", ic: "target" },
-                { k: "balanced", l: "均衡模式", d: "F1最大化", ic: "activity" },
+                { k: 'precision', l: '精确优先', d: '减少误报', ic: 'target' },
+                { k: 'balanced', l: '均衡模式', d: 'F1最大化', ic: 'activity' },
               ].map((o) => (
                 <div
                   key={o.k}
-                  className={clsx(
-                    css.optTarget,
-                    cfg.optimizeTarget === o.k && css.optTargetSelected,
-                  )}
-                  onClick={() => setCfg((c) => ({ ...c, optimizeTarget: o.k }))}
-                >
+                  className={clsx(css.optTarget, cfg.optimizeTarget === o.k && css.optTargetSelected)}
+                  onClick={() => setCfg((c) => ({ ...c, optimizeTarget: o.k }))}>
                   <div className={css.optTargetIcon}>
                     <Ic name={o.ic} size={16} />
                   </div>
@@ -402,26 +339,19 @@ export const Wizard = ({
                   {[5, 10, 20, 50].map((n) => (
                     <button
                       key={n}
-                      className={clsx(
-                        css.rangeBtn,
-                        cfg.maxIter === n && css.rangeBtnSelected,
-                      )}
-                      onClick={() => setCfg((c) => ({ ...c, maxIter: n }))}
-                    >
+                      className={clsx(css.rangeBtn, cfg.maxIter === n && css.rangeBtnSelected)}
+                      onClick={() => setCfg((c) => ({ ...c, maxIter: n }))}>
                       {n}
                     </button>
                   ))}
                 </div>
                 {[
-                  { k: "autoThreshold", l: "自动设置阈值(P1/P99)" },
-                  { k: "autoSuppress", l: "自动配置抑制规则" },
-                  { k: "autoAlgoSwitch", l: "不达标自动切换算法" },
+                  { k: 'autoThreshold', l: '自动设置阈值(P1/P99)' },
+                  { k: 'autoSuppress', l: '自动配置抑制规则' },
+                  { k: 'autoAlgoSwitch', l: '不达标自动切换算法' },
                 ].map((o) => (
                   <div key={o.k} className={css.autoRow}>
-                    <Toggle
-                      on={cfg[o.k] as boolean}
-                      onToggle={() => setCfg((c) => ({ ...c, [o.k]: !c[o.k] }))}
-                    />
+                    <Toggle on={cfg[o.k] as boolean} onToggle={() => setCfg((c) => ({ ...c, [o.k]: !c[o.k] }))} />
                     <span className={css.autoRowLabel}>{o.l}</span>
                   </div>
                 ))}
@@ -437,19 +367,19 @@ export const Wizard = ({
             <div className={css.confirmGrid}>
               <div className={css.confirmCard}>
                 {[
-                  ["机型", selTpl ? selTpl.name : ""],
-                  ["场景", cfg.scenes.join("、")],
+                  ['机型', selTpl ? selTpl.name : ''],
+                  ['场景', cfg.scenes.join('、')],
                   [
-                    "选样",
+                    '选样',
                     (
                       {
-                        auto: "全自动",
-                        semi: "半自动",
-                        manual: "手动",
+                        auto: '全自动',
+                        semi: '半自动',
+                        manual: '手动',
                       } as Record<string, string>
                     )[cfg.sampleStrategy],
                   ],
-                  ["回溯", cfg.sampleMonths + "月"],
+                  ['回溯', cfg.sampleMonths + '月'],
                 ].map(([k, v]) => (
                   <div key={k} className={css.confirmRow}>
                     <span className={css.confirmRowKey}>{k}</span>
@@ -460,18 +390,18 @@ export const Wizard = ({
               <div className={css.confirmCard}>
                 {[
                   [
-                    "目标",
+                    '目标',
                     (
                       {
-                        recall: "召回优先",
-                        precision: "精确优先",
-                        balanced: "均衡",
+                        recall: '召回优先',
+                        precision: '精确优先',
+                        balanced: '均衡',
                       } as Record<string, string>
                     )[cfg.optimizeTarget],
                   ],
-                  ["迭代", cfg.maxIter + "轮"],
-                  ["算法", "AutoML"],
-                  ["阈值", "自动(P1/P99)"],
+                  ['迭代', cfg.maxIter + '轮'],
+                  ['算法', 'AutoML'],
+                  ['阈值', '自动(P1/P99)'],
                 ].map(([k, v]) => (
                   <div key={k} className={css.confirmRow}>
                     <span className={css.confirmRowKey}>{k}</span>
@@ -483,11 +413,9 @@ export const Wizard = ({
             <div className={css.confirmInfo}>
               <Ic name="info" size={14} />
               <span className={css.confirmInfoText}>
-                {"将创建 "}
-                <strong className={css.confirmCount}>
-                  {cfg.scenes.length}
-                </strong>
-                {" 个模型"}
+                {'将创建 '}
+                <strong className={css.confirmCount}>{cfg.scenes.length}</strong>
+                {' 个模型'}
               </span>
             </div>
           </div>
@@ -495,19 +423,15 @@ export const Wizard = ({
       </div>
 
       <div className={css.wizardNav}>
-        <Btn
-          onClick={() => (step > 0 ? setStep(step - 1) : onBack())}
-          icon="chevL"
-        >
-          {step > 0 ? "上一步" : "取消"}
+        <Btn onClick={() => (step > 0 ? setStep(step - 1) : onBack())} icon="chevL">
+          {step > 0 ? '上一步' : '取消'}
         </Btn>
         <Btn
           primary
           disabled={!canNext}
           onClick={() => (step < 4 ? setStep(step + 1) : doComplete())}
-          icon={step === 4 ? "zap" : "chevR"}
-        >
-          {step === 4 ? "启动自动建模" : "下一步"}
+          icon={step === 4 ? 'zap' : 'chevR'}>
+          {step === 4 ? '启动自动建模' : '下一步'}
         </Btn>
       </div>
     </div>

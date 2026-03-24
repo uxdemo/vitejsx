@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Tabs } from "antd";
-import css from "./styles/index.module.less";
-import clsx from "clsx";
-import { DEFAULT_PT_CFG, LV_COLORS, ITER_HISTORY} from "./constant";
-import type { ModelItem, PtCfgItem } from "./constant";
-import { Ic, Btn, Prog, Badge } from "./ui";
+import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import * as css from './styles/index.module.less';
+import clsx from 'clsx';
+import { DEFAULT_PT_CFG, LV_COLORS, ITER_HISTORY } from './constant';
+import type { ModelItem, PtCfgItem } from './constant';
+import { Ic, Btn, Prog, Badge } from './ui';
 
 const AnyTabs = Tabs as any;
 const AnyTabPane = Tabs.TabPane as any;
@@ -23,17 +23,16 @@ interface EditVals {
 }
 
 export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactElement => {
-  const [tab, setTab] = useState<string>("iter");
+  const [tab, setTab] = useState<string>('iter');
   const [editPt, setEditPt] = useState<number | null>(null);
   const [editVals, setEditVals] = useState<EditVals>({
     hi: 0,
     lo: 0,
-    lv: "",
-    sup: ""
-});
+    lv: '',
+    sup: '',
+  });
 
-  const ptCfg: PtCfgItem[] =
-    model.ptCfg && model.ptCfg.length > 0 ? model.ptCfg : DEFAULT_PT_CFG;
+  const ptCfg: PtCfgItem[] = model.ptCfg && model.ptCfg.length > 0 ? model.ptCfg : DEFAULT_PT_CFG;
 
   const startEdit = (i: number): void => {
     setEditPt(i);
@@ -41,8 +40,8 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
       hi: ptCfg[i].hi,
       lo: ptCfg[i].lo,
       lv: ptCfg[i].lv,
-      sup: ptCfg[i].sup
-});
+      sup: ptCfg[i].sup,
+    });
   };
   const saveEdit = (): void => {
     const u = [...ptCfg];
@@ -57,12 +56,14 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
     if (onUpdate) onUpdate({ ...model, ptCfg: u });
   };
 
-  const metricColor = (
-    v: number | null,
-    good: number,
-    bad: number,
-  ): string =>
-    v === null ? "var(--disabled-color)" : v >= good ? "var(--success-color)" : v >= bad ? "var(--warning-color)" : "var(--error-color)";
+  const metricColor = (v: number | null, good: number, bad: number): string =>
+    v === null
+      ? 'var(--disabled-color)'
+      : v >= good
+        ? 'var(--success-color)'
+        : v >= bad
+          ? 'var(--warning-color)'
+          : 'var(--error-color)';
 
   return (
     <div className={css.detailWrap}>
@@ -81,32 +82,21 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
             <span>{model.plant}</span>
             <span>{model.type}</span>
             <span>{model.algo}</span>
-            <span>{"迭代" + model.iter + "轮"}</span>
+            <span>{'迭代' + model.iter + '轮'}</span>
           </div>
         </div>
         <div className={css.detailActions}>
-          {model.status === "review" && (
-            <Btn
-              small
-              primary
-              icon="check"
-              onClick={() =>
-                onUpdate && onUpdate({ ...model, status: "completed" })
-              }
-            >
+          {model.status === 'review' && (
+            <Btn small primary icon="check" onClick={() => onUpdate && onUpdate({ ...model, status: 'completed' })}>
               审核通过
             </Btn>
           )}
-          {model.status === "failed" && (
+          {model.status === 'failed' && (
             <Btn
               small
               primary
               icon="refresh"
-              onClick={() =>
-                onUpdate &&
-                onUpdate({ ...model, status: "training", progress: 10 })
-              }
-            >
+              onClick={() => onUpdate && onUpdate({ ...model, status: 'training', progress: 10 })}>
               重新优化
             </Btn>
           )}
@@ -119,25 +109,26 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
       <div className={css.metricsGrid}>
         {(
           [
-            ["准确率", model.p, "%", metricColor(model.p, 90, 80)],
-            ["召回率", model.r, "%", metricColor(model.r, 90, 80)],
-            ["F1", model.f1, "%", metricColor(model.f1, 90, 80)],
+            ['准确率', model.p, '%', metricColor(model.p, 90, 80)],
+            ['召回率', model.r, '%', metricColor(model.r, 90, 80)],
+            ['F1', model.f1, '%', metricColor(model.f1, 90, 80)],
             [
-              "误报率",
+              '误报率',
               model.fa,
-              "%",
-              model.fa !== null ? (model.fa <= 5 ? "var(--success-color)" : "var(--error-color)") : "var(--disabled-color)",
+              '%',
+              model.fa !== null
+                ? model.fa <= 5
+                  ? 'var(--success-color)'
+                  : 'var(--error-color)'
+                : 'var(--disabled-color)',
             ],
-            ["迭代", model.iter, "轮", "var(--text-color)"],
+            ['迭代', model.iter, '轮', 'var(--text-color)'],
           ] as [string, number | null, string, string][]
         ).map(([l, v, u, c]) => (
           <div key={String(l)} className={css.metricCard}>
             <div className={css.metricCardLabel}>{l}</div>
-            <span
-              className={css.metricCardValue}
-              style={{ color: v !== null ? c : "var(--disabled-color)" }}
-            >
-              {v !== null ? v : "—"}
+            <span className={css.metricCardValue} style={{ color: v !== null ? c : 'var(--disabled-color)' }}>
+              {v !== null ? v : '—'}
             </span>
             <span className={css.metricCardUnit}>{u}</span>
           </div>
@@ -155,9 +146,9 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
                     <div className={css.barCols}>
                       {(
                         [
-                          [h.p, "var(--primary-color)"],
-                          [h.rc, "var(--blue-color)"],
-                          [h.f, "var(--success-color)"],
+                          [h.p, 'var(--primary-color)'],
+                          [h.rc, 'var(--blue-color)'],
+                          [h.f, 'var(--success-color)'],
                         ] as [number, string][]
                       ).map(([v, c], bi) => (
                         <div key={bi} className={css.barCol}>
@@ -166,13 +157,13 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
                             className={css.barFill}
                             style={{
                               height: `${(v / 100) * 110}px`,
-                              background: c
-}}
+                              background: c,
+                            }}
                           />
                         </div>
                       ))}
                     </div>
-                    <div className={css.barLabel}>{"R" + h.r}</div>
+                    <div className={css.barLabel}>{'R' + h.r}</div>
                   </div>
                 ))}
               </div>
@@ -182,43 +173,26 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
               {ITER_HISTORY.map((h, i) => (
                 <div key={i} className={css.logItem}>
                   <div className={css.logTimeline}>
-                    <div
-                      className={clsx(
-                        css.logDot,
-                        i === ITER_HISTORY.length - 1 && css.logDotCurrent,
-                      )}
-                    >
-                      {h.r}
-                    </div>
-                    {i < ITER_HISTORY.length - 1 && (
-                      <div className={css.logLine} />
-                    )}
+                    <div className={clsx(css.logDot, i === ITER_HISTORY.length - 1 && css.logDotCurrent)}>{h.r}</div>
+                    {i < ITER_HISTORY.length - 1 && <div className={css.logLine} />}
                   </div>
                   <div>
                     <div className={css.logAct}>{h.act}</div>
                     <div className={css.logMetrics}>
                       {(
                         [
-                          ["P", h.p, "var(--primary-color)"],
-                          ["R", h.rc, "var(--blue-color)"],
-                          ["FA", h.fa, h.fa <= 5 ? "var(--success-color)" : "var(--error-color)"],
+                          ['P', h.p, 'var(--primary-color)'],
+                          ['R', h.rc, 'var(--blue-color)'],
+                          ['FA', h.fa, h.fa <= 5 ? 'var(--success-color)' : 'var(--error-color)'],
                         ] as [string, number, string][]
                       ).map(([l2, v2, c2]) => (
-                        <span
-                          key={l2}
-                          className={css.logMetric}
-                          style={{ color: c2 }}
-                        >
-                          {l2 + ":" + v2 + "%"}
+                        <span key={l2} className={css.logMetric} style={{ color: c2 }}>
+                          {l2 + ':' + v2 + '%'}
                         </span>
                       ))}
                     </div>
                     {i > 0 && (
-                      <div className={css.logImprove}>
-                        {"F1 +" +
-                          (h.f - ITER_HISTORY[i - 1].f).toFixed(1) +
-                          "%"}
-                      </div>
+                      <div className={css.logImprove}>{'F1 +' + (h.f - ITER_HISTORY[i - 1].f).toFixed(1) + '%'}</div>
                     )}
                   </div>
                 </div>
@@ -241,12 +215,7 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
             </div>
             {ptCfg.map((p, i) => (
               <div key={i}>
-                <div
-                  className={clsx(
-                    css.ptsRow,
-                    editPt === i && css.ptsRowEditing,
-                  )}
-                >
+                <div className={clsx(css.ptsRow, editPt === i && css.ptsRowEditing)}>
                   <span className={css.ptsName}>{p.nm}</span>
                   <span className={css.ptsTag}>{p.tag}</span>
                   <span className={css.ptsNum}>{p.hi}</span>
@@ -255,34 +224,25 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
                     <span
                       className={css.lvTag}
                       style={{
-                        color: LV_COLORS[p.lv as keyof typeof LV_COLORS] || "var(--disabled-color)",
-                        background:
-                          (LV_COLORS[p.lv as keyof typeof LV_COLORS] || "var(--disabled-color)") + "12"
-}}
-                    >
+                        color: LV_COLORS[p.lv as keyof typeof LV_COLORS] || 'var(--disabled-color)',
+                        background: (LV_COLORS[p.lv as keyof typeof LV_COLORS] || 'var(--disabled-color)') + '12',
+                      }}>
                       {p.lv}
                     </span>
                   </span>
                   <span className={css.ptsSup}>{p.sup}</span>
                   <div
-                    className={clsx(
-                      css.ptsLock,
-                      p.lock ? css.ptsLockLocked : css.ptsLockUnlocked,
-                    )}
-                    onClick={() => toggleLock(i)}
-                  >
-                    <Ic name={p.lock ? "lock" : "unlock"} size={12} />
+                    className={clsx(css.ptsLock, p.lock ? css.ptsLockLocked : css.ptsLockUnlocked)}
+                    onClick={() => toggleLock(i)}>
+                    <Ic name={p.lock ? 'lock' : 'unlock'} size={12} />
                   </div>
                   <div className={css.ptsEdit}>
                     <Btn
                       small
                       ghost
-                      onClick={() =>
-                        editPt === i ? setEditPt(null) : startEdit(i)
-                      }
-                      icon={editPt === i ? "x" : "edit3"}
-                    >
-                      {editPt === i ? "收起" : "编辑"}
+                      onClick={() => (editPt === i ? setEditPt(null) : startEdit(i))}
+                      icon={editPt === i ? 'x' : 'edit3'}>
+                      {editPt === i ? '收起' : '编辑'}
                     </Btn>
                   </div>
                 </div>
@@ -292,45 +252,37 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
                       <div>
                         <label className={css.editLabel}>上限阈值</label>
                         <input
-                          className={clsx(css.samInput, "ant-input")}
+                          className={clsx(css.samInput, 'ant-input')}
                           value={editVals.hi as string | number}
-                          onChange={(e) =>
-                            setEditVals((v) => ({ ...v, hi: e.target.value }))
-                          }
+                          onChange={(e) => setEditVals((v) => ({ ...v, hi: e.target.value }))}
                         />
                       </div>
                       <div>
                         <label className={css.editLabel}>下限阈值</label>
                         <input
-                          className={clsx(css.samInput, "ant-input")}
+                          className={clsx(css.samInput, 'ant-input')}
                           value={editVals.lo as string | number}
-                          onChange={(e) =>
-                            setEditVals((v) => ({ ...v, lo: e.target.value }))
-                          }
+                          onChange={(e) => setEditVals((v) => ({ ...v, lo: e.target.value }))}
                         />
                       </div>
                       <div>
                         <label className={css.editLabel}>报警级别</label>
                         <div className={css.lvBtns}>
-                          {["严重", "警告", "注意", "参考"].map((lv) => (
+                          {['严重', '警告', '注意', '参考'].map((lv) => (
                             <button
                               key={lv}
                               className={css.lvBtn}
                               style={
                                 editVals.lv === lv
                                   ? {
-                                      borderColor:
-                                        LV_COLORS[lv as keyof typeof LV_COLORS] || "var(--disabled-color)",
+                                      borderColor: LV_COLORS[lv as keyof typeof LV_COLORS] || 'var(--disabled-color)',
                                       background:
-                                        (LV_COLORS[lv as keyof typeof LV_COLORS] || "var(--disabled-color)") +
-                                        "12",
-                                      color:
-                                        LV_COLORS[lv as keyof typeof LV_COLORS] || "var(--disabled-color)"
-}
+                                        (LV_COLORS[lv as keyof typeof LV_COLORS] || 'var(--disabled-color)') + '12',
+                                      color: LV_COLORS[lv as keyof typeof LV_COLORS] || 'var(--disabled-color)',
+                                    }
                                   : {}
                               }
-                              onClick={() => setEditVals((v) => ({ ...v, lv }))}
-                            >
+                              onClick={() => setEditVals((v) => ({ ...v, lv }))}>
                               {lv}
                             </button>
                           ))}
@@ -339,11 +291,9 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
                       <div>
                         <label className={css.editLabel}>抑制规则</label>
                         <input
-                          className={clsx(css.samInput, "ant-input")}
+                          className={clsx(css.samInput, 'ant-input')}
                           value={editVals.sup}
-                          onChange={(e) =>
-                            setEditVals((v) => ({ ...v, sup: e.target.value }))
-                          }
+                          onChange={(e) => setEditVals((v) => ({ ...v, sup: e.target.value }))}
                         />
                       </div>
                     </div>
@@ -366,36 +316,34 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
           <div className={css.diagGrid}>
             <div className={css.panelCard}>
               <div className={css.diagSuccess}>
-                <div className={css.diagSuccessTitle}>{"✓ 模型已达标"}</div>
-                <div className={css.diagSuccessDesc}>
-                  {"F1 93.0%≥90% | 误报率 3.1%≤5%"}
-                </div>
+                <div className={css.diagSuccessTitle}>{'✓ 模型已达标'}</div>
+                <div className={css.diagSuccessDesc}>{'F1 93.0%≥90% | 误报率 3.1%≤5%'}</div>
               </div>
               <div className={css.diagNotes}>
-                {"本轮优化："}
+                {'本轮优化：'}
                 <br />
-                {"• 贝叶斯优化油温阈值 70→72°C"}
+                {'• 贝叶斯优化油温阈值 70→72°C'}
                 <br />
-                {"• 抑制规则：连续3次/5min窗口"}
+                {'• 抑制规则：连续3次/5min窗口'}
                 <br />
-                {"• 85%误报来自启停机，已增补样本"}
+                {'• 85%误报来自启停机，已增补样本'}
                 <br />
-                {"• 剔除低重要性测点 GBX_FLT_DP"}
+                {'• 剔除低重要性测点 GBX_FLT_DP'}
               </div>
             </div>
             <div className={css.panelCard}>
               <div className={css.panelCardTitle}>误报分布</div>
               {(
                 [
-                  ["启停机", 85, "var(--error-color)"],
-                  ["极端风速", 10, "var(--warning-color)"],
-                  ["传感器异常", 5, "var(--blue-color)"],
+                  ['启停机', 85, 'var(--error-color)'],
+                  ['极端风速', 10, 'var(--warning-color)'],
+                  ['传感器异常', 5, 'var(--blue-color)'],
                 ] as [string, number, string][]
               ).map(([l, v, c]) => (
                 <div key={String(l)} className={css.faItem}>
                   <div className={css.faItemHeader}>
                     <span className={css.faItemLabel}>{l}</span>
-                    <span className={css.faItemVal}>{v + "%"}</span>
+                    <span className={css.faItemVal}>{v + '%'}</span>
                   </div>
                   <Prog value={Number(v)} color={String(c)} />
                 </div>
