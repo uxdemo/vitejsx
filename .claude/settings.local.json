@@ -6,7 +6,10 @@
       "Bash(npm run:*)",
       "Bash(ls -la src/blade-monitor*)",
       "Bash(git init:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(npx vite:*)",
+      "Bash(node -e \"const p = require\\(''./node_modules/react/package.json''\\); console.log\\(p.version\\)\")",
+      "Bash(node -e \":*)"
     ]
   }
 }
