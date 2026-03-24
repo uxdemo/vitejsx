@@ -7,4 +7,11 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
+  },
 })

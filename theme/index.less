@@ -1,0 +1,72 @@
+@primary-color: #009fda;
+@success-color: #0fc38f;
+@error-color: #ff5413;
+@warning-color: #ff954d;
+@blue-color: #00c5f9;
+
+@primary-color-bg: fade(@primary-color, 10);
+@success-color-bg: fade(@success-color, 10);
+@error-color-bg: fade(@error-color, 10);
+@warning-color-bg: fade(@warning-color, 10);
+@blue-color-bg: fade(@blue-color, 10);
+
+@primary-color-hover-bg: #198ab4;
+@error-color-hover-bg: fade(@error-color, 80);
+
+@body-background: #051120;
+@component-background: #0a1b2f;
+
+@heading-color: #fff; // 标题色
+@text-color: fade(#fff, 65);
+@text-color-secondary: fade(#fff, 45);
+@disabled-color: fade(#fff, 30);
+
+@box-shadow-base: 0px 2px 12px -2px rgba(0, 0, 0, 0.4);
+@border-color-base: fade(#fff, 30);
+
+@tab-border-line-color: fade(#fff, 10);
+@background-color-light: fade(#fff, 5);
+@border-color-split: fade(#fff, 10);
+@pubg-tab-line-color: #fff;
+
+@tooltip-color: #fff;
+
+@select-dropdown-color: #13274a;
+@select-dropdown-hover-color: #1a3260;
+
+:root {
+  --primary-color: @primary-color;
+  --success-color: @success-color;
+  --error-color: @error-color;
+  --warning-color: @warning-color;
+  --blue-color: @blue-color;
+  --select-dropdown-color: @select-dropdown-color;
+  --select-dropdown-hover-color: @select-dropdown-hover-color;
+
+  --primary-color-hover-bg: @primary-color-hover-bg;
+  --error-color-hover-bg: @error-color-hover-bg;
+  --primary-color-bg: @primary-color-bg;
+  --success-color-bg: @success-color-bg;
+  --error-color-bg: @error-color-bg;
+  --warning-color-bg: @warning-color-bg;
+  --blue-color-bg: @blue-color-bg;
+
+  --component-background: @component-background;
+  --body-background: @body-background;
+  --heading-color: @heading-color;
+
+  --heading-color: @heading-color;
+  --text-color: @text-color;
+  --text-color-secondary: @text-color-secondary;
+  --disabled-color: @disabled-color;
+
+  --box-shadow-base: @box-shadow-base;
+  --border-color-base: @border-color-base;
+
+  --tab-border-line-color: @tab-border-line-color;
+  --background-color-light: @background-color-light;
+  --border-color-split: @border-color-split;
+
+  --pubg-tab-line-color: @pubg-tab-line-color;
+  --tooltip-color: @tooltip-color;
+}
