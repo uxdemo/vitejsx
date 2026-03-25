@@ -1,0 +1,535 @@
+/* ============================================================
+   BladeMonitorDashboard CSS Module
+   Uses CSS variables from theme/index.less
+   ============================================================ */
+
+/* Root / Canvas */
+.root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--body-background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+.canvas {
+  width: 1920px;
+  height: 990px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform-origin: center center;
+}
+
+/* KPI Row */
+.kpiRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex-shrink: 0;
+}
+
+.kpiCard {
+  height: 30px;
+  background-color: rgba(0, 159, 218, 0.1);
+  border-radius: 2px;
+  display: flex;
+  align-items: baseline;
+  padding: 6px 24px 0 16px;
+  gap: 24px;
+}
+
+.kpiLabel {
+  font-size: 14px;
+  color: var(--text-color-secondary);
+  line-height: 1;
+  position: relative;
+  top: -15px;
+}
+
+.kpiVal {
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 0.75;
+  position: relative;
+  top: -15px;
+}
+
+/* Layout */
+.bottomArea {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+/* Left Panel */
+.leftPanel {
+  width: 340px;
+  background: var(--component-background);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px;
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--heading-color);
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.titleBar {
+  width: 3px;
+  height: 16px;
+  background: var(--blue-color);
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+.titleBarSm {
+  width: 3px;
+  height: 14px;
+  background: var(--blue-color);
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+.panelContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Turbine */
+.turbineWrap {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  margin: 0 auto 16px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.turbineImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+.speedBadge {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 16px;
+  padding: 4px 12px;
+  border: 1px solid var(--border-color-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.speedVal {
+  color: var(--heading-color);
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.speedUnit {
+  color: var(--text-color-secondary);
+  font-size: 10px;
+}
+
+.bladeBadge {
+  position: absolute;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.bladeBadgeSuccess {
+  background: rgba(15, 195, 143, 0.3);
+  border: 1px solid var(--success-color);
+  color: var(--success-color);
+}
+
+.bladeBadgeWarning {
+  background: rgba(255, 149, 77, 0.3);
+  border: 1px solid var(--warning-color);
+  color: var(--warning-color);
+}
+
+.badgeB1 {
+  top: 15%;
+  left: 10%;
+}
+
+.badgeB2 {
+  top: 20%;
+  right: 10%;
+}
+
+.badgeB3 {
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Data Grid */
+.dataGridHeader {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr 1fr 1fr;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border-color-split);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  color: var(--text-color-secondary);
+}
+
+.dataGridRow {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr 1fr 1fr;
+  font-size: 13px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color-split);
+}
+
+.dataGridLabel {
+  color: var(--text-color);
+  text-align: left;
+}
+
+.dataGridVal {
+  text-align: right;
+  color: var(--heading-color);
+  font-weight: 500;
+}
+
+.dataGridValWarn {
+  text-align: right;
+  color: var(--warning-color);
+  font-weight: 500;
+}
+
+/* Right Panel */
+.rightPanel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Chart Cards */
+.chartCard {
+  background: var(--component-background);
+  border-radius: 4px;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chartCardLg {
+  composes: chartCard;
+  flex: 1.5;
+}
+
+.chartCardMd {
+  composes: chartCard;
+  flex: 1;
+}
+
+.subChartCard {
+  composes: chartCard;
+  flex: 1;
+  min-width: 0;
+}
+
+.block3 {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  min-height: 0;
+}
+
+.chartCardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.chartTitleRow {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.chartHealthScore {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--success-color);
+}
+
+.chartSubNote {
+  font-size: 12px;
+  color: var(--text-color-secondary);
+  margin-bottom: 8px;
+}
+
+.chartBody {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Tabs */
+.tabsRow {
+  display: flex;
+  gap: 24px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tab {
+  color: var(--text-color);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 4px;
+  transition: all 0.3s;
+}
+
+.tabActive {
+  color: var(--heading-color);
+  border-bottom-color: var(--blue-color);
+}
+
+.alarmBadge {
+  background: var(--error-color);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  vertical-align: top;
+  margin-left: 4px;
+}
+
+/* Time Range */
+.timeRangeRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeRangeHint {
+  font-size: 12px;
+  color: var(--text-color-secondary);
+}
+
+.timeRangeBtns {
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  gap: 8px;
+}
+
+.timeRangeBtn {
+  width: 80px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  color: var(--text-color);
+  background: var(--background-color-light);
+  border: 1px solid var(--border-color-split);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.timeRangeBtnActive {
+  color: var(--heading-color);
+  font-weight: bold;
+  background: rgba(0, 197, 249, 0.3);
+  border-color: var(--blue-color);
+}
+
+/* Trend / Content */
+.trendSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.trendHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.alarmFilterRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.alarmSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chartLegendLayout {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: 0;
+}
+
+.chartLegendBody {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+}
+
+.chartLegendSide {
+  padding-left: 16px;
+}
+
+/* Alarm Level Tags */
+.levelTag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.levelCritical {
+  background: var(--error-color-bg);
+  color: var(--error-color);
+}
+
+.levelWarning {
+  background: var(--warning-color-bg);
+  color: var(--warning-color);
+}
+
+.levelInfo {
+  background: var(--success-color-bg);
+  color: var(--success-color);
+}
+
+.statusActive {
+  color: var(--error-color);
+}
+
+.statusResolved {
+  color: var(--success-color);
+}
+
+/* Chart Tooltip */
+.tooltip {
+  background: var(--component-background);
+  border: 1px solid var(--border-color-base);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  box-shadow: var(--box-shadow-base);
+}
+
+.tooltipTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--heading-color);
+}
+
+.tooltipRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.tooltipDot {
+  width: 8px;
+  height: 4px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.tooltipKey {
+  color: var(--text-color);
+}
+
+.tooltipVal {
+  color: var(--heading-color);
+  font-weight: 500;
+}
+
+/* Chart Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-color-secondary);
+  margin-top: 8px;
+}
+
+.legendVertical {
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 0;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendLine {
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.legendDash {
+  width: 12px;
+}
+
+.legendDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}

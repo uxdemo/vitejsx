@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import DiagnosticDemo from './diagnostic-demo'
-import BladeMonitorDashboard from './BladeMonitorDashboard'
+import BladeMonitorDashboard from './BladeMonitorDashboard/index'
 import IndustrialVisionPlatform from './industrial-vision-platform'
 import SmartAutoModeling from './smart-auto-modeling/index'
 import './App.css'
