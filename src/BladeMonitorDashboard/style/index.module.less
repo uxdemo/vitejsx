@@ -3,6 +3,11 @@
    Uses CSS variables from theme/index.less
    ============================================================ */
 
+/* KPI health score color (not in theme/index.less) */
+:root {
+  --kpi-health-color: #faad14;
+}
+
 /* Root / Canvas */
 .root {
   width: 100vw;
@@ -60,6 +65,42 @@
   line-height: 0.75;
   position: relative;
   top: -15px;
+}
+
+/* KPI value color variants */
+.kpiValHealth {
+  color: var(--kpi-health-color);
+}
+.kpiValPrimary {
+  color: var(--blue-color);
+}
+
+/* KPI unit label (RPM / m/s) */
+.kpiUnit {
+  font-size: 14px;
+  color: var(--blue-color);
+  font-weight: 600;
+}
+
+/* KPI alert indicator (↑ 1台) */
+.kpiAlertText {
+  font-size: 12px;
+  color: var(--error-color);
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+/* Data grid header column alignment */
+.colLeft {
+  text-align: left;
+}
+.colRight {
+  text-align: right;
+}
+
+/* Chart title row with bottom spacing (used in block-3 sub-cards) */
+.chartTitleRowMb {
+  margin-bottom: 8px;
 }
 
 /* Layout */
@@ -256,17 +297,14 @@
 }
 
 .chartCardLg {
-  composes: chartCard;
   flex: 1.5;
 }
 
 .chartCardMd {
-  composes: chartCard;
   flex: 1;
 }
 
 .subChartCard {
-  composes: chartCard;
   flex: 1;
   min-width: 0;
 }
@@ -308,6 +346,7 @@
 .chartBody {
   flex: 1;
   min-height: 0;
+  height: 100%;
 }
 
 /* Tabs */
@@ -408,24 +447,6 @@
   min-height: 0;
 }
 
-.chartLegendLayout {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  min-height: 0;
-}
-
-.chartLegendBody {
-  flex: 1;
-  height: 100%;
-  min-width: 0;
-}
-
-.chartLegendSide {
-  padding-left: 16px;
-}
-
 /* Alarm Level Tags */
 .levelTag {
   display: inline-block;
@@ -455,81 +476,4 @@
 
 .statusResolved {
   color: var(--success-color);
-}
-
-/* Chart Tooltip */
-.tooltip {
-  background: var(--component-background);
-  border: 1px solid var(--border-color-base);
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 12px;
-  box-shadow: var(--box-shadow-base);
-}
-
-.tooltipTitle {
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: var(--heading-color);
-}
-
-.tooltipRow {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 4px;
-}
-
-.tooltipDot {
-  width: 8px;
-  height: 4px;
-  border-radius: 2px;
-  display: inline-block;
-}
-
-.tooltipKey {
-  color: var(--text-color);
-}
-
-.tooltipVal {
-  color: var(--heading-color);
-  font-weight: 500;
-}
-
-/* Chart Legend */
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--text-color-secondary);
-  margin-top: 8px;
-}
-
-.legendVertical {
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 0;
-}
-
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.legendLine {
-  width: 12px;
-  height: 4px;
-  border-radius: 2px;
-}
-
-.legendDash {
-  width: 12px;
-}
-
-.legendDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
 }

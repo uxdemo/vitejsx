@@ -1,42 +1,4 @@
 /* ============================================================
-   OFM Design Tokens → CSS variables
-   ============================================================ */
-export const OFM_C = {
-  primary:       'var(--blue-color)',
-  success:       'var(--success-color)',
-  warning:       'var(--warning-color)',
-  error:         'var(--error-color)',
-  bgPage:        'var(--body-background)',
-  bgCard:        'var(--component-background)',
-  bgComponent:   'var(--component-background)',
-  textPrimary:   'var(--heading-color)',
-  textRegular:   'var(--text-color)',
-  textSecondary: 'var(--text-color-secondary)',
-  borderBase:    'var(--border-color-base)',
-  borderSplit:   'var(--border-color-split)',
-} as const;
-
-/* ============================================================
-   Chart series colors
-   ============================================================ */
-export const CHART_C = {
-  c1: 'var(--blue-color)',
-  c2: 'var(--success-color)',
-  c3: '#B37FEB',
-  c4: 'var(--warning-color)',
-  c5: '#FF85C0',
-  c6: 'var(--error-color)',
-  c7: '#1890FF',
-  c8: '#FAAD14',
-} as const;
-
-/* ============================================================
-   Recharts shared axis/grid styles
-   ============================================================ */
-export const AXIS_TICK = { fontSize: 10, fill: 'var(--text-color-secondary)' } as const;
-export const CHART_GRID = { strokeDasharray: '3 3', stroke: 'var(--border-color-split)', vertical: false } as const;
-
-/* ============================================================
    Alarm types and data
    ============================================================ */
 export type AlarmLevel = 'critical' | 'warning' | 'info';
