@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Tabs } from 'antd';
 import * as css from './styles/index.module.less';
 import clsx from 'clsx';
-import { DEFAULT_PT_CFG, LV_COLORS, ITER_HISTORY } from './constant';
+import { DEFAULT_PT_CFG, LV_COLORS } from './constant';
 import type { ModelItem, PtCfgItem } from './constant';
 import { Ic, Btn, Prog, Badge } from './ui';
 
@@ -141,7 +141,7 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
             <div className={css.panelCard}>
               <div className={css.panelCardTitle}>指标趋势</div>
               <div className={css.barChart}>
-                {ITER_HISTORY.map((h, i) => (
+                {model.iterHistory.map((h, i) => (
                   <div key={i} className={css.barGroup}>
                     <div className={css.barCols}>
                       {(
@@ -170,11 +170,11 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
             </div>
             <div className={css.panelCard}>
               <div className={css.panelCardTitle}>操作日志</div>
-              {ITER_HISTORY.map((h, i) => (
+              {model.iterHistory.map((h, i) => (
                 <div key={i} className={css.logItem}>
                   <div className={css.logTimeline}>
-                    <div className={clsx(css.logDot, i === ITER_HISTORY.length - 1 && css.logDotCurrent)}>{h.r}</div>
-                    {i < ITER_HISTORY.length - 1 && <div className={css.logLine} />}
+                    <div className={clsx(css.logDot, i === model.iterHistory.length - 1 && css.logDotCurrent)}>{h.r}</div>
+                    {i < model.iterHistory.length - 1 && <div className={css.logLine} />}
                   </div>
                   <div>
                     <div className={css.logAct}>{h.act}</div>
@@ -192,7 +192,7 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
                       ))}
                     </div>
                     {i > 0 && (
-                      <div className={css.logImprove}>{'F1 +' + (h.f - ITER_HISTORY[i - 1].f).toFixed(1) + '%'}</div>
+                      <div className={css.logImprove}>{'F1 +' + (h.f - model.iterHistory[i - 1].f).toFixed(1) + '%'}</div>
                     )}
                   </div>
                 </div>

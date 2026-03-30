@@ -99,6 +99,7 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
       sc,
       progress: 5,
       ptCfg: [],
+      iterHistory: [], // 新模型初始为空迭代历史
     }));
     onComplete(ms);
   };

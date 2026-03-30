@@ -380,6 +380,7 @@ export const AiPanel = ({ expanded, onToggle, onNav, models }: AiPanelProps): Re
                       sc: data.scene,
                       progress: 8,
                       ptCfg: [],
+                      iterHistory: [],
                     };
                     onNav('addModel', m);
                     setSt('done');

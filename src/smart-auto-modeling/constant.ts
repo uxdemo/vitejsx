@@ -272,6 +272,15 @@ export const DEFAULT_PT_CFG: PtCfgItem[] = [
   },
 ];
 
+export interface IterHistoryItem {
+  r: number;   // 轮次
+  p: number;   // 准确率
+  rc: number;  // 召回率
+  f: number;   // F1分数
+  fa: number;  // 误报率
+  act: string; // 操作描述
+}
+
 export interface ModelItem {
   id: number;
   name: string;
@@ -289,6 +298,7 @@ export interface ModelItem {
   sc: string;
   progress?: number;
   ptCfg: PtCfgItem[];
+  iterHistory: IterHistoryItem[]; // 每个模型携带自己的迭代历史
 }
 
 export function createInitModels(): ModelItem[] {
@@ -309,6 +319,12 @@ export function createInitModels(): ModelItem[] {
       pts: 12,
       sc: '齿轮箱',
       ptCfg: [...DEFAULT_PT_CFG],
+      iterHistory: [
+        { r: 1, p: 72.1, rc: 68.5, f: 70.2, fa: 18.3, act: '初始训练' },
+        { r: 2, p: 81.4, rc: 79.2, f: 80.3, fa: 11.2, act: '扩充低风速样本' },
+        { r: 3, p: 88.6, rc: 85.1, f: 86.8, fa: 6.8, act: '剔除噪声测点' },
+        { r: 4, p: 94.2, rc: 91.8, f: 93.0, fa: 3.1, act: '优化阈值+抑制规则' },
+      ],
     },
     {
       id: 2,
@@ -327,6 +343,10 @@ export function createInitModels(): ModelItem[] {
       sc: '发电机',
       progress: 67,
       ptCfg: [],
+      iterHistory: [
+        { r: 1, p: 65.3, rc: 58.7, f: 61.8, fa: 15.8, act: '初始训练' },
+        { r: 2, p: 74.8, rc: 69.2, f: 71.9, fa: 10.5, act: '调整样本权重' },
+      ],
     },
     {
       id: 3,
@@ -344,6 +364,11 @@ export function createInitModels(): ModelItem[] {
       pts: 15,
       sc: '叶片',
       ptCfg: [],
+      iterHistory: [
+        { r: 1, p: 72.5, rc: 62.1, f: 66.9, fa: 15.7, act: '初始训练' },
+        { r: 2, p: 81.2, rc: 71.5, f: 76.0, fa: 11.3, act: '增加时序窗口' },
+        { r: 3, p: 87.5, rc: 78.3, f: 82.6, fa: 8.2, act: '优化损失函数权重' },
+      ],
     },
     {
       id: 4,
@@ -361,6 +386,13 @@ export function createInitModels(): ModelItem[] {
       pts: 10,
       sc: '偏航',
       ptCfg: [],
+      iterHistory: [
+        { r: 1, p: 78.5, rc: 72.3, f: 75.3, fa: 12.8, act: '初始训练' },
+        { r: 2, p: 85.7, rc: 81.2, f: 83.4, fa: 7.5, act: '特征工程优化' },
+        { r: 3, p: 91.2, rc: 88.6, f: 89.9, fa: 4.3, act: '调整超参数' },
+        { r: 4, p: 94.8, rc: 91.9, f: 93.3, fa: 2.7, act: '增加正则化' },
+        { r: 5, p: 96.1, rc: 93.5, f: 94.8, fa: 1.9, act: '精细调优阈值' },
+      ],
     },
     {
       id: 5,
@@ -374,33 +406,24 @@ export function createInitModels(): ModelItem[] {
       r: 55.1,
       f1: 58.5,
       fa: 22.4,
-      iter: 6,
+      iter: 5,
       pts: 9,
       sc: '变桨',
       ptCfg: [],
+      iterHistory: [
+        { r: 1, p: 58.2, rc: 51.3, f: 54.5, fa: 25.7, act: '初始训练' },
+        { r: 2, p: 60.5, rc: 52.8, f: 56.4, fa: 24.1, act: '增加树深度' },
+        { r: 3, p: 61.8, rc: 53.9, f: 57.6, fa: 23.2, act: '调整样本平衡' },
+        { r: 4, p: 62.1, rc: 54.7, f: 58.1, fa: 22.8, act: '更换特征集' },
+        { r: 5, p: 62.3, rc: 55.1, f: 58.5, fa: 22.4, act: '优化后仍未达标' },
+      ],
     },
   ];
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// DETAIL / AI DATA
+// AI DATA
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-export interface IterHistoryItem {
-  r: number;
-  p: number;
-  rc: number;
-  f: number;
-  fa: number;
-  act: string;
-}
-
-export const ITER_HISTORY: IterHistoryItem[] = [
-  { r: 1, p: 72.1, rc: 68.5, f: 70.2, fa: 18.3, act: '初始训练' },
-  { r: 2, p: 81.4, rc: 79.2, f: 80.3, fa: 11.2, act: '扩充低风速样本' },
-  { r: 3, p: 88.6, rc: 85.1, f: 86.8, fa: 6.8, act: '剔除噪声测点' },
-  { r: 4, p: 94.2, rc: 91.8, f: 93.0, fa: 3.1, act: '优化阈值+抑制规则' },
-];
-
 export interface AiCatItem {
   l: string;
   ic: string;
