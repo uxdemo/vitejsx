@@ -163,7 +163,7 @@ const App = (): React.ReactElement => {
                 {
                   title: '模型',
                   dataIndex: 'name',
-                  width: '22%',
+                  width: '26%',
                   render: (_: unknown, m: ModelItem) => (
                     <div>
                       <div className={css.modelTableName}>{m.name}</div>
@@ -174,19 +174,13 @@ const App = (): React.ReactElement => {
                 {
                   title: '风场',
                   dataIndex: 'plant',
-                  width: '8%',
+                  width: '9%',
                   render: (v: string) => <span className={css.modelTablePlant}>{v}</span>,
-                },
-                {
-                  title: '算法',
-                  dataIndex: 'algo',
-                  width: '14%',
-                  render: (v: string) => <span className={css.modelTableAlgo}>{v}</span>,
                 },
                 {
                   title: '准确率',
                   dataIndex: 'p',
-                  width: '9%',
+                  width: '10%',
                   align: 'center',
                   render: (v: number | null) => (
                     <span className={clsx(css.modelTableMetric, css[metricClass(v, 90, 80)])}>{v ? v + '%' : '—'}</span>
@@ -195,7 +189,7 @@ const App = (): React.ReactElement => {
                 {
                   title: '召回率',
                   dataIndex: 'r',
-                  width: '9%',
+                  width: '10%',
                   align: 'center',
                   render: (v: number | null) => (
                     <span className={clsx(css.modelTableMetric, css[metricClass(v, 90, 80)])}>{v ? v + '%' : '—'}</span>
@@ -204,7 +198,7 @@ const App = (): React.ReactElement => {
                 {
                   title: '误报率',
                   dataIndex: 'fa',
-                  width: '9%',
+                  width: '10%',
                   align: 'center',
                   render: (v: number | null) => (
                     <span
@@ -219,14 +213,14 @@ const App = (): React.ReactElement => {
                 {
                   title: '迭代',
                   dataIndex: 'iter',
-                  width: '7%',
+                  width: '8%',
                   align: 'center',
                   render: (v: number) => <span className={css.modelTableIter}>{v}</span>,
                 },
                 {
                   title: '状态',
                   dataIndex: 'status',
-                  width: '18%',
+                  width: '21%',
                   render: (_: unknown, m: ModelItem) => (
                     <div>
                       <Badge status={m.status} />

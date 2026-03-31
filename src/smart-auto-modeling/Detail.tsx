@@ -4,7 +4,7 @@ import * as css from './styles/index.module.less';
 import clsx from 'clsx';
 import { DEFAULT_PT_CFG, LV_COLORS } from './constant';
 import type { ModelItem, PtCfgItem } from './constant';
-import { Ic, Btn, Prog, Badge } from './ui';
+import { Ic, Btn, Badge } from './ui';
 
 const AnyTabs = Tabs as any;
 const AnyTabPane = Tabs.TabPane as any;
@@ -330,24 +330,6 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
                 <br />
                 {'• 剔除低重要性测点 GBX_FLT_DP'}
               </div>
-            </div>
-            <div className={css.panelCard}>
-              <div className={css.panelCardTitle}>误报分布</div>
-              {(
-                [
-                  ['启停机', 85, 'var(--error-color)'],
-                  ['极端风速', 10, 'var(--warning-color)'],
-                  ['传感器异常', 5, 'var(--blue-color)'],
-                ] as [string, number, string][]
-              ).map(([l, v, c]) => (
-                <div key={String(l)} className={css.faItem}>
-                  <div className={css.faItemHeader}>
-                    <span className={css.faItemLabel}>{l}</span>
-                    <span className={css.faItemVal}>{v + '%'}</span>
-                  </div>
-                  <Prog value={Number(v)} color={String(c)} />
-                </div>
-              ))}
             </div>
           </div>
         </AnyTabPane>
