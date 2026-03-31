@@ -948,6 +948,106 @@ button:hover {
   background: var(--primary-color-bg);
   color: var(--primary-color);
 }
+.algoCompBadge {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--success-color-bg);
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+/* Time Ranges Section */
+.timeRangesSection {
+  margin-top: 12px;
+}
+.timeRangesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.timeRangesEmpty {
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--select-dropdown-hover-color);
+  text-align: center;
+}
+.timeRangesEmptyText {
+  font-size: 12px;
+  color: var(--text-color-secondary);
+}
+.timeRangesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.timeRangeRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--select-dropdown-hover-color);
+  border: 1px solid var(--border-color-split);
+}
+.timeRangeIndex {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color-secondary);
+  min-width: 50px;
+}
+.timeRangeSeparator {
+  font-size: 12px;
+  color: var(--text-color-secondary);
+}
+.timeRangeRemove {
+  margin-left: auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: none;
+  background: var(--error-color-bg);
+  color: var(--error-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.timeRangeRemove:hover {
+  background: var(--error-color);
+  color: #fff;
+}
+
+/* Confirm Time Ranges */
+.confirmTimeRanges {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color-split);
+}
+.confirmTimeRange {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+.confirmTimeRangeIdx {
+  font-size: 12px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--primary-color-bg);
+  color: var(--primary-color);
+  font-weight: 600;
+  min-width: 45px;
+  text-align: center;
+}
+.confirmTimeRangeDate {
+  font-size: 12px;
+  color: var(--text-color-secondary);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
 
 /* Step 3 */
 .optTarget {
@@ -1340,7 +1440,7 @@ button:hover {
 /* Diag tab */
 .diagGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 .diagSuccess {
@@ -1364,20 +1464,4 @@ button:hover {
   font-size: 12px;
   color: var(--text-color-secondary);
   line-height: 1.8;
-}
-.faItem {
-  margin-bottom: 8px;
-}
-.faItemHeader {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  margin-bottom: 2px;
-}
-.faItemLabel {
-  color: var(--text-color-secondary);
-}
-.faItemVal {
-  color: var(--text-color);
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }

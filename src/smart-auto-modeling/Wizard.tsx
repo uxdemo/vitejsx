@@ -10,18 +10,26 @@ import { Ic, Btn, Toggle } from './ui';
 const AnySteps = Steps as any;
 const AnyStep = Steps.Step as any;
 
+interface TimeRange {
+  id: string;
+  startDate: string;
+  endDate: string;
+}
+
 interface WizardCfg {
   turbine: string | null;
   scenes: string[];
   points: Record<string, string[]>;
   sampleStrategy: string;
   sampleMonths: number;
+  timeRanges: TimeRange[]; // 手动指定的时间段列表
   excludeFaults: boolean;
   optimizeTarget: string;
   maxIter: number;
   autoThreshold: boolean;
   autoSuppress: boolean;
   autoAlgoSwitch: boolean;
+  algoCompetition: boolean; // 多算法竞赛开关
   [key: string]: unknown;
 }
 
@@ -38,12 +46,14 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
     points: {},
     sampleStrategy: 'auto',
     sampleMonths: 6,
+    timeRanges: [],
     excludeFaults: true,
     optimizeTarget: 'balanced',
     maxIter: 10,
     autoThreshold: true,
     autoSuppress: true,
     autoAlgoSwitch: true,
+    algoCompetition: true, // 默认打开
   });
 
   const selTpl: TplItem | undefined = TPLS.find((t) => t.id === cfg.turbine);
@@ -81,6 +91,29 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
     setCfg((c) => ({ ...c, points: { ...c.points, [sc]: pts } }));
   };
 
+  // 添加时间段
+  const addTimeRange = (): void => {
+    const newRange: TimeRange = {
+      id: Date.now().toString(),
+      startDate: '',
+      endDate: '',
+    };
+    setCfg((c) => ({ ...c, timeRanges: [...c.timeRanges, newRange] }));
+  };
+
+  // 删除时间段
+  const removeTimeRange = (id: string): void => {
+    setCfg((c) => ({ ...c, timeRanges: c.timeRanges.filter((r) => r.id !== id) }));
+  };
+
+  // 更新时间段
+  const updateTimeRange = (id: string, field: 'startDate' | 'endDate', value: string): void => {
+    setCfg((c) => ({
+      ...c,
+      timeRanges: c.timeRanges.map((r) => (r.id === id ? { ...r, [field]: value } : r)),
+    }));
+  };
+
   const doComplete = (): void => {
     const ms: ModelItem[] = cfg.scenes.map((sc, i) => ({
       id: Date.now() + i,
@@ -99,6 +132,7 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
       sc,
       progress: 5,
       ptCfg: [],
+      iterHistory: [], // 新模型初始为空迭代历史
     }));
     onComplete(ms);
   };
@@ -236,7 +270,6 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
               <div className={css.configCard}>
                 {[
                   { k: 'auto', l: '全自动选样', d: '自动识别正常工况段' },
-                  { k: 'semi', l: '半自动选样', d: '系统推荐+人工确认' },
                   { k: 'manual', l: '手动指定', d: '手动设定时间范围' },
                 ].map((s) => (
                   <div
@@ -252,51 +285,116 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                     <div className={css.sampleOptionDesc}>{s.d}</div>
                   </div>
                 ))}
-                <div className={css.rangeLabel}>回溯范围</div>
-                <div className={css.rangeBtns}>
-                  {[3, 6, 12, 24].map((m) => (
-                    <button
-                      key={m}
-                      className={clsx(css.rangeBtn, cfg.sampleMonths === m && css.rangeBtnSelected)}
-                      onClick={() => setCfg((c) => ({ ...c, sampleMonths: m }))}>
-                      {m}月
-                    </button>
-                  ))}
-                </div>
-                <div className={css.switchRow}>
-                  <Toggle
-                    on={cfg.excludeFaults}
-                    onToggle={() => setCfg((c) => ({ ...c, excludeFaults: !c.excludeFaults }))}
-                  />
-                  <span className={css.switchLabel}>排除故障工单时段</span>
-                </div>
+
+                {cfg.sampleStrategy === 'auto' ? (
+                  <>
+                    <div className={css.rangeLabel}>回溯范围</div>
+                    <div className={css.rangeBtns}>
+                      {[3, 6, 12, 24].map((m) => (
+                        <button
+                          key={m}
+                          className={clsx(css.rangeBtn, cfg.sampleMonths === m && css.rangeBtnSelected)}
+                          onClick={() => setCfg((c) => ({ ...c, sampleMonths: m }))}>
+                          {m}月
+                        </button>
+                      ))}
+                    </div>
+                    <div className={css.switchRow}>
+                      <Toggle
+                        on={cfg.excludeFaults}
+                        onToggle={() => setCfg((c) => ({ ...c, excludeFaults: !c.excludeFaults }))}
+                      />
+                      <span className={css.switchLabel}>排除故障工单时段</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className={css.timeRangesSection}>
+                    <div className={css.timeRangesHeader}>
+                      <span className={css.rangeLabel}>训练时间段</span>
+                      <Btn small icon="plus" onClick={addTimeRange}>
+                        添加时间段
+                      </Btn>
+                    </div>
+                    {cfg.timeRanges.length === 0 ? (
+                      <div className={css.timeRangesEmpty}>
+                        <span className={css.timeRangesEmptyText}>点击"添加时间段"选择训练数据范围</span>
+                      </div>
+                    ) : (
+                      <div className={css.timeRangesList}>
+                        {cfg.timeRanges.map((range, idx) => (
+                          <div key={range.id} className={css.timeRangeRow}>
+                            <span className={css.timeRangeIndex}>时段 {idx + 1}</span>
+                            <input
+                              type="date"
+                              className={clsx(css.samInput, 'ant-input')}
+                              value={range.startDate}
+                              onChange={(e) => updateTimeRange(range.id, 'startDate', e.target.value)}
+                              placeholder="开始日期"
+                            />
+                            <span className={css.timeRangeSeparator}>至</span>
+                            <input
+                              type="date"
+                              className={clsx(css.samInput, 'ant-input')}
+                              value={range.endDate}
+                              onChange={(e) => updateTimeRange(range.id, 'endDate', e.target.value)}
+                              placeholder="结束日期"
+                            />
+                            {cfg.timeRanges.length > 1 && (
+                              <button
+                                className={css.timeRangeRemove}
+                                onClick={() => removeTimeRange(range.id)}
+                                title="删除此时间段">
+                                <Ic name="x" size={12} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className={css.switchRow}>
+                      <Toggle
+                        on={cfg.excludeFaults}
+                        onToggle={() => setCfg((c) => ({ ...c, excludeFaults: !c.excludeFaults }))}
+                      />
+                      <span className={css.switchLabel}>排除故障工单时段</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <div>
               <div className={css.sectionTitle}>算法池</div>
               <div className={css.configCard}>
                 <div className={css.algoToggleRow}>
-                  <Toggle on={true} onToggle={() => {}} />
+                  <Toggle
+                    on={cfg.algoCompetition}
+                    onToggle={() => setCfg((c) => ({ ...c, algoCompetition: !c.algoCompetition }))}
+                  />
                   <span className={css.switchLabel}>AutoML 多算法竞赛</span>
+                  {cfg.algoCompetition && (
+                    <span className={css.algoCompBadge}>开启</span>
+                  )}
                 </div>
-                {ALGOS.map((a) => (
-                  <div key={a.id} className={css.algoRow}>
-                    <div>
-                      <span className={css.algoName}>{a.name}</span>
-                      <span className={css.algoType}>{a.type}</span>
-                      <div className={css.algoDesc}>{a.desc}</div>
-                    </div>
-                    {a.best.length > 0 && (
-                      <div className={css.algoTags}>
-                        {a.best.map((b) => (
-                          <span key={b} className={css.algoTag}>
-                            {b}
-                          </span>
-                        ))}
+                <div style={cfg.algoCompetition ? {} : { opacity: 0.5, pointerEvents: 'none' as const }}>
+                  {ALGOS.map((a) => (
+                    <div key={a.id} className={css.algoRow}>
+                      <div>
+                        <span className={css.algoName}>{a.name}</span>
+                        <span className={css.algoType}>{a.type}</span>
+                        <div className={css.algoDesc}>{a.desc}</div>
                       </div>
-                    )}
-                  </div>
-                ))}
+                      {a.best.length > 0 && (
+                        <div className={css.algoTags}>
+                          {a.best.map((b) => (
+                            <span key={b} className={css.algoTag}>
+                              {b}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -374,18 +472,36 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                     (
                       {
                         auto: '全自动',
-                        semi: '半自动',
                         manual: '手动',
                       } as Record<string, string>
                     )[cfg.sampleStrategy],
                   ],
-                  ['回溯', cfg.sampleMonths + '月'],
+                  [
+                    '回溯',
+                    cfg.sampleStrategy === 'auto'
+                      ? cfg.sampleMonths + '月'
+                      : cfg.timeRanges.length > 0
+                        ? `${cfg.timeRanges.length} 个时间段`
+                        : '未选择',
+                  ],
                 ].map(([k, v]) => (
                   <div key={k} className={css.confirmRow}>
                     <span className={css.confirmRowKey}>{k}</span>
                     <span className={css.confirmRowVal}>{v}</span>
                   </div>
                 ))}
+                {cfg.sampleStrategy === 'manual' && cfg.timeRanges.length > 0 && (
+                  <div className={css.confirmTimeRanges}>
+                    {cfg.timeRanges.map((r, i) => (
+                      <div key={r.id} className={css.confirmTimeRange}>
+                        <span className={css.confirmTimeRangeIdx}>时段{i + 1}</span>
+                        <span className={css.confirmTimeRangeDate}>
+                          {r.startDate} ~ {r.endDate}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className={css.confirmCard}>
                 {[
@@ -400,7 +516,7 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                     )[cfg.optimizeTarget],
                   ],
                   ['迭代', cfg.maxIter + '轮'],
-                  ['算法', 'AutoML'],
+                  ['算法', cfg.algoCompetition ? '多算法竞赛' : '单一算法'],
                   ['阈值', '自动(P1/P99)'],
                 ].map(([k, v]) => (
                   <div key={k} className={css.confirmRow}>
