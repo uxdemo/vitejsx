@@ -163,19 +163,26 @@ const App = (): React.ReactElement => {
                 {
                   title: '模型',
                   dataIndex: 'name',
-                  width: '26%',
+                  width: '22%',
                   render: (_: unknown, m: ModelItem) => (
                     <div>
                       <div className={css.modelTableName}>{m.name}</div>
-                      <div className={css.modelTableSub}>{m.sc + '·' + m.turb + '·' + m.pts + '点'}</div>
+                      <div className={css.modelTableSub}>{m.sc + '·' + m.pts + '点'}</div>
                     </div>
                   ),
                 },
                 {
                   title: '风场',
                   dataIndex: 'plant',
-                  width: '9%',
+                  width: '8%',
                   render: (v: string) => <span className={css.modelTablePlant}>{v}</span>,
+                },
+                {
+                  title: '风机编号',
+                  dataIndex: 'turb',
+                  width: '9%',
+                  align: 'center',
+                  render: (v: string) => <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--primary-color)' }}>{v}</span>,
                 },
                 {
                   title: '准确率',

@@ -11,7 +11,7 @@ interface CreateEntities {
   plant: string;
   scene: string;
   turbineType: string;
-  turbineRange: string;
+  turbines: string[]; // 具体的风机列表
   count: number;
 }
 
@@ -115,6 +115,20 @@ export const parseAiCmd = (text: string, models: ModelItem[]): ParsedCmd | null 
   if (cm) {
     const pl = cm[1].charAt(0).toUpperCase() + '厂';
     const pi = PLANTS[pl];
+    // 检查是否指定了"所有"、"全部"、"每台"、"全场"等关键词
+    const selectAll = /(?:所有|全部|每台|全场)/.test(t);
+    // 尝试匹配具体的风机编号，如 A01 A02 A03
+    const specificTurbines = t.match(/[ABC]\d{2}/gi);
+    let selectedTurbines: string[] = [];
+    if (specificTurbines && specificTurbines.length > 0) {
+      // 如果指定了具体风机
+      selectedTurbines = [...new Set(specificTurbines.map((turb) => turb.toUpperCase()))].filter((turb) =>
+        pi?.turbines.includes(turb),
+      );
+    } else if (selectAll || pi) {
+      // 如果说"所有"或者没有指定具体风机，默认选择全部
+      selectedTurbines = pi?.turbines || [];
+    }
     return {
       intent: 'create',
       original: text,
@@ -122,8 +136,8 @@ export const parseAiCmd = (text: string, models: ModelItem[]): ParsedCmd | null 
         plant: pl,
         scene: cm[2],
         turbineType: pi ? pi.type : 'SG4.2-145',
-        turbineRange: pi ? pi.turbines[0] + '~' + pi.turbines[pi.turbines.length - 1] : '',
-        count: pi ? pi.turbines.length : 0,
+        turbines: selectedTurbines,
+        count: selectedTurbines.length,
       },
     };
   }
@@ -346,11 +360,18 @@ export const AiPanel = ({ expanded, onToggle, onNav, models }: AiPanelProps): Re
       plant: '目标风场',
       scene: '故障场景',
       turbineType: '机型',
-      turbineRange: '风机范围',
+      turbines: '选择风机',
       count: '风机数量',
       turbine: '目标风机',
       modelName: '目标模型',
       modelCount: '模型数量',
+    };
+    // 格式化显示值
+    const formatValue = (k: string, v: unknown): string => {
+      if (k === 'turbines' && Array.isArray(v)) {
+        return v.length > 3 ? `${v.slice(0, 3).join('、')}...（${v.length}台）` : v.join('、');
+      }
+      return String(v);
     };
     return (
       <div className={css.aiCard}>
@@ -371,12 +392,23 @@ export const AiPanel = ({ expanded, onToggle, onNav, models }: AiPanelProps): Re
         </div>
         <div className={css.aiCardBody}>
           <div className={css.entityLabel}>提取实体</div>
-          {Object.entries(parsed.entities).map(([k, v]) => (
-            <div key={k} className={css.entityRow}>
-              <span className={css.entityKey}>{entLabels[k] || k}</span>
-              <span className={css.entityVal}>{String(v)}</span>
-            </div>
-          ))}
+          {Object.entries(parsed.entities).map(([k, v]) => {
+            if (k === 'turbines' && Array.isArray(v) && v.length > 3) {
+              // 当风机数量大于3时，显示简略版本
+              return (
+                <div key={k} className={css.entityRow}>
+                  <span className={css.entityKey}>{entLabels[k] || k}</span>
+                  <span className={css.entityVal}>{formatValue(k, v)}</span>
+                </div>
+              );
+            }
+            return (
+              <div key={k} className={css.entityRow}>
+                <span className={css.entityKey}>{entLabels[k] || k}</span>
+                <span className={css.entityVal}>{formatValue(k, v)}</span>
+              </div>
+            );
+          })}
           <div className={css.entityOriginal}>
             <span className={css.entityKey}>原始输入</span>
             <span className={css.entityQuote}>{'"' + parsed.original + '"'}</span>
@@ -411,7 +443,12 @@ export const AiPanel = ({ expanded, onToggle, onNav, models }: AiPanelProps): Re
               ['风场', data.plant],
               ['机型', data.turbineType],
               ['场景', data.scene],
-              ['风机', data.turbineRange + '（' + data.count + '台）'],
+              [
+                '风机',
+                data.count > 3
+                  ? `${data.turbines.slice(0, 3).join('、')}...（${data.count}台）`
+                  : data.turbines.join('、') + '（' + data.count + '台）',
+              ],
               ['测点', '知识图谱推荐'],
               ['算法', 'AutoML竞赛'],
             ] as [string, string][]
@@ -421,6 +458,14 @@ export const AiPanel = ({ expanded, onToggle, onNav, models }: AiPanelProps): Re
               <span className={css.planRowVal}>{v}</span>
             </div>
           ))}
+          {data.count > 3 && (
+            <div className={css.planRow}>
+              <span className={css.planRowKey}>完整列表</span>
+              <span className={css.planRowVal} style={{ fontFamily: 'monospace', fontSize: 10 }}>
+                {data.turbines.join('、')}
+              </span>
+            </div>
+          )}
         </div>
         <div className={css.planFoot}>
           {st === 'done' ? (
@@ -443,30 +488,34 @@ export const AiPanel = ({ expanded, onToggle, onNav, models }: AiPanelProps): Re
                 onClick={() => {
                   setSt('launching');
                   setTimeout(() => {
-                    const m: ModelItem = {
-                      id: Date.now(),
-                      name: data.scene + '预警模型',
-                      plant: data.plant,
-                      turb: data.turbineRange,
-                      type: data.turbineType,
-                      status: 'training' as ModelStatus,
-                      algo: 'AutoML',
-                      p: null,
-                      r: null,
-                      f1: null,
-                      fa: null,
-                      iter: 0,
-                      pts: 8,
-                      sc: data.scene,
-                      progress: 8,
-                      ptCfg: [],
-                      iterHistory: [],
-                    };
-                    onNav('addModel', m);
+                    // 为每个选中的风机创建一个模型
+                    let modelId = Date.now();
+                    data.turbines.forEach((turb) => {
+                      const m: ModelItem = {
+                        id: modelId++,
+                        name: data.scene + '预警模型',
+                        plant: data.plant,
+                        turb: turb,
+                        type: data.turbineType,
+                        status: 'training' as ModelStatus,
+                        algo: 'AutoML',
+                        p: null,
+                        r: null,
+                        f1: null,
+                        fa: null,
+                        iter: 0,
+                        pts: 8,
+                        sc: data.scene,
+                        progress: 8,
+                        ptCfg: [],
+                        iterHistory: [],
+                      };
+                      onNav('addModel', m);
+                    });
                     setSt('done');
                   }, 1000);
                 }}>
-                {st === 'launching' ? '启动中...' : '确认启动'}
+                {st === 'launching' ? '启动中...' : `确认启动（${data.count}个模型）`}
               </Btn>
             </>
           )}

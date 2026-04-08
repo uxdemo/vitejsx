@@ -51,7 +51,9 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
   const [step, setStep] = useState<number>(0);
   const [cfg, setCfg] = useState<WizardCfg>({
     turbine: null,
+    turbineType: '',
     scenes: [],
+    turbines: [],
     points: {},
     sampleStrategy: 'auto',
     sampleMonths: 6,
@@ -116,7 +118,7 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
 
   const canNext: boolean =
     step === 0
-      ? !!(cfg.turbine && cfg.scenes.length > 0)
+      ? !!(cfg.turbine && cfg.scenes.length > 0 && cfg.turbines.length > 0)
       : step === 1
         ? cfg.scenes.every((sc) => (cfg.points[sc] || []).length >= 2)
         : true;
@@ -170,25 +172,34 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
   };
 
   const doComplete = (): void => {
-    const ms: ModelItem[] = cfg.scenes.map((sc, i) => ({
-      id: Date.now() + i,
-      name: `${sc}预警模型`,
-      plant: 'A厂',
-      turb: selTpl ? (selTpl.id === 'sg42' ? 'A01~A12' : selTpl.id === 'my166' ? 'B01~B08' : 'C01~C06') : 'A01~A12',
-      type: selTpl ? selTpl.name : 'SG4.2-145',
-      status: 'training' as ModelStatus,
-      algo: 'AutoML',
-      p: null,
-      r: null,
-      f1: null,
-      fa: null,
-      iter: 0,
-      pts: (cfg.points[sc] || []).length,
-      sc,
-      progress: 5,
-      ptCfg: [],
-      iterHistory: [], // 新模型初始为空迭代历史
-    }));
+    // 为每个选中的风机和场景创建模型
+    const ms: ModelItem[] = [];
+    let modelId = Date.now();
+
+    cfg.scenes.forEach((sc) => {
+      cfg.turbines.forEach((turb) => {
+        ms.push({
+          id: modelId++,
+          name: `${sc}预警模型`,
+          plant: cfg.turbine === 'sg42' ? 'A厂' : cfg.turbine === 'my166' ? 'B厂' : 'C厂',
+          turb: turb,
+          type: selTpl ? selTpl.name : 'SG4.2-145',
+          status: 'training' as ModelStatus,
+          algo: 'AutoML',
+          p: null,
+          r: null,
+          f1: null,
+          fa: null,
+          iter: 0,
+          pts: (cfg.points[sc] || []).length,
+          sc,
+          progress: 5,
+          ptCfg: [],
+          iterHistory: [],
+        });
+      });
+    });
+
     onComplete(ms);
   };
 
@@ -221,8 +232,10 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                     setCfg((c) => ({
                       ...c,
                       turbine: t.id,
+                      turbineType: t.id,
                       scenes: [],
                       points: {},
+                      turbines: [],
                     }))
                   }>
                   <div className={css.turbineCardHeader}>
@@ -234,7 +247,7 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
               ))}
             </div>
             {selTpl && (
-              <div>
+              <>
                 <div className={css.sectionTitle}>选择监测场景</div>
                 <div className={css.sceneGrid}>
                   {selTpl.scenes.map((sc) => {
@@ -250,7 +263,57 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                     );
                   })}
                 </div>
-              </div>
+
+                <div className={css.sectionTitle} style={{ marginTop: 18 }}>
+                  选择风机
+                  <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-secondary)', marginLeft: 8 }}>
+                    (已选 {cfg.turbines.length} 台)
+                  </span>
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <button
+                    className={css.sceneItem}
+                    onClick={() => {
+                      const plantTurbines = PLANTS[selTpl.id === 'sg42' ? 'A厂' : selTpl.id === 'my166' ? 'B厂' : 'C厂'].turbines;
+                      setCfg((c) => ({
+                        ...c,
+                        turbines: c.turbines.length === plantTurbines.length ? [] : plantTurbines,
+                      }));
+                    }}
+                    style={{
+                      padding: '8px 14px',
+                      marginBottom: 10,
+                      border: cfg.turbines.length === PLANTS[selTpl.id === 'sg42' ? 'A厂' : selTpl.id === 'my166' ? 'B厂' : 'C厂'].turbines.length
+                        ? '1px solid var(--primary-color)'
+                        : '1px solid var(--border-color)',
+                      }}>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-color)' }}>
+                      {cfg.turbines.length === PLANTS[selTpl.id === 'sg42' ? 'A厂' : selTpl.id === 'my166' ? 'B厂' : 'C厂'].turbines.length ? '✓ ' : ''}
+                      全选 ({PLANTS[selTpl.id === 'sg42' ? 'A厂' : selTpl.id === 'my166' ? 'B厂' : 'C厂'].turbines.length}台)
+                    </span>
+                  </button>
+                </div>
+                <div className={css.sceneGrid}>
+                  {PLANTS[selTpl.id === 'sg42' ? 'A厂' : selTpl.id === 'my166' ? 'B厂' : 'C厂'].turbines.map((turb) => {
+                    const sel = cfg.turbines.includes(turb);
+                    return (
+                      <div
+                        key={turb}
+                        className={clsx(css.sceneItem, sel && css.sceneItemSelected)}
+                        onClick={() => {
+                          setCfg((c) => ({
+                            ...c,
+                            turbines: c.turbines.includes(turb) ? c.turbines.filter((t) => t !== turb) : [...c.turbines, turb],
+                          }));
+                        }}
+                        style={{ cursor: 'pointer' }}>
+                        <span className={css.sceneItemName}>{turb}</span>
+                        {sel && <Ic name="check" size={13} />}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
         )}
@@ -530,6 +593,7 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
               <div className={css.confirmCard}>
                 {[
                   ['机型', selTpl ? selTpl.name : ''],
+                  ['风机', `${cfg.turbines.length}台 (${cfg.turbines.slice(0, 3).join('、')}${cfg.turbines.length > 3 ? '...' : ''})`],
                   ['场景', cfg.scenes.join('、')],
                   [
                     '选样',
@@ -554,6 +618,14 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                     <span className={css.confirmRowVal}>{v}</span>
                   </div>
                 ))}
+                {cfg.turbines.length > 3 && (
+                  <div style={{ marginTop: 8, padding: '8px 12px', background: 'var(--section-bg)', borderRadius: 6 }}>
+                    <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 }}>完整风机列表：</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-color)', fontFamily: 'monospace' }}>
+                      {cfg.turbines.join('、')}
+                    </div>
+                  </div>
+                )}
                 {cfg.sampleStrategy === 'manual' && cfg.timeRanges.length > 0 && (
                   <div className={css.confirmTimeRanges}>
                     {cfg.timeRanges.map((r, i) => (
@@ -593,8 +665,12 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
             <div className={css.confirmInfo}>
               <Ic name="info" size={14} />
               <span className={css.confirmInfoText}>
-                {'将创建 '}
+                {'将为 '}
+                <strong className={css.confirmCount}>{cfg.turbines.length}</strong>
+                {' 台风机创建 '}
                 <strong className={css.confirmCount}>{cfg.scenes.length}</strong>
+                {' 个场景，共 '}
+                <strong className={css.confirmCount}>{cfg.turbines.length * cfg.scenes.length}</strong>
                 {' 个模型'}
               </span>
             </div>
