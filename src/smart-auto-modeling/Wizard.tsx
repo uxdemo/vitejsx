@@ -16,6 +16,15 @@ interface TimeRange {
   endDate: string;
 }
 
+interface FaultPeriod {
+  id: string;
+  turbine: string;
+  startTime: string;
+  endTime: string;
+  faultMode: string;
+  description: string;
+}
+
 interface WizardCfg {
   turbine: string | null;
   scenes: string[];
@@ -55,6 +64,52 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
     autoAlgoSwitch: true,
     algoCompetition: true, // 默认打开
   });
+
+  // 故障时段相关状态
+  const [showFaultModal, setShowFaultModal] = useState<boolean>(false);
+  const [faultPeriods, setFaultPeriods] = useState<FaultPeriod[]>([
+    {
+      id: '1',
+      turbine: 'A01',
+      startTime: '2024-01-15T08:00',
+      endTime: '2024-01-18T16:00',
+      faultMode: '齿轮箱油温过高',
+      description: '齿轮箱冷却系统故障，导致油温持续偏高',
+    },
+    {
+      id: '2',
+      turbine: 'A01',
+      startTime: '2024-02-20T10:00',
+      endTime: '2024-02-22T14:00',
+      faultMode: '发电机轴承异常',
+      description: '发电机驱动端轴承温度异常波动',
+    },
+    {
+      id: '3',
+      turbine: 'A02',
+      startTime: '2024-03-05T09:00',
+      endTime: '2024-03-08T17:00',
+      faultMode: '叶片桨距角偏差',
+      description: '2号叶片桨距角响应延迟，需排查变桨系统',
+    },
+    {
+      id: '4',
+      turbine: 'A03',
+      startTime: '2024-03-12T14:00',
+      endTime: '2024-03-15T11:00',
+      faultMode: '偏航系统故障',
+      description: '偏航电机故障，导致对风精度下降',
+    },
+    {
+      id: '5',
+      turbine: 'A01',
+      startTime: '2024-04-01T08:00',
+      endTime: '2024-04-03T18:00',
+      faultMode: '主轴承温度异常',
+      description: '主轴承润滑不足，温度持续上升',
+    },
+  ]);
+  const [editingFault, setEditingFault] = useState<FaultPeriod | null>(null);
 
   const selTpl: TplItem | undefined = TPLS.find((t) => t.id === cfg.turbine);
   const steps: string[] = ['设备与场景', '配置测点', '采样与算法', '优化策略', '确认启动'];
@@ -300,11 +355,20 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                       ))}
                     </div>
                     <div className={css.switchRow}>
-                      <Toggle
-                        on={cfg.excludeFaults}
-                        onToggle={() => setCfg((c) => ({ ...c, excludeFaults: !c.excludeFaults }))}
-                      />
-                      <span className={css.switchLabel}>排除故障工单时段</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                          <Toggle
+                            on={cfg.excludeFaults}
+                            onToggle={() => setCfg((c) => ({ ...c, excludeFaults: !c.excludeFaults }))}
+                          />
+                          <span className={css.switchLabel}>排除故障工单时段</span>
+                        </div>
+                        {cfg.excludeFaults && (
+                          <Btn small ghost onClick={() => setShowFaultModal(true)} icon="edit3">
+                            配置时段 ({faultPeriods.length})
+                          </Btn>
+                        )}
+                      </div>
                     </div>
                   </>
                 ) : (
@@ -550,6 +614,379 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
           {step === 4 ? '启动自动建模' : '下一步'}
         </Btn>
       </div>
+
+      {/* 故障时段管理模态框 */}
+      {showFaultModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            backdropFilter: 'blur(4px)',
+          }}>
+          <div
+            style={{
+              background: 'var(--bg-color)',
+              borderRadius: 16,
+              border: '1px solid var(--border-color)',
+              width: 900,
+              maxHeight: '80vh',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+            }}>
+            {/* Header */}
+            <div
+              style={{
+                padding: '18px 22px',
+                borderBottom: '1px solid var(--border-color)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    background: 'rgba(255,77,106,0.07)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Ic name="alert" size={16} style={{ color: 'var(--danger-color)' }} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-color)' }}>故障时段配置</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 1 }}>
+                    配置需要排除的故障时间段和故障模式
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowFaultModal(false);
+                  setEditingFault(null);
+                }}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: 4 }}>
+                <Ic name="x" size={20} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: 18, overflowY: 'auto', flex: 1 }}>
+              {/* 工具栏 */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
+                  共 <strong style={{ color: 'var(--primary-color)' }}>{faultPeriods.length}</strong> 条故障记录
+                </div>
+                <Btn small primary icon="plus" onClick={() => setEditingFault({ id: '', turbine: '', startTime: '', endTime: '', faultMode: '', description: '' })}>
+                  新增故障时段
+                </Btn>
+              </div>
+
+              {/* 故障列表 */}
+              <div
+                style={{
+                  background: 'var(--card-bg)',
+                  borderRadius: 10,
+                  border: '1px solid var(--border-color)',
+                  overflow: 'hidden',
+                }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '80px 1fr 140px 140px 150px 1fr 90px',
+                    padding: '10px 14px',
+                    borderBottom: '1px solid var(--border-color)',
+                    fontSize: 9,
+                    color: 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    background: 'var(--section-bg)',
+                  }}>
+                  <span>设备</span>
+                  <span>故障模式</span>
+                  <span>开始时间</span>
+                  <span>结束时间</span>
+                  <span>时长</span>
+                  <span>说明</span>
+                  <span style={{ textAlign: 'center' }}>操作</span>
+                </div>
+
+                {/* 新增/编辑表单 */}
+                {editingFault !== null && (
+                  <div
+                    style={{
+                      padding: '16px 14px',
+                      borderBottom: '1px solid var(--border-color)',
+                      background: 'rgba(0,212,255,0.08)',
+                    }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--primary-color)', marginBottom: 12 }}>
+                      {editingFault.id ? '编辑故障时段' : '新增故障时段'}
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginBottom: 12 }}>
+                      <div>
+                        <label style={{ fontSize: 9, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>设备编号</label>
+                        <select
+                          value={editingFault.turbine}
+                          onChange={(e) => setEditingFault({ ...editingFault, turbine: e.target.value })}
+                          style={{
+                            width: '100%',
+                            padding: '6px 10px',
+                            background: 'var(--bg-color)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 6,
+                            color: 'var(--text-color)',
+                            fontSize: 11,
+                            outline: 'none',
+                            cursor: 'pointer',
+                          }}>
+                          <option value="">请选择设备</option>
+                          {selTpl &&
+                            ((selTpl.id === 'sg42'
+                              ? ['A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07', 'A08', 'A09', 'A10', 'A11', 'A12']
+                              : selTpl.id === 'my166'
+                                ? ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B08']
+                                : ['C01', 'C02', 'C03', 'C04', 'C05', 'C06']) || []).map((t) => (
+                              <option key={t} value={t}>
+                                {t}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 9, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>故障模式</label>
+                        <input
+                          type="text"
+                          value={editingFault.faultMode}
+                          onChange={(e) => setEditingFault({ ...editingFault, faultMode: e.target.value })}
+                          placeholder="例如：齿轮箱油温过高"
+                          style={{
+                            width: '100%',
+                            padding: '6px 10px',
+                            background: 'var(--bg-color)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 6,
+                            color: 'var(--text-color)',
+                            fontSize: 11,
+                            outline: 'none',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 9, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>开始时间</label>
+                        <input
+                          type="datetime-local"
+                          value={editingFault.startTime}
+                          onChange={(e) => setEditingFault({ ...editingFault, startTime: e.target.value })}
+                          style={{
+                            width: '100%',
+                            padding: '6px 10px',
+                            background: 'var(--bg-color)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 6,
+                            color: 'var(--text-color)',
+                            fontSize: 11,
+                            outline: 'none',
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 9, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>结束时间</label>
+                        <input
+                          type="datetime-local"
+                          value={editingFault.endTime}
+                          onChange={(e) => setEditingFault({ ...editingFault, endTime: e.target.value })}
+                          style={{
+                            width: '100%',
+                            padding: '6px 10px',
+                            background: 'var(--bg-color)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 6,
+                            color: 'var(--text-color)',
+                            fontSize: 11,
+                            outline: 'none',
+                          }}
+                        />
+                      </div>
+                      <div style={{ gridColumn: 'span 2' }}>
+                        <label style={{ fontSize: 9, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>故障说明</label>
+                        <input
+                          type="text"
+                          value={editingFault.description}
+                          onChange={(e) => setEditingFault({ ...editingFault, description: e.target.value })}
+                          placeholder="描述故障原因和影响"
+                          style={{
+                            width: '100%',
+                            padding: '6px 10px',
+                            background: 'var(--bg-color)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 6,
+                            color: 'var(--text-color)',
+                            fontSize: 11,
+                            outline: 'none',
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
+                      <Btn small onClick={() => setEditingFault(null)}>
+                        取消
+                      </Btn>
+                      <Btn
+                        small
+                        primary
+                        icon="check"
+                        onClick={() => {
+                          if (editingFault.id) {
+                            setFaultPeriods(faultPeriods.map((f) => (f.id === editingFault.id ? editingFault : f)));
+                          } else {
+                            setFaultPeriods([...faultPeriods, { ...editingFault, id: Date.now().toString() }]);
+                          }
+                          setEditingFault(null);
+                        }}>
+                        {editingFault.id ? '保存修改' : '确认添加'}
+                      </Btn>
+                    </div>
+                  </div>
+                )}
+
+                {/* 列表项 */}
+                {faultPeriods.map((fault) => {
+                  const duration = new Date(fault.endTime).getTime() - new Date(fault.startTime).getTime();
+                  const hours = Math.floor(duration / (1000 * 60 * 60));
+                  const days = Math.floor(hours / 24);
+                  const displayDuration = days > 0 ? `${days}天${hours % 24}小时` : `${hours}小时`;
+
+                  return (
+                    <div
+                      key={fault.id}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '80px 1fr 140px 140px 150px 1fr 90px',
+                        padding: '11px 14px',
+                        borderBottom: '1px solid var(--border-color)',
+                        alignItems: 'center',
+                        fontSize: 11,
+                        background: editingFault?.id === fault.id ? 'rgba(0,212,255,0.08)' : 'transparent',
+                      }}>
+                      <span style={{ color: 'var(--primary-color)', fontWeight: 600 }}>{fault.turbine}</span>
+                      <span style={{ color: 'var(--text-color)', fontWeight: 500 }}>{fault.faultMode}</span>
+                      <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{fault.startTime.replace('T', ' ')}</span>
+                      <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{fault.endTime.replace('T', ' ')}</span>
+                      <span style={{ fontSize: 10, color: 'var(--danger-color)' }}>{displayDuration}</span>
+                      <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{fault.description}</span>
+                      <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+                        <button
+                          onClick={() => setEditingFault(fault)}
+                          style={{
+                            padding: '3px 6px',
+                            background: 'rgba(96,165,250,0.07)',
+                            border: 'none',
+                            borderRadius: 4,
+                            color: 'var(--blue-color)',
+                            fontSize: 9,
+                            cursor: 'pointer',
+                          }}>
+                          编辑
+                        </button>
+                        <button
+                          onClick={() => {
+                            setFaultPeriods(faultPeriods.filter((f) => f.id !== fault.id));
+                          }}
+                          style={{
+                            padding: '3px 6px',
+                            background: 'rgba(255,77,106,0.07)',
+                            border: 'none',
+                            borderRadius: 4,
+                            color: 'var(--danger-color)',
+                            fontSize: 9,
+                            cursor: 'pointer',
+                          }}>
+                          删除
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {faultPeriods.length === 0 && (
+                  <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-secondary)', fontSize: 11 }}>
+                    <div style={{ marginBottom: 8 }}>
+                      <Ic name="alert" size={32} style={{ color: 'var(--border-color)' }} />
+                    </div>
+                    <div>暂无故障时段配置</div>
+                    <div style={{ fontSize: 10, marginTop: 4 }}>点击上方"新增故障时段"按钮添加</div>
+                  </div>
+                )}
+              </div>
+
+              {/* 统计信息 */}
+              {faultPeriods.length > 0 && (
+                <div
+                  style={{
+                    marginTop: 14,
+                    padding: '12px 14px',
+                    borderRadius: 8,
+                    background: 'var(--card-bg)',
+                    border: '1px solid var(--border-color)',
+                    fontSize: 10,
+                  }}>
+                  <div style={{ display: 'flex', gap: 18, color: 'var(--text-secondary)' }}>
+                    <span>
+                      总故障时长：
+                      <strong style={{ color: 'var(--text-color)' }}>
+                        {Math.round(
+                          faultPeriods.reduce(
+                            (acc, f) => acc + (new Date(f.endTime).getTime() - new Date(f.startTime).getTime()),
+                            0,
+                          ) / (1000 * 60 * 60),
+                        )}{' '}
+                        小时
+                      </strong>
+                    </span>
+                    <span>
+                      涉及设备：<strong style={{ color: 'var(--text-color)' }}>{[...new Set(faultPeriods.map((f) => f.turbine))].length}台</strong>
+                    </span>
+                    <span>
+                      故障类型：<strong style={{ color: 'var(--text-color)' }}>{[...new Set(faultPeriods.map((f) => f.faultMode))].length}种</strong>
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding: '14px 22px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <Btn
+                onClick={() => {
+                  setShowFaultModal(false);
+                  setEditingFault(null);
+                }}>
+                关闭
+              </Btn>
+              <Btn
+                primary
+                icon="check"
+                onClick={() => {
+                  setShowFaultModal(false);
+                  setEditingFault(null);
+                }}>
+                确认配置
+              </Btn>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
