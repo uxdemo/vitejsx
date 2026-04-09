@@ -1,11 +1,12 @@
-/* CSS Variables for Industrial Vision Platform */
+/* CSS Variables for Industrial Vision Platform
+   映射到全局主题变量，随 applyTheme() 自动切换 */
 :root {
-  --bg: #0f1419;
-  --card: #1a1f2e;
-  --border: #2a3441;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --accent: #3b82f6;
+  --bg: var(--body-background);
+  --card: var(--component-background);
+  --border: var(--border-color-base);
+  --text: var(--heading-color);
+  --muted: var(--text-color-secondary);
+  --accent: var(--primary-color);
   --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
 }
 

@@ -1,31 +1,40 @@
-import { C } from './colors';
+import { getC } from './colors';
 
 export const ecGrid = (left = 20) => ({ top: 5, right: 8, bottom: 0, left });
 
-export const ecXAxis = (showLabel = true, interval = 2) => ({
-  type: 'category' as const,
-  axisLine: { show: false },
-  axisTick: { show: false },
-  axisLabel: showLabel ? { fontSize: 10, color: C.axisLabel, interval } : { show: false },
-  splitLine: { show: false },
-});
+export const ecXAxis = (showLabel = true, interval = 2) => {
+  const C = getC();
+  return {
+    type: 'category' as const,
+    axisLine: { show: false },
+    axisTick: { show: false },
+    axisLabel: showLabel ? { fontSize: 10, color: C.axisLabel, interval } : { show: false },
+    splitLine: { show: false },
+  };
+};
 
-export const ecYAxis = (min: number, max: number, fmtFn?: (v: number) => string) => ({
-  type: 'value' as const,
-  min,
-  max,
-  axisLine: { show: false },
-  axisTick: { show: false },
-  axisLabel: { fontSize: 10, color: C.axisLabel, formatter: fmtFn },
-  splitLine: { lineStyle: { type: 'dashed' as const, color: C.splitLine } },
-});
+export const ecYAxis = (min: number, max: number, fmtFn?: (v: number) => string) => {
+  const C = getC();
+  return {
+    type: 'value' as const,
+    min,
+    max,
+    axisLine: { show: false },
+    axisTick: { show: false },
+    axisLabel: { fontSize: 10, color: C.axisLabel, formatter: fmtFn },
+    splitLine: { lineStyle: { type: 'dashed' as const, color: C.splitLine } },
+  };
+};
 
-export const ecTooltip = {
-  trigger: 'axis' as const,
-  backgroundColor: C.tooltipBg,
-  borderColor: 'rgba(255,255,255,0.3)',
-  textStyle: { color: C.tooltipText, fontSize: 12 },
-  confine: true,
+export const ecTooltip = () => {
+  const C = getC();
+  return {
+    trigger: 'axis' as const,
+    backgroundColor: C.tooltipBg,
+    borderColor: C.splitLine,
+    textStyle: { color: C.tooltipText, fontSize: 12 },
+    confine: true,
+  };
 };
 
 export const ecLine = (name: string, color: string, width = 1.5) => ({
@@ -51,10 +60,13 @@ export const ecMarkLine = (marks: Array<{ y: number; color: string; name?: strin
   })),
 });
 
-export const ecLegend = (orient: 'horizontal' | 'vertical' = 'horizontal', pos: object = {}) => ({
-  orient,
-  ...pos,
-  textStyle: { color: C.axisLabel, fontSize: 11 },
-  itemWidth: 12,
-  itemHeight: 4,
-});
+export const ecLegend = (orient: 'horizontal' | 'vertical' = 'horizontal', pos: object = {}) => {
+  const C = getC();
+  return {
+    orient,
+    ...pos,
+    textStyle: { color: C.axisLabel, fontSize: 11 },
+    itemWidth: 12,
+    itemHeight: 4,
+  };
+};

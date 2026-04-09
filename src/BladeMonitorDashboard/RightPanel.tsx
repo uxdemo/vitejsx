@@ -1,32 +1,40 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import clsx from 'clsx';
 import ReactECharts from 'echarts-for-react';
 import { ALARMS, TimeRangeKey } from './constant';
-import { C } from './colors';
+import { getC } from './colors';
 import { ecXAxis, ecYAxis, ecTooltip, ecLine, ecMarkLine, ecLegend } from './ecOptions';
 import { useChartData } from './useChartData';
 import AlarmPanel from './AlarmPanel';
-import styles from './style/index.module.less';
+import styles from './style/index.modules.less';
 
 const chartStyle = { height: '100%', width: '100%' };
 
-/* grid presets — kept compact so plot area is maximised */
-const gridBottom = { top: 4, right: 8,  bottom: 22, left: 20 }; // legend at bottom
-const gridRight  = { top: 4, right: 60, bottom: 2,  left: 22 }; // legend at right
+const gridBottom = { top: 4, right: 8,  bottom: 22, left: 20 };
+const gridRight  = { top: 4, right: 60, bottom: 2,  left: 22 };
 
 const RightPanel = () => {
   const [tab, setTab] = useState(0);
   const [timeRange, setTimeRange] = useState<TimeRangeKey>('近七天');
+  // 监听主题切换，触发 useMemo 重新计算 ECharts 颜色
+  const [themeKey, setThemeKey] = useState(0);
   const activeCount = ALARMS.filter((a) => a.status === 'active').length;
   const { chartData, tickInterval } = useChartData(timeRange);
 
-  const healthOption = useMemo(
-    () => ({
+  useEffect(() => {
+    const onStorage = () => setThemeKey((k) => k + 1);
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  const healthOption = useMemo(() => {
+    const C = getC();
+    return {
       dataset: { source: chartData.healthData },
       grid: gridBottom,
       xAxis: ecXAxis(true, tickInterval),
       yAxis: ecYAxis(40, 100),
-      tooltip: ecTooltip,
+      tooltip: ecTooltip(),
       legend: ecLegend('horizontal', { bottom: 0 }),
       series: [
         {
@@ -37,17 +45,17 @@ const RightPanel = () => {
           ]),
         },
       ],
-    }),
-    [chartData.healthData, tickInterval],
-  );
+    };
+  }, [chartData.healthData, tickInterval, themeKey]);
 
-  const consistOption = useMemo(
-    () => ({
+  const consistOption = useMemo(() => {
+    const C = getC();
+    return {
       dataset: { source: chartData.consistData },
       grid: gridBottom,
       xAxis: ecXAxis(true, tickInterval),
       yAxis: ecYAxis(0, 220, (v) => v + '%'),
-      tooltip: ecTooltip,
+      tooltip: ecTooltip(),
       legend: ecLegend('horizontal', { bottom: 0 }),
       series: [
         {
@@ -62,17 +70,17 @@ const RightPanel = () => {
         ecLine('超级电容', C.warning),
         ecLine('电机温度', C.pink),
       ],
-    }),
-    [chartData.consistData, tickInterval],
-  );
+    };
+  }, [chartData.consistData, tickInterval, themeKey]);
 
-  const vibOption = useMemo(
-    () => ({
+  const vibOption = useMemo(() => {
+    const C = getC();
+    return {
       dataset: { source: chartData.vibData },
       grid: gridRight,
       xAxis: ecXAxis(false, tickInterval),
       yAxis: ecYAxis(0, 100),
-      tooltip: ecTooltip,
+      tooltip: ecTooltip(),
       legend: ecLegend('vertical', { right: 4, top: 'middle' }),
       series: [
         ecLine('SS_STD', C.blue),
@@ -80,17 +88,17 @@ const RightPanel = () => {
         ecLine('FA_STD', C.purple),
         ecLine('FA_2P',  C.warning),
       ],
-    }),
-    [chartData.vibData, tickInterval],
-  );
+    };
+  }, [chartData.vibData, tickInterval, themeKey]);
 
-  const imbOption = useMemo(
-    () => ({
+  const imbOption = useMemo(() => {
+    const C = getC();
+    return {
       dataset: { source: chartData.imbData },
       grid: gridRight,
       xAxis: ecXAxis(false, tickInterval),
       yAxis: ecYAxis(0, 250),
-      tooltip: ecTooltip,
+      tooltip: ecTooltip(),
       legend: ecLegend('vertical', { right: 4, top: 'middle' }),
       series: [
         ecLine('weight',  C.blue),
@@ -98,17 +106,17 @@ const RightPanel = () => {
         ecLine('corner',  C.warning),
         ecLine('balance', C.error),
       ],
-    }),
-    [chartData.imbData, tickInterval],
-  );
+    };
+  }, [chartData.imbData, tickInterval, themeKey]);
 
-  const aeOption = useMemo(
-    () => ({
+  const aeOption = useMemo(() => {
+    const C = getC();
+    return {
       dataset: { source: chartData.aeData },
       grid: gridRight,
       xAxis: ecXAxis(false, tickInterval),
       yAxis: ecYAxis(0, 0.35),
-      tooltip: ecTooltip,
+      tooltip: ecTooltip(),
       legend: ecLegend('vertical', { right: 4, top: 'middle' }),
       series: [
         {
@@ -126,13 +134,11 @@ const RightPanel = () => {
           itemStyle: { color: C.error },
         },
       ],
-    }),
-    [chartData.aeData, tickInterval],
-  );
+    };
+  }, [chartData.aeData, tickInterval, themeKey]);
 
   return (
     <div className={styles.rightPanel}>
-      {/* Block 1: Tabs + Trend/Alarm */}
       <div className={clsx(styles.chartCard, styles.chartCardLg)}>
         <div className={styles.chartCardHeader}>
           <div className={styles.tabsRow}>
@@ -181,7 +187,6 @@ const RightPanel = () => {
 
       {tab === 0 && (
         <>
-          {/* Block 2: 传感器一致性偏差 */}
           <div className={clsx(styles.chartCard, styles.chartCardMd)}>
             <div className={styles.chartCardHeader}>
               <div className={styles.chartTitleRow}>
@@ -195,7 +200,6 @@ const RightPanel = () => {
             </div>
           </div>
 
-          {/* Block 3: 振动 / 不平衡 / AE */}
           <div className={styles.block3}>
             <div className={clsx(styles.chartCard, styles.subChartCard)}>
               <div className={clsx(styles.chartTitleRow, styles.chartTitleRowMb)}>

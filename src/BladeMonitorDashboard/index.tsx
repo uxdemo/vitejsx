@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import KpiRow from './KpiRow';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
-import styles from './style/index.module.less';
+import styles from './style/index.modules.less';
 
 export default function BladeMonitorDashboard() {
   const [scale, setScale] = useState(1);

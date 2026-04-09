@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Switch, Progress } from "antd";
-import css from "./styles/index.module.less";
+import css from "./styles/index.modules.less";
 import clsx from "clsx";
 import { STATUS_MAP} from "./constant";
 import type { ModelStatus } from "./constant";

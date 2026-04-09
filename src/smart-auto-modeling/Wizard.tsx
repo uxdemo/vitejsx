@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Steps } from 'antd';
-import * as css from './styles/index.module.less';
+import * as css from './styles/index.modules.less';
 import clsx from 'clsx';
 import { TPLS, ALGOS, getPts, PLANTS } from './constant';
 import type { ModelItem, TplItem } from './constant';

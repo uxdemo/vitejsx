@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import styles from './style/index.module.less';
+import styles from './style/index.modules.less';
 
 const kpiData = [
   { label: '综合健康分', val: '87', valClass: styles.kpiValHealth },

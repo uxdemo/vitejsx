@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import turbineImg from './style/images/turbine.png';
 import { BLADE_ROWS, BladeRow } from './constant';
-import styles from './style/index.module.less';
+import styles from './style/index.modules.less';
 
 export default function LeftPanel() {
   return (

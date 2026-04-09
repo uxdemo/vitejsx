@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Select, Table } from 'antd';
 import { ALARMS, AlarmLevel, AlarmStatus } from './constant';
-import styles from './style/index.module.less';
+import styles from './style/index.modules.less';
 
 const AntSelect = Select as React.ComponentType<any>;
 const AntOption = Select.Option as React.ComponentType<any>;

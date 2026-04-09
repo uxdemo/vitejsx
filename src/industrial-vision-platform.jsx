@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import "./industrial-vision-platform.css";
 
 // ─── Mock Data ───────────────────────────────────────────────
 const SCENES = [
@@ -107,7 +108,7 @@ function Lightbox({ result, onClose, results, onNavigate }) {
           <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--muted)", fontSize: 22, cursor: "pointer", padding: 4 }}>✕</button>
         </div>
         {/* Image area */}
-        <div style={{ position: "relative", background: "#0a0f14", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 340, padding: 24 }}>
+        <div style={{ position: "relative", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 340, padding: 24 }}>
           {/* Nav arrows */}
           {idx > 0 && <button onClick={() => onNavigate(results[idx - 1])} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 99, width: 40, height: 40, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>◂</button>}
           {idx < results.length - 1 && <button onClick={() => onNavigate(results[idx + 1])} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 99, width: 40, height: 40, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>▸</button>}
@@ -261,8 +262,7 @@ export default function App() {
   // ─── Render ──────────────────────────────────────────────
   return (
     <div style={{
-      "--bg": "#0b1017", "--card": "#111820", "--border": "#1e2a36", "--text": "#e2e8f0",
-      "--muted": "#64748b", "--accent": "#3b82f6", "--accent2": "#10b981",
+      "--accent2": "#10b981",
       "--mono": "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
       "--sans": "'DM Sans', 'Noto Sans SC', system-ui, sans-serif",
       fontFamily: "var(--sans)", background: "var(--bg)", color: "var(--text)", minHeight: "100vh", fontSize: 14, lineHeight: 1.5,
@@ -272,7 +272,7 @@ export default function App() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1e2a36; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color-base); border-radius: 99px; }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
         @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.5 } }
@@ -361,7 +361,7 @@ export default function App() {
                 ) : (
                   <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
                     {/* Mock video player */}
-                    <div style={{ background: "#080c10", height: 320, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                    <div style={{ background: "var(--bg)", height: 320, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                       <svg width="100%" height="100%" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet">
                         <defs>
                           <linearGradient id="sceneBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0f1923" /><stop offset="100%" stopColor="#0a0f14" /></linearGradient>

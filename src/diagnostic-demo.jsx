@@ -278,11 +278,11 @@ function ToolCallCard({ tool, expanded, onToggle, animPhase }) {
         <div style={{ padding: "10px 14px", fontSize: 12 }}>
           <div style={{ marginBottom: 8 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Request</div>
-            <pre style={{ margin: 0, padding: 10, borderRadius: 6, background: "rgba(0,0,0,0.06)", color: "var(--color-text-secondary)", fontSize: 11, lineHeight: 1.5, overflowX: "auto", fontFamily: "var(--font-mono)", whiteSpace: "pre-wrap" }}>{tool.request}</pre>
+            <pre style={{ margin: 0, padding: 10, borderRadius: 6, background: "var(--color-background-secondary)", color: "var(--color-text-secondary)", fontSize: 11, lineHeight: 1.5, overflowX: "auto", fontFamily: "var(--font-mono)", whiteSpace: "pre-wrap" }}>{tool.request}</pre>
           </div>
           <div style={{ marginBottom: 8 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Response</div>
-            <pre style={{ margin: 0, padding: 10, borderRadius: 6, background: "rgba(0,0,0,0.06)", color: "var(--color-text-secondary)", fontSize: 11, lineHeight: 1.5, overflowX: "auto", fontFamily: "var(--font-mono)", whiteSpace: "pre-wrap" }}>{JSON.stringify(tool.response, null, 2)}</pre>
+            <pre style={{ margin: 0, padding: 10, borderRadius: 6, background: "var(--color-background-secondary)", color: "var(--color-text-secondary)", fontSize: 11, lineHeight: 1.5, overflowX: "auto", fontFamily: "var(--font-mono)", whiteSpace: "pre-wrap" }}>{JSON.stringify(tool.response, null, 2)}</pre>
           </div>
           {tool.narrative && (
             <div style={{ padding: 10, borderRadius: 6, background: "rgba(216,90,48,0.06)", border: "1px solid rgba(216,90,48,0.15)" }}>

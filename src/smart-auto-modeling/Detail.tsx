@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs } from 'antd';
-import * as css from './styles/index.module.less';
+import * as css from './styles/index.modules.less';
 import clsx from 'clsx';
 import { DEFAULT_PT_CFG, LV_COLORS } from './constant';
 import type { ModelItem, PtCfgItem } from './constant';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import * as css from './styles/AiPanel.module.less';
+import * as css from './styles/AiPanel.modules.less';
 import clsx from 'clsx';
 import { PLANTS, AI_CATS } from './constant';
 import type { ModelItem, ModelStatus, PtCfgItem } from './constant';

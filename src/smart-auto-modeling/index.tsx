@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Table, message } from 'antd';
-import * as css from './styles/index.module.less';
+import * as css from './styles/index.modules.less';
 import clsx from 'clsx';
 import { createInitModels, STATUS_MAP } from './constant';
 import type { ModelItem } from './constant';
