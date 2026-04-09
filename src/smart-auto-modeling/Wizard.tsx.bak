@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Steps } from 'antd';
 import * as css from './styles/index.module.less';
 import clsx from 'clsx';
-import { TPLS, ALGOS, getPts, PLANTS } from './constant';
+import { TPLS, ALGOS, getPts } from './constant';
 import type { ModelItem, TplItem } from './constant';
 import type { ModelStatus } from './constant';
 import { Ic, Btn, Toggle } from './ui';
@@ -124,10 +124,6 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
     return { plantName: 'A厂', turbines: [] };
   };
 
-  // 计算当前选择的风机列表
-  const currentPlantTurbines = selTpl ? getPlantByTplId(selTpl.id).turbines : [];
-  const allTurbinesSelected = cfg.turbines.length === currentPlantTurbines.length && currentPlantTurbines.length > 0;
-
   const canNext: boolean =
     step === 0
       ? !!(cfg.turbine && cfg.scenes.length > 0 && cfg.turbines.length > 0)
@@ -190,11 +186,10 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
 
     cfg.scenes.forEach((sc) => {
       cfg.turbines.forEach((turb) => {
-        const { plantName } = getPlantByTplId(cfg.turbine);
         ms.push({
           id: modelId++,
           name: `${sc}预警模型`,
-          plant: plantName,
+          plant: cfg.turbine === 'sg42' ? 'A厂' : cfg.turbine === 'my166' ? 'B厂' : 'C厂',
           turb: turb,
           type: selTpl ? selTpl.name : 'SG4.2-145',
           status: 'training' as ModelStatus,
@@ -277,59 +272,55 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                   })}
                 </div>
 
-                {currentPlantTurbines.length > 0 && (
-                  <>
-                    <div className={css.sectionTitle} style={{ marginTop: 18 }}>
-                      选择风机
-                      <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-secondary)', marginLeft: 8 }}>
-                        (已选 {cfg.turbines.length} 台)
-                      </span>
-                    </div>
-                    <div style={{ marginBottom: 12 }}>
-                      <button
-                        type="button"
-                        className={css.sceneItem}
+                <div className={css.sectionTitle} style={{ marginTop: 18 }}>
+                  选择风机
+                  <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-secondary)', marginLeft: 8 }}>
+                    (已选 {cfg.turbines.length} 台)
+                  </span>
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <button
+                    className={css.sceneItem}
+                    onClick={() => {
+                      const plantTurbines = getPlantByTplId(selTpl?.id || null).turbines;
+                      setCfg((c) => ({
+                        ...c,
+                        turbines: c.turbines.length === plantTurbines.length ? [] : plantTurbines,
+                      }));
+                    }}
+                    style={{
+                      padding: '8px 14px',
+                      marginBottom: 10,
+                      border: cfg.turbines.length === plantTurbines.length
+                        ? '1px solid var(--primary-color)'
+                        : '1px solid var(--border-color)',
+                      }}>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-color)' }}>
+                      {cfg.turbines.length === plantTurbines.length ? '✓ ' : ''}
+                      全选 (${plantTurbines.length}台)
+                    </span>
+                  </button>
+                </div>
+                <div className={css.sceneGrid}>
+                  {PLANTS[selTpl.id === 'sg42' ? 'A厂' : selTpl.id === 'my166' ? 'B厂' : 'C厂'].turbines.map((turb) => {
+                    const sel = cfg.turbines.includes(turb);
+                    return (
+                      <div
+                        key={turb}
+                        className={clsx(css.sceneItem, sel && css.sceneItemSelected)}
                         onClick={() => {
                           setCfg((c) => ({
                             ...c,
-                            turbines: allTurbinesSelected ? [] : currentPlantTurbines,
+                            turbines: c.turbines.includes(turb) ? c.turbines.filter((t) => t !== turb) : [...c.turbines, turb],
                           }));
                         }}
-                        style={{
-                          padding: '8px 14px',
-                          marginBottom: 10,
-                          border: allTurbinesSelected
-                            ? '1px solid var(--primary-color)'
-                            : '1px solid var(--border-color)',
-                        }}>
-                        <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-color)' }}>
-                          {allTurbinesSelected ? '✓ ' : ''}
-                          全选 ({currentPlantTurbines.length}台)
-                        </span>
-                      </button>
-                    </div>
-                    <div className={css.sceneGrid}>
-                      {currentPlantTurbines.map((turb) => {
-                        const sel = cfg.turbines.includes(turb);
-                        return (
-                          <div
-                            key={turb}
-                            className={clsx(css.sceneItem, sel && css.sceneItemSelected)}
-                            onClick={() => {
-                              setCfg((c) => ({
-                                ...c,
-                                turbines: c.turbines.includes(turb) ? c.turbines.filter((t) => t !== turb) : [...c.turbines, turb],
-                              }));
-                            }}
-                            style={{ cursor: 'pointer' }}>
-                            <span className={css.sceneItemName}>{turb}</span>
-                            {sel && <Ic name="check" size={13} />}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
+                        style={{ cursor: 'pointer' }}>
+                        <span className={css.sceneItemName}>{turb}</span>
+                        {sel && <Ic name="check" size={13} />}
+                      </div>
+                    );
+                  })}
+                </div>
               </>
             )}
           </div>
@@ -845,7 +836,11 @@ export const Wizard = ({ onBack, onComplete }: WizardProps): React.ReactElement 
                           }}>
                           <option value="">请选择设备</option>
                           {selTpl &&
-                            getPlantByTplId(selTpl.id).turbines.map((t) => (
+                            ((selTpl.id === 'sg42'
+                              ? ['A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07', 'A08', 'A09', 'A10', 'A11', 'A12']
+                              : selTpl.id === 'my166'
+                                ? ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B08']
+                                : ['C01', 'C02', 'C03', 'C04', 'C05', 'C06']) || []).map((t) => (
                               <option key={t} value={t}>
                                 {t}
                               </option>

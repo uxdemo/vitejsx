@@ -10,7 +10,12 @@
       "Bash(npx vite:*)",
       "Bash(node -e \"const p = require\\(''./node_modules/react/package.json''\\); console.log\\(p.version\\)\")",
       "Bash(node -e \":*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(sed -i.bak \"285s/.*/                      const plantTurbines = getPlantByTplId\\(selTpl?.id || null\\).turbines;/\" Wizard.tsx)",
+      "Bash(sed -i.bak \"294s/.*/                      border: cfg.turbines.length === plantTurbines.length/\" Wizard.tsx)",
+      "Bash(sed -i.bak \"299s/.*/                      {cfg.turbines.length === plantTurbines.length ? '✓ ' : ''}/\" Wizard.tsx)",
+      "Bash(sed -i.bak \"300s/.*/                      全选 \\(\\\\${plantTurbines.length}台\\)/\" Wizard.tsx)",
+      "Bash(sed -i.bak \"305s/.*/                  \\\\{plantTurbines.map\\(\\(turb\\) => {/\" Wizard.tsx)"
     ]
   }
 }

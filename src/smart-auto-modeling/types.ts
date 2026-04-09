@@ -34,7 +34,9 @@ export interface ToggleProps {
 // ── Wizard ──────────────────────────────────────────────────────────────────
 export interface WizardCfg {
   turbine: string | null;
+  turbineType: string; // 机型ID
   scenes: string[];
+  turbines: string[]; // 选择的风机列表，如 ['A01', 'A02', 'A05']
   points: Record<string, string[]>;
   sampleStrategy: string;
   sampleMonths: number;
@@ -44,6 +46,7 @@ export interface WizardCfg {
   autoThreshold: boolean;
   autoSuppress: boolean;
   autoAlgoSwitch: boolean;
+  algoCompetition: boolean;
   [key: string]: unknown;
 }
 
