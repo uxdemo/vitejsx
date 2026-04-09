@@ -1,12 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DiagnosticDemo from './diagnostic-demo'
 import BladeMonitorDashboard from './BladeMonitorDashboard/index'
 import IndustrialVisionPlatform from './industrial-vision-platform'
 import SmartAutoModeling from './smart-auto-modeling/index'
-import './App.css'
+import { defaultTheme, darkTheme, applyTheme } from './theme'
+import './App.less'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('modeling')
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark')
+
+  useEffect(() => {
+    const currentTheme = localStorage.getItem('theme') || 'dark'
+    setTheme(currentTheme)
+    applyTheme(currentTheme === 'dark' ? darkTheme : defaultTheme)
+  }, [])
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'default' : 'dark'
+    localStorage.setItem('theme', newTheme)
+    setTheme(newTheme)
+    applyTheme(newTheme === 'dark' ? darkTheme : defaultTheme)
+    window.dispatchEvent(new Event('storage'))
+  }
 
   return (
     <div className="app-container">
@@ -39,6 +55,9 @@ function App() {
             onClick={() => setCurrentPage('diagnostic')}
           >
             故障诊断系统
+          </button>
+          <button className="nav-link theme-toggle" onClick={toggleTheme}>
+            {theme === 'dark' ? '☀️ 浅色' : '🌙 深色'}
           </button>
         </div>
       </nav>

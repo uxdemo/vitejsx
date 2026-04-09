@@ -1,72 +1,61 @@
-@primary-color: #009fda;
-@success-color: #0fc38f;
-@error-color: #ff5413;
-@warning-color: #ff954d;
-@blue-color: #00c5f9;
-
-@primary-color-bg: fade(@primary-color, 10);
-@success-color-bg: fade(@success-color, 10);
-@error-color-bg: fade(@error-color, 10);
-@warning-color-bg: fade(@warning-color, 10);
-@blue-color-bg: fade(@blue-color, 10);
-
-@primary-color-hover-bg: #198ab4;
-@error-color-hover-bg: fade(@error-color, 80);
-
-@body-background: #051120;
-@component-background: #0a1b2f;
-
-@heading-color: #fff; // 标题色
-@text-color: fade(#fff, 65);
-@text-color-secondary: fade(#fff, 45);
-@disabled-color: fade(#fff, 30);
-
-@box-shadow-base: 0px 2px 12px -2px rgba(0, 0, 0, 0.4);
-@border-color-base: fade(#fff, 30);
-
-@tab-border-line-color: fade(#fff, 10);
-@background-color-light: fade(#fff, 5);
-@border-color-split: fade(#fff, 10);
-@pubg-tab-line-color: #fff;
-
-@tooltip-color: #fff;
-
-@select-dropdown-color: #13274a;
-@select-dropdown-hover-color: #1a3260;
-
+// 初始主题值（暗色）定义为 CSS 自定义属性
+// 运行时通过 applyTheme() 修改这些 CSS 变量即可切换主题
 :root {
-  --primary-color: @primary-color;
-  --success-color: @success-color;
-  --error-color: @error-color;
-  --warning-color: @warning-color;
-  --blue-color: @blue-color;
-  --select-dropdown-color: @select-dropdown-color;
-  --select-dropdown-hover-color: @select-dropdown-hover-color;
+  --primary-color: #009fda;
+  --success-color: #0fc38f;
+  --error-color: #ff5413;
+  --warning-color: #ff954d;
+  --blue-color: #00c5f9;
 
-  --primary-color-hover-bg: @primary-color-hover-bg;
-  --error-color-hover-bg: @error-color-hover-bg;
-  --primary-color-bg: @primary-color-bg;
-  --success-color-bg: @success-color-bg;
-  --error-color-bg: @error-color-bg;
-  --warning-color-bg: @warning-color-bg;
-  --blue-color-bg: @blue-color-bg;
+  --primary-color-bg: rgba(0, 159, 218, 0.10);
+  --success-color-bg: rgba(15, 195, 143, 0.10);
+  --error-color-bg: rgba(255, 84, 19, 0.10);
+  --warning-color-bg: rgba(255, 149, 77, 0.10);
+  --blue-color-bg: rgba(0, 197, 249, 0.10);
 
-  --component-background: @component-background;
-  --body-background: @body-background;
-  --heading-color: @heading-color;
+  --primary-color-hover-bg: #198ab4;
+  --error-color-hover-bg: rgba(255, 84, 19, 0.80);
 
-  --heading-color: @heading-color;
-  --text-color: @text-color;
-  --text-color-secondary: @text-color-secondary;
-  --disabled-color: @disabled-color;
+  --body-background: #051120;
+  --component-background: #0a1b2f;
 
-  --box-shadow-base: @box-shadow-base;
-  --border-color-base: @border-color-base;
+  --heading-color: #fff;
+  --text-color: rgba(255, 255, 255, 0.65);
+  --text-color-secondary: rgba(255, 255, 255, 0.45);
+  --disabled-color: rgba(255, 255, 255, 0.30);
 
-  --tab-border-line-color: @tab-border-line-color;
-  --background-color-light: @background-color-light;
-  --border-color-split: @border-color-split;
+  --box-shadow-base: 0px 2px 12px -2px rgba(0, 0, 0, 0.4);
+  --border-color-base: rgba(255, 255, 255, 0.30);
+  --tab-border-line-color: rgba(255, 255, 255, 0.10);
+  --background-color-light: rgba(255, 255, 255, 0.05);
+  --border-color-split: rgba(255, 255, 255, 0.10);
 
-  --pubg-tab-line-color: @pubg-tab-line-color;
-  --tooltip-color: @tooltip-color;
+  --pubg-tab-line-color: #fff;
+  --tooltip-color: #fff;
+
+  --select-dropdown-color: #13274a;
+  --select-dropdown-hover-color: #1a3260;
+
+  --chart-bg: #16273A;
+  --chart-fold-color: #20ade2;
+  --chart-nodata-color: #fff;
+  --chart-title-color: #fff;
+  --chart-yAxis-left-label-color: rgba(255, 255, 255, 0.4);
+  --chart-yAxis-right-label-color: rgba(255, 255, 255, 0.4);
+  --chart-line-color: rgba(255, 255, 255, 0.1);
+  --chart-legend-color: rgba(255, 255, 255, 0.65);
+  --chart-legend-hover-color: rgba(255, 255, 255, 0.6);
+  --chart-xAxis-color: rgba(255, 255, 255, 0.4);
+  --chart-navigator-maskfill: rgba(255, 255, 255, 0.1);
+  --chart-navigator-outlineColor: rgba(255, 255, 255, 0.3);
+  --chart-plotBands: rgba(255, 255, 255, 0.3);
+  --chart-plotLines-color: rgba(255, 255, 255, 0.65);
+  --chart-handles-bg: #505356;
+  --chart-btn-bg: #505356;
+  --chart-btnArrow-color: #979797;
+  --chart-scrollbar-trackBg: #343434;
+  --chart-scrollbar-barBg: rgba(255, 255, 255, 0.1);
+  --chart-alarmLine-bg: #16273A;
 }
+
+@import './variables.less';

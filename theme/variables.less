@@ -1,0 +1,59 @@
+// Less 变量桥接 CSS 变量
+// 在任意 .less 文件头部 @import 此文件，即可使用 @primary-color 等变量
+// 编译后会变成 var(--primary-color)，运行时通过 applyTheme() 切换主题生效
+
+@primary-color: var(--primary-color);
+@success-color: var(--success-color);
+@error-color: var(--error-color);
+@warning-color: var(--warning-color);
+@blue-color: var(--blue-color);
+
+@primary-color-bg: var(--primary-color-bg);
+@success-color-bg: var(--success-color-bg);
+@error-color-bg: var(--error-color-bg);
+@warning-color-bg: var(--warning-color-bg);
+@blue-color-bg: var(--blue-color-bg);
+
+@primary-color-hover-bg: var(--primary-color-hover-bg);
+@error-color-hover-bg: var(--error-color-hover-bg);
+
+@body-background: var(--body-background);
+@component-background: var(--component-background);
+
+@heading-color: var(--heading-color);
+@text-color: var(--text-color);
+@text-color-secondary: var(--text-color-secondary);
+@disabled-color: var(--disabled-color);
+
+@box-shadow-base: var(--box-shadow-base);
+@border-color-base: var(--border-color-base);
+@tab-border-line-color: var(--tab-border-line-color);
+@background-color-light: var(--background-color-light);
+@border-color-split: var(--border-color-split);
+
+@pubg-tab-line-color: var(--pubg-tab-line-color);
+@tooltip-color: var(--tooltip-color);
+
+@select-dropdown-color: var(--select-dropdown-color);
+@select-dropdown-hover-color: var(--select-dropdown-hover-color);
+
+@chart-bg: var(--chart-bg);
+@chart-fold-color: var(--chart-fold-color);
+@chart-nodata-color: var(--chart-nodata-color);
+@chart-title-color: var(--chart-title-color);
+@chart-yAxis-left-label-color: var(--chart-yAxis-left-label-color);
+@chart-yAxis-right-label-color: var(--chart-yAxis-right-label-color);
+@chart-line-color: var(--chart-line-color);
+@chart-legend-color: var(--chart-legend-color);
+@chart-legend-hover-color: var(--chart-legend-hover-color);
+@chart-xAxis-color: var(--chart-xAxis-color);
+@chart-navigator-maskfill: var(--chart-navigator-maskfill);
+@chart-navigator-outlineColor: var(--chart-navigator-outlineColor);
+@chart-plotBands: var(--chart-plotBands);
+@chart-plotLines-color: var(--chart-plotLines-color);
+@chart-handles-bg: var(--chart-handles-bg);
+@chart-btn-bg: var(--chart-btn-bg);
+@chart-btnArrow-color: var(--chart-btnArrow-color);
+@chart-scrollbar-trackBg: var(--chart-scrollbar-trackBg);
+@chart-scrollbar-barBg: var(--chart-scrollbar-barBg);
+@chart-alarmLine-bg: var(--chart-alarmLine-bg);
