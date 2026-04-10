@@ -294,7 +294,15 @@ export interface ModelItem {
   sc: string;
   progress?: number;
   ptCfg: PtCfgItem[];
-  iterHistory: IterHistoryItem[]; // 每个模型携带自己的迭代历史
+  iterHistory: IterHistoryItem[];
+  diag: DiagInfo;
+}
+
+export interface DiagInfo {
+  passed: boolean;          // 是否达标
+  summary: string;          // 一行结论
+  notes: string[];          // 优化要点
+  suggestions?: string[];   // 改进建议（未达标时）
 }
 
 export function createInitModels(): ModelItem[] {
@@ -321,6 +329,17 @@ export function createInitModels(): ModelItem[] {
         { r: 3, p: 88.6, rc: 85.1, f: 86.8, fa: 6.8, act: '剔除噪声测点' },
         { r: 4, p: 94.2, rc: 91.8, f: 93.0, fa: 3.1, act: '优化阈值+抑制规则' },
       ],
+      diag: {
+        passed: true,
+        summary: 'F1 93.0% ≥ 90% | 误报率 3.1% ≤ 5%，模型已达标',
+        notes: [
+          '贝叶斯优化将油温阈值从 70°C 调整至 72°C，减少高温误触发',
+          '抑制规则收紧为连续3次/5min窗口，滤除短暂毛刺',
+          '85% 误报来源于启停机过渡段，已针对性增补样本',
+          '剔除低重要性测点 GBX_FLT_DP（特征贡献度 < 0.1）',
+          'Autoencoder 重构误差阈值调整为 0.15，异常灵敏度提升',
+        ],
+      },
     },
     {
       id: 2,
@@ -352,6 +371,21 @@ export function createInitModels(): ModelItem[] {
         { r: 1, p: 65.3, rc: 58.7, f: 61.8, fa: 15.8, act: '初始训练' },
         { r: 2, p: 74.8, rc: 69.2, f: 71.9, fa: 10.5, act: '调整样本权重' },
       ],
+      diag: {
+        passed: false,
+        summary: '模型训练中，当前 F1 71.9%，尚未达到 90% 目标',
+        notes: [
+          '第2轮调整正负样本权重（1:3→1:5），F1 提升 10.1%',
+          '驱动端与非驱动端轴承温差特征效果显著，已纳入核心特征集',
+          'IsolationForest 污染率参数当前设为 0.05，待进一步调优',
+          '绕组三相温度分散度特征尚未引入，预计可提升召回率',
+        ],
+        suggestions: [
+          '建议引入三相绕组温差作为辅助特征',
+          '增补高温异常样本（当前正样本仅 87 条，建议 ≥ 200 条）',
+          '尝试切换为 Autoencoder，对多测点关联异常建模更有效',
+        ],
+      },
     },
     {
       id: 3,
@@ -390,6 +424,21 @@ export function createInitModels(): ModelItem[] {
         { r: 2, p: 81.2, rc: 71.5, f: 76.0, fa: 11.3, act: '增加时序窗口' },
         { r: 3, p: 87.5, rc: 78.3, f: 82.6, fa: 8.2, act: '优化损失函数权重' },
       ],
+      diag: {
+        passed: false,
+        summary: 'F1 82.6%，误报率 8.2% 超限，正在优化中',
+        notes: [
+          '时序窗口从 10min 扩展至 30min，捕获缓慢结冰过程，召回率提升 9.4%',
+          '调整 LSTM-AE 重构损失权重（温度:振动 = 0.6:0.4），F1 提升 6.6%',
+          '低温（<-10°C）启停机段误报率高达 62%，需专项抑制规则',
+          '三叶桨距角不一致性特征（BLD1~3 最大差值）已提取，效果待验证',
+        ],
+        suggestions: [
+          '增加低温启停机抑制规则（AMB_T < -5°C 且 ROT_SPD < 5rpm 时屏蔽）',
+          '引入功率偏差三叶不一致性作为复合特征',
+          '建议扩充冬季结冰历史样本，当前样本集中于 11-12 月',
+        ],
+      },
     },
     {
       id: 4,
@@ -425,6 +474,17 @@ export function createInitModels(): ModelItem[] {
         { r: 4, p: 94.8, rc: 91.9, f: 93.3, fa: 2.7, act: '增加正则化' },
         { r: 5, p: 96.1, rc: 93.5, f: 94.8, fa: 1.9, act: '精细调优阈值' },
       ],
+      diag: {
+        passed: true,
+        summary: 'F1 94.8% ≥ 90% | 误报率 1.9% ≤ 5%，模型已达标，待审核',
+        notes: [
+          '构造偏航误差滑动标准差（15min窗口）作为核心特征，精度提升 7.2%',
+          'XGBoost max_depth 从 6 调至 4，L2 正则化系数 λ=1.5，过拟合明显改善',
+          '偏航电机电流差值特征（M1-M2）有效区分单侧卡死与正常偏航',
+          '大风（>20m/s）段偏航频繁误报已通过风速分层抑制规则消除',
+          '精细调优将 YAW_ERR 报警阈值从 ±25° 收窄至 ±30°/±20° 二级阈值',
+        ],
+      },
     },
     {
       id: 5,
@@ -459,6 +519,23 @@ export function createInitModels(): ModelItem[] {
         { r: 4, p: 62.1, rc: 54.7, f: 58.1, fa: 22.8, act: '更换特征集' },
         { r: 5, p: 62.3, rc: 55.1, f: 58.5, fa: 22.4, act: '优化后仍未达标' },
       ],
+      diag: {
+        passed: false,
+        summary: 'F1 58.5% 远低于 90% 目标，误报率 22.4% 严重超标，模型未达标',
+        notes: [
+          'RandomForest 5轮迭代 F1 累计仅提升 4%，算法选型可能不适合变桨时序故障',
+          '变桨电机电流三路一致性差异特征（PITCH1~3_CUR 极差）重要度最低，疑似噪声',
+          '正样本严重不足（仅 43 条故障记录），导致召回率长期低于 60%',
+          '电池欠压（< 22V）与正常充放电过渡段特征高度重叠，误报主要来源',
+          '更换特征集（第4轮）效果不明显，说明问题在于数据质量而非特征选择',
+        ],
+        suggestions: [
+          '建议切换为 LSTM-AE，对变桨动作时序模式建模更有针对性',
+          '需补充至少 150 条有效故障样本，当前样本量严重不足',
+          '引入电池充放电状态标记，区分正常低压与故障低压场景',
+          '考虑分故障类型建模：卡桨、编码器失效、电池欠压各建独立子模型',
+        ],
+      },
     },
     {
       id: 6,
@@ -489,6 +566,17 @@ export function createInitModels(): ModelItem[] {
         { r: 2, p: 88.7, rc: 85.1, f: 86.8, fa: 5.8, act: '调整核函数参数' },
         { r: 3, p: 91.5, rc: 89.2, f: 90.3, fa: 4.2, act: '优化异常比例阈值' },
       ],
+      diag: {
+        passed: true,
+        summary: 'F1 90.3% ≥ 90% | 误报率 4.2% ≤ 5%，模型已达标',
+        notes: [
+          'One-Class SVM RBF 核参数 γ 从 auto 调整为 0.01，决策边界更平滑',
+          '驱动侧与非驱动侧温差（MB_DS_T - MB_NDS_T）作为复合特征，误报率降低 3.7%',
+          '润滑脂压力低（< 0.5bar）触发的误报通过与温度联合判断基本消除',
+          '异常比例 ν 从 0.1 调整为 0.05，与历史故障频率更吻合',
+          'GW155-4.5 机型主轴承样本量充足（312条），小样本优势明显',
+        ],
+      },
     },
   ];
 }
