@@ -161,24 +161,53 @@ export const SCENE_PTS: Record<string, ScenePtItem[]> = {
     { id: 'e', nm: '环境温度', tag: 'AMB_T', u: '°C', rec: true, imp: 0.74 },
   ],
   叶片: [
-    {
-      id: 'a',
-      nm: '叶片1桨距角',
-      tag: 'BLD1_PIT',
-      u: '°',
-      rec: true,
-      imp: 0.91,
-    },
-    {
-      id: 'b',
-      nm: '叶片2桨距角',
-      tag: 'BLD2_PIT',
-      u: '°',
-      rec: true,
-      imp: 0.91,
-    },
-    { id: 'c', nm: '转子转速', tag: 'ROT_SPD', u: 'rpm', rec: true, imp: 0.85 },
-    { id: 'd', nm: '风速', tag: 'WIND_SPD', u: 'm/s', rec: true, imp: 0.88 },
+    { id: 'a', nm: '叶片1桨距角',     tag: 'BLD1_PIT',     u: '°',    rec: true,  imp: 0.91 },
+    { id: 'b', nm: '叶片2桨距角',     tag: 'BLD2_PIT',     u: '°',    rec: true,  imp: 0.91 },
+    { id: 'c', nm: '叶片3桨距角',     tag: 'BLD3_PIT',     u: '°',    rec: true,  imp: 0.90 },
+    { id: 'd', nm: '转子转速',        tag: 'ROT_SPD',      u: 'rpm',  rec: true,  imp: 0.85 },
+    { id: 'e', nm: '叶片1振动加速度', tag: 'BLD1_VIB',     u: 'm/s²', rec: true,  imp: 0.83 },
+    { id: 'f', nm: '叶片2振动加速度', tag: 'BLD2_VIB',     u: 'm/s²', rec: true,  imp: 0.82 },
+    { id: 'g', nm: '叶片3振动加速度', tag: 'BLD3_VIB',     u: 'm/s²', rec: true,  imp: 0.81 },
+    { id: 'h', nm: '轮毂温度',        tag: 'HUB_T',        u: '°C',   rec: true,  imp: 0.78 },
+    { id: 'i', nm: '机舱温度',        tag: 'NAC_T',        u: '°C',   rec: false, imp: 0.72 },
+    { id: 'j', nm: '环境温度',        tag: 'AMB_T',        u: '°C',   rec: true,  imp: 0.88 },
+    { id: 'k', nm: '叶片1功率偏差',   tag: 'BLD1_PWR_DEV', u: '%',    rec: false, imp: 0.76 },
+    { id: 'l', nm: '叶片2功率偏差',   tag: 'BLD2_PWR_DEV', u: '%',    rec: false, imp: 0.75 },
+    { id: 'm', nm: '叶片3功率偏差',   tag: 'BLD3_PWR_DEV', u: '%',    rec: false, imp: 0.74 },
+    { id: 'n', nm: '风速',            tag: 'WIND_SPD',     u: 'm/s',  rec: true,  imp: 0.88 },
+    { id: 'o', nm: '有功功率',        tag: 'ACT_PWR',      u: 'kW',   rec: true,  imp: 0.85 },
+  ],
+  偏航: [
+    { id: 'a', nm: '风向',          tag: 'WIND_DIR',    u: '°',   rec: true,  imp: 0.93 },
+    { id: 'b', nm: '机舱方向',      tag: 'NAC_DIR',     u: '°',   rec: true,  imp: 0.93 },
+    { id: 'c', nm: '偏航误差',      tag: 'YAW_ERR',     u: '°',   rec: true,  imp: 0.95 },
+    { id: 'd', nm: '偏航电机1电流', tag: 'YAW_M1_CUR',  u: 'A',   rec: true,  imp: 0.88 },
+    { id: 'e', nm: '偏航电机2电流', tag: 'YAW_M2_CUR',  u: 'A',   rec: true,  imp: 0.87 },
+    { id: 'f', nm: '偏航扭矩',      tag: 'YAW_TORQ',    u: 'N·m', rec: true,  imp: 0.82 },
+    { id: 'g', nm: '偏航速度',      tag: 'YAW_SPD',     u: '°/s', rec: false, imp: 0.76 },
+    { id: 'h', nm: '偏航计数',      tag: 'YAW_CNT',     u: '次',  rec: false, imp: 0.71 },
+    { id: 'i', nm: '风速',          tag: 'WIND_SPD',    u: 'm/s', rec: true,  imp: 0.88 },
+    { id: 'j', nm: '有功功率',      tag: 'ACT_PWR',     u: 'kW',  rec: true,  imp: 0.85 },
+  ],
+  变桨: [
+    { id: 'a', nm: '叶片1桨距角',     tag: 'PITCH1_ANG',  u: '°', rec: true,  imp: 0.94 },
+    { id: 'b', nm: '叶片2桨距角',     tag: 'PITCH2_ANG',  u: '°', rec: true,  imp: 0.94 },
+    { id: 'c', nm: '叶片3桨距角',     tag: 'PITCH3_ANG',  u: '°', rec: true,  imp: 0.93 },
+    { id: 'd', nm: '变桨电机1电流',   tag: 'PITCH1_CUR',  u: 'A', rec: true,  imp: 0.89 },
+    { id: 'e', nm: '变桨电机2电流',   tag: 'PITCH2_CUR',  u: 'A', rec: true,  imp: 0.89 },
+    { id: 'f', nm: '变桨电机3电流',   tag: 'PITCH3_CUR',  u: 'A', rec: true,  imp: 0.88 },
+    { id: 'g', nm: '变桨电池1电压',   tag: 'PITCH1_BAT',  u: 'V', rec: true,  imp: 0.85 },
+    { id: 'h', nm: '变桨电池2电压',   tag: 'PITCH2_BAT',  u: 'V', rec: true,  imp: 0.85 },
+    { id: 'i', nm: '变桨电池3电压',   tag: 'PITCH3_BAT',  u: 'V', rec: true,  imp: 0.84 },
+  ],
+  主轴承: [
+    { id: 'a', nm: '主轴承驱动侧温度',   tag: 'MB_DS_T',   u: '°C',   rec: true,  imp: 0.96 },
+    { id: 'b', nm: '主轴承非驱动侧温度', tag: 'MB_NDS_T',  u: '°C',   rec: true,  imp: 0.95 },
+    { id: 'c', nm: '主轴转速',           tag: 'MS_SPD',    u: 'rpm',  rec: true,  imp: 0.87 },
+    { id: 'd', nm: '润滑脂温度',         tag: 'LUB_T',     u: '°C',   rec: true,  imp: 0.83 },
+    { id: 'e', nm: '润滑脂压力',         tag: 'LUB_P',     u: 'bar',  rec: true,  imp: 0.79 },
+    { id: 'f', nm: '机舱振动',           tag: 'NAC_VIB',   u: 'mm/s', rec: false, imp: 0.74 },
+    { id: 'g', nm: '有功功率',           tag: 'ACT_PWR',   u: 'kW',   rec: true,  imp: 0.85 },
   ],
 };
 
@@ -225,51 +254,18 @@ export interface PtCfgItem {
 }
 
 export const DEFAULT_PT_CFG: PtCfgItem[] = [
-  {
-    nm: '齿轮箱油温',
-    tag: 'GBX_OIL_T',
-    hi: 72,
-    lo: 15,
-    lv: '严重',
-    sup: '连续3次/5min',
-    lock: true,
-  },
-  {
-    nm: '驱动端轴承温度',
-    tag: 'GBX_DE_T',
-    hi: 85,
-    lo: 20,
-    lv: '警告',
-    sup: '连续2次/3min',
-    lock: false,
-  },
-  {
-    nm: '齿轮箱油压',
-    tag: 'GBX_OIL_P',
-    hi: 4.5,
-    lo: 1.2,
-    lv: '注意',
-    sup: '连续5次/10min',
-    lock: false,
-  },
-  {
-    nm: '有功功率',
-    tag: 'ACT_PWR',
-    hi: 4500,
-    lo: 0,
-    lv: '参考',
-    sup: '无',
-    lock: true,
-  },
-  {
-    nm: '风速',
-    tag: 'WIND_SPD',
-    hi: 25,
-    lo: 3,
-    lv: '参考',
-    sup: '无',
-    lock: false,
-  },
+  { nm: '齿轮箱油温',       tag: 'GBX_OIL_T',  hi: 72,   lo: 15,  lv: '严重', sup: '连续3次/5min',  lock: true  },
+  { nm: '驱动端轴承温度',   tag: 'GBX_DE_T',   hi: 85,   lo: 20,  lv: '严重', sup: '连续3次/5min',  lock: true  },
+  { nm: '非驱动端轴承温度', tag: 'GBX_NDE_T',  hi: 83,   lo: 20,  lv: '警告', sup: '连续3次/5min',  lock: false },
+  { nm: '齿轮箱油压',       tag: 'GBX_OIL_P',  hi: 4.5,  lo: 1.2, lv: '警告', sup: '连续5次/10min', lock: false },
+  { nm: '齿轮箱滤网差压',   tag: 'GBX_FLT_DP', hi: 2.5,  lo: 0,   lv: '注意', sup: '连续5次/10min', lock: false },
+  { nm: '低速轴振动X',      tag: 'LSS_VIB_X',  hi: 8,    lo: 0,   lv: '注意', sup: '连续3次/5min',  lock: false },
+  { nm: '低速轴振动Y',      tag: 'LSS_VIB_Y',  hi: 8,    lo: 0,   lv: '注意', sup: '连续3次/5min',  lock: false },
+  { nm: '高速轴振动',       tag: 'HSS_VIB',    hi: 10,   lo: 0,   lv: '注意', sup: '连续3次/5min',  lock: false },
+  { nm: '高速轴转速',       tag: 'HSS_SPD',    hi: 1800, lo: 0,   lv: '参考', sup: '无',            lock: true  },
+  { nm: '环境温度',         tag: 'AMB_T',      hi: 45,   lo: -20, lv: '参考', sup: '无',            lock: false },
+  { nm: '有功功率',         tag: 'ACT_PWR',    hi: 4500, lo: 0,   lv: '参考', sup: '无',            lock: true  },
+  { nm: '风速',             tag: 'WIND_SPD',   hi: 25,   lo: 3,   lv: '参考', sup: '无',            lock: true  },
 ];
 
 export interface IterHistoryItem {
@@ -298,7 +294,15 @@ export interface ModelItem {
   sc: string;
   progress?: number;
   ptCfg: PtCfgItem[];
-  iterHistory: IterHistoryItem[]; // 每个模型携带自己的迭代历史
+  iterHistory: IterHistoryItem[];
+  diag: DiagInfo;
+}
+
+export interface DiagInfo {
+  passed: boolean;          // 是否达标
+  summary: string;          // 一行结论
+  notes: string[];          // 优化要点
+  suggestions?: string[];   // 改进建议（未达标时）
 }
 
 export function createInitModels(): ModelItem[] {
@@ -325,6 +329,17 @@ export function createInitModels(): ModelItem[] {
         { r: 3, p: 88.6, rc: 85.1, f: 86.8, fa: 6.8, act: '剔除噪声测点' },
         { r: 4, p: 94.2, rc: 91.8, f: 93.0, fa: 3.1, act: '优化阈值+抑制规则' },
       ],
+      diag: {
+        passed: true,
+        summary: 'F1 93.0% ≥ 90% | 误报率 3.1% ≤ 5%，模型已达标',
+        notes: [
+          '贝叶斯优化将油温阈值从 70°C 调整至 72°C，减少高温误触发',
+          '抑制规则收紧为连续3次/5min窗口，滤除短暂毛刺',
+          '85% 误报来源于启停机过渡段，已针对性增补样本',
+          '剔除低重要性测点 GBX_FLT_DP（特征贡献度 < 0.1）',
+          'Autoencoder 重构误差阈值调整为 0.15，异常灵敏度提升',
+        ],
+      },
     },
     {
       id: 2,
@@ -342,11 +357,35 @@ export function createInitModels(): ModelItem[] {
       pts: 8,
       sc: '发电机',
       progress: 67,
-      ptCfg: [],
+      ptCfg: [
+        { nm: '驱动端轴承温度',   tag: 'GEN_DE_T',  hi: 90,   lo: 20, lv: '严重', sup: '连续3次/5min', lock: true  },
+        { nm: '非驱动端轴承温度', tag: 'GEN_NDE_T', hi: 88,   lo: 20, lv: '严重', sup: '连续3次/5min', lock: true  },
+        { nm: '绕组温度U相',      tag: 'GEN_U_T',   hi: 130,  lo: 20, lv: '警告', sup: '连续2次/3min', lock: false },
+        { nm: '绕组温度V相',      tag: 'GEN_V_T',   hi: 130,  lo: 20, lv: '警告', sup: '连续2次/3min', lock: false },
+        { nm: '绕组温度W相',      tag: 'GEN_W_T',   hi: 130,  lo: 20, lv: '警告', sup: '连续2次/3min', lock: false },
+        { nm: '定子温度',         tag: 'GEN_STA_T', hi: 120,  lo: 20, lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '有功功率',         tag: 'ACT_PWR',   hi: 4500, lo: 0,  lv: '参考', sup: '无',           lock: true  },
+        { nm: '环境温度',         tag: 'AMB_T',     hi: 45,   lo: -20,lv: '参考', sup: '无',           lock: false },
+      ],
       iterHistory: [
         { r: 1, p: 65.3, rc: 58.7, f: 61.8, fa: 15.8, act: '初始训练' },
         { r: 2, p: 74.8, rc: 69.2, f: 71.9, fa: 10.5, act: '调整样本权重' },
       ],
+      diag: {
+        passed: false,
+        summary: '模型训练中，当前 F1 71.9%，尚未达到 90% 目标',
+        notes: [
+          '第2轮调整正负样本权重（1:3→1:5），F1 提升 10.1%',
+          '驱动端与非驱动端轴承温差特征效果显著，已纳入核心特征集',
+          'IsolationForest 污染率参数当前设为 0.05，待进一步调优',
+          '绕组三相温度分散度特征尚未引入，预计可提升召回率',
+        ],
+        suggestions: [
+          '建议引入三相绕组温差作为辅助特征',
+          '增补高温异常样本（当前正样本仅 87 条，建议 ≥ 200 条）',
+          '尝试切换为 Autoencoder，对多测点关联异常建模更有效',
+        ],
+      },
     },
     {
       id: 3,
@@ -363,12 +402,43 @@ export function createInitModels(): ModelItem[] {
       iter: 3,
       pts: 15,
       sc: '叶片',
-      ptCfg: [],
+      ptCfg: [
+        { nm: '叶片1桨距角',     tag: 'BLD1_PIT',     hi: 90,  lo: -2,  lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '叶片2桨距角',     tag: 'BLD2_PIT',     hi: 90,  lo: -2,  lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '叶片3桨距角',     tag: 'BLD3_PIT',     hi: 90,  lo: -2,  lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '转子转速',        tag: 'ROT_SPD',      hi: 18,  lo: 0,   lv: '严重', sup: '连续3次/5min',  lock: true  },
+        { nm: '叶片1振动加速度', tag: 'BLD1_VIB',     hi: 5,   lo: 0,   lv: '警告', sup: '连续3次/5min',  lock: false },
+        { nm: '叶片2振动加速度', tag: 'BLD2_VIB',     hi: 5,   lo: 0,   lv: '警告', sup: '连续3次/5min',  lock: false },
+        { nm: '叶片3振动加速度', tag: 'BLD3_VIB',     hi: 5,   lo: 0,   lv: '警告', sup: '连续3次/5min',  lock: false },
+        { nm: '环境温度',        tag: 'AMB_T',        hi: 5,   lo: -30, lv: '警告', sup: '连续10次/20min', lock: true  },
+        { nm: '轮毂温度',        tag: 'HUB_T',        hi: 40,  lo: -30, lv: '参考', sup: '无',            lock: false },
+        { nm: '叶片1功率偏差',   tag: 'BLD1_PWR_DEV', hi: 15,  lo: 0,   lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '叶片2功率偏差',   tag: 'BLD2_PWR_DEV', hi: 15,  lo: 0,   lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '叶片3功率偏差',   tag: 'BLD3_PWR_DEV', hi: 15,  lo: 0,   lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '风速',            tag: 'WIND_SPD',     hi: 25,  lo: 3,   lv: '参考', sup: '无',            lock: true  },
+        { nm: '机舱温度',        tag: 'NAC_T',        hi: 40,  lo: -30, lv: '参考', sup: '无',            lock: false },
+        { nm: '有功功率',        tag: 'ACT_PWR',      hi: 4500,lo: 0,   lv: '参考', sup: '无',            lock: true  },
+      ],
       iterHistory: [
         { r: 1, p: 72.5, rc: 62.1, f: 66.9, fa: 15.7, act: '初始训练' },
         { r: 2, p: 81.2, rc: 71.5, f: 76.0, fa: 11.3, act: '增加时序窗口' },
         { r: 3, p: 87.5, rc: 78.3, f: 82.6, fa: 8.2, act: '优化损失函数权重' },
       ],
+      diag: {
+        passed: false,
+        summary: 'F1 82.6%，误报率 8.2% 超限，正在优化中',
+        notes: [
+          '时序窗口从 10min 扩展至 30min，捕获缓慢结冰过程，召回率提升 9.4%',
+          '调整 LSTM-AE 重构损失权重（温度:振动 = 0.6:0.4），F1 提升 6.6%',
+          '低温（<-10°C）启停机段误报率高达 62%，需专项抑制规则',
+          '三叶桨距角不一致性特征（BLD1~3 最大差值）已提取，效果待验证',
+        ],
+        suggestions: [
+          '增加低温启停机抑制规则（AMB_T < -5°C 且 ROT_SPD < 5rpm 时屏蔽）',
+          '引入功率偏差三叶不一致性作为复合特征',
+          '建议扩充冬季结冰历史样本，当前样本集中于 11-12 月',
+        ],
+      },
     },
     {
       id: 4,
@@ -385,7 +455,18 @@ export function createInitModels(): ModelItem[] {
       iter: 5,
       pts: 10,
       sc: '偏航',
-      ptCfg: [],
+      ptCfg: [
+        { nm: '风向',          tag: 'WIND_DIR',   hi: 360,  lo: 0,  lv: '参考', sup: '无',           lock: true  },
+        { nm: '机舱方向',      tag: 'NAC_DIR',    hi: 360,  lo: 0,  lv: '参考', sup: '无',           lock: true  },
+        { nm: '偏航误差',      tag: 'YAW_ERR',    hi: 30,   lo: -30,lv: '警告', sup: '连续3次/5min', lock: true  },
+        { nm: '偏航电机1电流', tag: 'YAW_M1_CUR', hi: 15,   lo: 0,  lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '偏航电机2电流', tag: 'YAW_M2_CUR', hi: 15,   lo: 0,  lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '偏航扭矩',      tag: 'YAW_TORQ',   hi: 50000,lo: 0,  lv: '警告', sup: '连续2次/3min', lock: false },
+        { nm: '偏航速度',      tag: 'YAW_SPD',    hi: 0.5,  lo: 0,  lv: '参考', sup: '无',           lock: false },
+        { nm: '偏航计数',      tag: 'YAW_CNT',    hi: 10,   lo: 0,  lv: '注意', sup: '连续10次/1h',  lock: false },
+        { nm: '风速',          tag: 'WIND_SPD',   hi: 25,   lo: 3,  lv: '参考', sup: '无',           lock: true  },
+        { nm: '有功功率',      tag: 'ACT_PWR',    hi: 4500, lo: 0,  lv: '参考', sup: '无',           lock: true  },
+      ],
       iterHistory: [
         { r: 1, p: 78.5, rc: 72.3, f: 75.3, fa: 12.8, act: '初始训练' },
         { r: 2, p: 85.7, rc: 81.2, f: 83.4, fa: 7.5, act: '特征工程优化' },
@@ -393,6 +474,17 @@ export function createInitModels(): ModelItem[] {
         { r: 4, p: 94.8, rc: 91.9, f: 93.3, fa: 2.7, act: '增加正则化' },
         { r: 5, p: 96.1, rc: 93.5, f: 94.8, fa: 1.9, act: '精细调优阈值' },
       ],
+      diag: {
+        passed: true,
+        summary: 'F1 94.8% ≥ 90% | 误报率 1.9% ≤ 5%，模型已达标，待审核',
+        notes: [
+          '构造偏航误差滑动标准差（15min窗口）作为核心特征，精度提升 7.2%',
+          'XGBoost max_depth 从 6 调至 4，L2 正则化系数 λ=1.5，过拟合明显改善',
+          '偏航电机电流差值特征（M1-M2）有效区分单侧卡死与正常偏航',
+          '大风（>20m/s）段偏航频繁误报已通过风速分层抑制规则消除',
+          '精细调优将 YAW_ERR 报警阈值从 ±25° 收窄至 ±30°/±20° 二级阈值',
+        ],
+      },
     },
     {
       id: 5,
@@ -409,7 +501,17 @@ export function createInitModels(): ModelItem[] {
       iter: 5,
       pts: 9,
       sc: '变桨',
-      ptCfg: [],
+      ptCfg: [
+        { nm: '叶片1桨距角',   tag: 'PITCH1_ANG', hi: 90, lo: -2, lv: '严重', sup: '连续3次/5min',  lock: true  },
+        { nm: '叶片2桨距角',   tag: 'PITCH2_ANG', hi: 90, lo: -2, lv: '严重', sup: '连续3次/5min',  lock: true  },
+        { nm: '叶片3桨距角',   tag: 'PITCH3_ANG', hi: 90, lo: -2, lv: '严重', sup: '连续3次/5min',  lock: true  },
+        { nm: '变桨电机1电流', tag: 'PITCH1_CUR', hi: 20, lo: 0,  lv: '警告', sup: '连续5次/10min', lock: false },
+        { nm: '变桨电机2电流', tag: 'PITCH2_CUR', hi: 20, lo: 0,  lv: '警告', sup: '连续5次/10min', lock: false },
+        { nm: '变桨电机3电流', tag: 'PITCH3_CUR', hi: 20, lo: 0,  lv: '警告', sup: '连续5次/10min', lock: false },
+        { nm: '变桨电池1电压', tag: 'PITCH1_BAT', hi: 28, lo: 22, lv: '注意', sup: '连续2次/3min',  lock: false },
+        { nm: '变桨电池2电压', tag: 'PITCH2_BAT', hi: 28, lo: 22, lv: '注意', sup: '连续2次/3min',  lock: false },
+        { nm: '变桨电池3电压', tag: 'PITCH3_BAT', hi: 28, lo: 22, lv: '注意', sup: '连续2次/3min',  lock: false },
+      ],
       iterHistory: [
         { r: 1, p: 58.2, rc: 51.3, f: 54.5, fa: 25.7, act: '初始训练' },
         { r: 2, p: 60.5, rc: 52.8, f: 56.4, fa: 24.1, act: '增加树深度' },
@@ -417,6 +519,23 @@ export function createInitModels(): ModelItem[] {
         { r: 4, p: 62.1, rc: 54.7, f: 58.1, fa: 22.8, act: '更换特征集' },
         { r: 5, p: 62.3, rc: 55.1, f: 58.5, fa: 22.4, act: '优化后仍未达标' },
       ],
+      diag: {
+        passed: false,
+        summary: 'F1 58.5% 远低于 90% 目标，误报率 22.4% 严重超标，模型未达标',
+        notes: [
+          'RandomForest 5轮迭代 F1 累计仅提升 4%，算法选型可能不适合变桨时序故障',
+          '变桨电机电流三路一致性差异特征（PITCH1~3_CUR 极差）重要度最低，疑似噪声',
+          '正样本严重不足（仅 43 条故障记录），导致召回率长期低于 60%',
+          '电池欠压（< 22V）与正常充放电过渡段特征高度重叠，误报主要来源',
+          '更换特征集（第4轮）效果不明显，说明问题在于数据质量而非特征选择',
+        ],
+        suggestions: [
+          '建议切换为 LSTM-AE，对变桨动作时序模式建模更有针对性',
+          '需补充至少 150 条有效故障样本，当前样本量严重不足',
+          '引入电池充放电状态标记，区分正常低压与故障低压场景',
+          '考虑分故障类型建模：卡桨、编码器失效、电池欠压各建独立子模型',
+        ],
+      },
     },
     {
       id: 6,
@@ -433,12 +552,31 @@ export function createInitModels(): ModelItem[] {
       iter: 3,
       pts: 7,
       sc: '主轴承',
-      ptCfg: [],
+      ptCfg: [
+        { nm: '主轴承驱动侧温度',   tag: 'MB_DS_T',  hi: 85,   lo: 10,  lv: '严重', sup: '连续3次/5min',  lock: true  },
+        { nm: '主轴承非驱动侧温度', tag: 'MB_NDS_T', hi: 83,   lo: 10,  lv: '严重', sup: '连续3次/5min',  lock: true  },
+        { nm: '主轴转速',           tag: 'MS_SPD',   hi: 1800, lo: 0,   lv: '参考', sup: '无',            lock: true  },
+        { nm: '润滑脂温度',         tag: 'LUB_T',    hi: 60,   lo: -10, lv: '警告', sup: '连续5次/10min', lock: false },
+        { nm: '润滑脂压力',         tag: 'LUB_P',    hi: 5,    lo: 0.5, lv: '注意', sup: '连续5次/10min', lock: false },
+        { nm: '机舱振动',           tag: 'NAC_VIB',  hi: 3,    lo: 0,   lv: '注意', sup: '连续3次/5min',  lock: false },
+        { nm: '有功功率',           tag: 'ACT_PWR',  hi: 4500, lo: 0,   lv: '参考', sup: '无',            lock: true  },
+      ],
       iterHistory: [
         { r: 1, p: 82.3, rc: 78.5, f: 80.3, fa: 9.5, act: '初始训练' },
         { r: 2, p: 88.7, rc: 85.1, f: 86.8, fa: 5.8, act: '调整核函数参数' },
         { r: 3, p: 91.5, rc: 89.2, f: 90.3, fa: 4.2, act: '优化异常比例阈值' },
       ],
+      diag: {
+        passed: true,
+        summary: 'F1 90.3% ≥ 90% | 误报率 4.2% ≤ 5%，模型已达标',
+        notes: [
+          'One-Class SVM RBF 核参数 γ 从 auto 调整为 0.01，决策边界更平滑',
+          '驱动侧与非驱动侧温差（MB_DS_T - MB_NDS_T）作为复合特征，误报率降低 3.7%',
+          '润滑脂压力低（< 0.5bar）触发的误报通过与温度联合判断基本消除',
+          '异常比例 ν 从 0.1 调整为 0.05，与历史故障频率更吻合',
+          'GW155-4.5 机型主轴承样本量充足（312条），小样本优势明显',
+        ],
+      },
     },
   ];
 }

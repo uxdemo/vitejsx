@@ -3,7 +3,7 @@ import { Tabs } from 'antd';
 import * as css from './styles/index.modules.less';
 import clsx from 'clsx';
 import { DEFAULT_PT_CFG, LV_COLORS } from './constant';
-import type { ModelItem, PtCfgItem } from './constant';
+import type { ModelItem, PtCfgItem, DiagInfo } from './constant';
 import { Ic, Btn, Badge } from './ui';
 
 const AnyTabs = Tabs as any;
@@ -315,21 +315,31 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
         <AnyTabPane key="diag" tab="自动诊断">
           <div className={css.diagGrid}>
             <div className={css.panelCard}>
-              <div className={css.diagSuccess}>
-                <div className={css.diagSuccessTitle}>{'✓ 模型已达标'}</div>
-                <div className={css.diagSuccessDesc}>{'F1 93.0%≥90% | 误报率 3.1%≤5%'}</div>
-              </div>
+              {model.diag.passed ? (
+                <div className={css.diagSuccess}>
+                  <div className={css.diagSuccessTitle}>{'✓ 模型已达标'}</div>
+                  <div className={css.diagSuccessDesc}>{model.diag.summary}</div>
+                </div>
+              ) : (
+                <div className={css.diagFail}>
+                  <div className={css.diagFailTitle}>{'✗ 模型未达标'}</div>
+                  <div className={css.diagFailDesc}>{model.diag.summary}</div>
+                </div>
+              )}
               <div className={css.diagNotes}>
-                {'本轮优化：'}
-                <br />
-                {'• 贝叶斯优化油温阈值 70→72°C'}
-                <br />
-                {'• 抑制规则：连续3次/5min窗口'}
-                <br />
-                {'• 85%误报来自启停机，已增补样本'}
-                <br />
-                {'• 剔除低重要性测点 GBX_FLT_DP'}
+                <div className={css.diagNotesTitle}>{'本轮诊断要点：'}</div>
+                {model.diag.notes.map((n, i) => (
+                  <div key={i} className={css.diagNoteItem}>{'• ' + n}</div>
+                ))}
               </div>
+              {model.diag.suggestions && model.diag.suggestions.length > 0 && (
+                <div className={css.diagSuggestions}>
+                  <div className={css.diagSuggestionsTitle}>{'优化建议：'}</div>
+                  {model.diag.suggestions.map((s, i) => (
+                    <div key={i} className={css.diagSuggestionItem}>{'→ ' + s}</div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </AnyTabPane>
