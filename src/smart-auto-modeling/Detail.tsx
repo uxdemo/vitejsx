@@ -315,29 +315,37 @@ export const Detail = ({ model, onBack, onUpdate }: DetailProps): React.ReactEle
         <AnyTabPane key="diag" tab="自动诊断">
           <div className={css.diagGrid}>
             <div className={css.panelCard}>
-              {model.diag.passed ? (
-                <div className={css.diagSuccess}>
-                  <div className={css.diagSuccessTitle}>{'✓ 模型已达标'}</div>
-                  <div className={css.diagSuccessDesc}>{model.diag.summary}</div>
-                </div>
+              {model.diag ? (
+                <>
+                  {model.diag.passed ? (
+                    <div className={css.diagSuccess}>
+                      <div className={css.diagSuccessTitle}>{'✓ 模型已达标'}</div>
+                      <div className={css.diagSuccessDesc}>{model.diag.summary}</div>
+                    </div>
+                  ) : (
+                    <div className={css.diagFail}>
+                      <div className={css.diagFailTitle}>{'✗ 模型未达标'}</div>
+                      <div className={css.diagFailDesc}>{model.diag.summary}</div>
+                    </div>
+                  )}
+                  <div className={css.diagNotes}>
+                    <div className={css.diagNotesTitle}>{'本轮诊断要点：'}</div>
+                    {model.diag.notes.map((n, i) => (
+                      <div key={i} className={css.diagNoteItem}>{'• ' + n}</div>
+                    ))}
+                  </div>
+                  {model.diag.suggestions && model.diag.suggestions.length > 0 && (
+                    <div className={css.diagSuggestions}>
+                      <div className={css.diagSuggestionsTitle}>{'优化建议：'}</div>
+                      {model.diag.suggestions.map((s, i) => (
+                        <div key={i} className={css.diagSuggestionItem}>{'→ ' + s}</div>
+                      ))}
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className={css.diagFail}>
-                  <div className={css.diagFailTitle}>{'✗ 模型未达标'}</div>
-                  <div className={css.diagFailDesc}>{model.diag.summary}</div>
-                </div>
-              )}
-              <div className={css.diagNotes}>
-                <div className={css.diagNotesTitle}>{'本轮诊断要点：'}</div>
-                {model.diag.notes.map((n, i) => (
-                  <div key={i} className={css.diagNoteItem}>{'• ' + n}</div>
-                ))}
-              </div>
-              {model.diag.suggestions && model.diag.suggestions.length > 0 && (
-                <div className={css.diagSuggestions}>
-                  <div className={css.diagSuggestionsTitle}>{'优化建议：'}</div>
-                  {model.diag.suggestions.map((s, i) => (
-                    <div key={i} className={css.diagSuggestionItem}>{'→ ' + s}</div>
-                  ))}
+                  <div className={css.diagFailTitle}>{'暂无诊断数据'}</div>
                 </div>
               )}
             </div>

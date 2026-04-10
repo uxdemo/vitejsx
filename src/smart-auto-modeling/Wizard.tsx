@@ -27,6 +27,7 @@ interface FaultPeriod {
 
 interface WizardCfg {
   turbine: string | null;
+  turbines: string[];
   scenes: string[];
   points: Record<string, string[]>;
   sampleStrategy: string;

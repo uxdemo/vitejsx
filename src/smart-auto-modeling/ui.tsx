@@ -8,7 +8,7 @@ import type { ModelStatus } from "./constant";
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // ICON
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-export const Ic = ({ name, size = 16 }: { name: string; size?: number }): React.ReactElement => {
+export const Ic = ({ name, size = 16, style }: { name: string; size?: number; style?: React.CSSProperties }): React.ReactElement => {
   const paths: Record<string, React.ReactNode> = {
     plus: <path d="M12 5v14M5 12h14" />,
     chevR: <path d="m9 18 6-6-6-6" />,
@@ -189,6 +189,7 @@ export const Ic = ({ name, size = 16 }: { name: string; size?: number }): React.
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      style={style}
     >
       {paths[name] || null}
     </svg>

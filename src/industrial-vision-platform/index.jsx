@@ -3,14 +3,14 @@ import "./industrial-vision-platform.css";
 
 // ─── Mock Data ───────────────────────────────────────────────
 const SCENES = [
-  { id: "leak", name: "跑冒滴漏检测", icon: "💧", target: "火电厂管道、阀门、法兰", desc: "蒸汽泄漏、液体滴漏、油渍渗出等", color: "#3b82f6" },
-  { id: "blade", name: "风机叶片异常识别", icon: "🔄", target: "风力发电机叶片", desc: "裂纹、雷击损伤、前缘腐蚀、涂层脱落等", color: "#10b981" },
-  { id: "rust", name: "设备锈蚀检测", icon: "🔩", target: "钢结构、管道外壁", desc: "锈蚀面积、锈蚀等级", color: "#f59e0b" },
-  { id: "meter", name: "仪表读数识别", icon: "🔢", target: "压力表、温度表、液位计", desc: "当前读数、是否超限", color: "#8b5cf6" },
-  { id: "safety", name: "安全着装合规检测", icon: "🦺", target: "现场作业人员", desc: "安全帽、工服、护目镜等佩戴情况", color: "#ef4444" },
+  { id: "leak", name: "跑冒滴漏检测", icon: "💧", target: "火电厂管道、阀门、法兰", desc: "蒸汽泄漏、液体滴漏、油渍渗出等", color: "#00c5f9" },
+  { id: "blade", name: "风机叶片异常识别", icon: "🔄", target: "风力发电机叶片", desc: "裂纹、雷击损伤、前缘腐蚀、涂层脱落等", color: "#0fc38f" },
+  { id: "rust", name: "设备锈蚀检测", icon: "🔩", target: "钢结构、管道外壁", desc: "锈蚀面积、锈蚀等级", color: "#ff954d" },
+  { id: "meter", name: "仪表读数识别", icon: "🔢", target: "压力表、温度表、液位计", desc: "当前读数、是否超限", color: "#722ed1" },
+  { id: "safety", name: "安全着装合规检测", icon: "🦺", target: "现场作业人员", desc: "安全帽、工服、护目镜等佩戴情况", color: "#ff5413" },
 ];
 
-const SEVERITY_MAP = { "严重": { color: "#ef4444", bg: "rgba(239,68,68,0.12)" }, "中等": { color: "#f59e0b", bg: "rgba(245,158,11,0.12)" }, "轻微": { color: "#facc15", bg: "rgba(250,204,21,0.12)" }, "正常": { color: "#22c55e", bg: "rgba(34,197,94,0.12)" } };
+const SEVERITY_MAP = { "严重": { color: "#ff5413", bg: "rgba(255,84,19,0.12)" }, "中等": { color: "#ff954d", bg: "rgba(255,149,77,0.12)" }, "轻微": { color: "#faad14", bg: "rgba(250,173,20,0.12)" }, "正常": { color: "#0fc38f", bg: "rgba(15,195,143,0.12)" } };
 
 const ANOMALY_TYPES_LEAK = ["蒸汽泄漏", "液体滴漏", "油渍渗出", "气体逸散"];
 
@@ -49,11 +49,11 @@ function generateMockResults(frameCount) {
 function FrameThumbnail({ result, size = 48, onClick }) {
   const c = result.isAnomaly ? SEVERITY_MAP[result.severity]?.color || "#666" : "#2a3a2a";
   return (
-    <div onClick={onClick} style={{ width: size, height: size, borderRadius: 4, overflow: "hidden", cursor: "pointer", border: `2px solid ${c}`, background: `hsl(${result.hue}, 15%, ${result.isAnomaly ? 18 : 22}%)`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
+    <div onClick={onClick} style={{ width: size, height: size, borderRadius: 3, overflow: "hidden", cursor: "pointer", border: `2px solid ${c}`, background: `hsl(${result.hue}, 15%, ${result.isAnomaly ? 18 : 22}%)`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
       <svg width={size - 8} height={size - 8} viewBox="0 0 40 40">
-        <rect x="2" y="6" width="36" height="28" rx="2" fill="none" stroke="hsl(210,10%,35%)" strokeWidth="1" />
+        <rect x="2" y="6" width="36" height="28" rx="3" fill="none" stroke="hsl(210,10%,35%)" strokeWidth="1" />
         {result.isAnomaly && <>
-          <rect x={8 + Math.random() * 10} y={10 + Math.random() * 8} width={12 + Math.random() * 6} height={8 + Math.random() * 6} rx="1" fill="none" stroke={c} strokeWidth="1.5" strokeDasharray="2 1" />
+          <rect x={8 + Math.random() * 10} y={10 + Math.random() * 8} width={12 + Math.random() * 6} height={8 + Math.random() * 6} rx="3" fill="none" stroke={c} strokeWidth="1.5" strokeDasharray="2 1" />
           <circle cx="30" cy="10" r="3" fill={c} opacity="0.8" />
         </>}
       </svg>
@@ -63,12 +63,12 @@ function FrameThumbnail({ result, size = 48, onClick }) {
 
 function SeverityBadge({ severity }) {
   const s = SEVERITY_MAP[severity] || { color: "#888", bg: "rgba(136,136,136,0.1)" };
-  return <span style={{ padding: "2px 10px", borderRadius: 99, fontSize: 12, fontWeight: 600, color: s.color, background: s.bg, border: `1px solid ${s.color}22`, whiteSpace: "nowrap" }}>{severity}</span>;
+  return <span style={{ padding: "2px 10px", borderRadius: 3, fontSize: 12, fontWeight: 600, color: s.color, background: s.bg, border: `1px solid ${s.color}22`, whiteSpace: "nowrap" }}>{severity}</span>;
 }
 
-function StatCard({ label, value, sub, accent }) {
+function StatCard({ label, value, sub, accent, flex = 1 }) {
   return (
-    <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px", flex: 1, minWidth: 140 }}>
+    <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 3, padding: "16px 20px", flex, minWidth: 140 }}>
       <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6, letterSpacing: 1, textTransform: "uppercase" }}>{label}</div>
       <div style={{ fontSize: 28, fontWeight: 700, color: accent || "var(--text)", fontFamily: "var(--mono)" }}>{value}</div>
       {sub && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>{sub}</div>}
@@ -83,8 +83,8 @@ function ProgressBar({ value, label, color }) {
         <span style={{ color: "var(--text)" }}>{label}</span>
         <span style={{ color: "var(--muted)", fontFamily: "var(--mono)" }}>{Math.round(value)}%</span>
       </div>
-      <div style={{ height: 6, background: "var(--border)", borderRadius: 99, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${value}%`, background: color || "var(--accent)", borderRadius: 99, transition: "width 0.4s ease" }} />
+      <div style={{ height: 6, background: "var(--border)", borderRadius: 3, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${value}%`, background: color || "var(--accent)", borderRadius: 3, transition: "width 0.4s ease" }} />
       </div>
     </div>
   );
@@ -97,7 +97,7 @@ function Lightbox({ result, onClose, results, onNavigate }) {
   const s = SEVERITY_MAP[result.severity] || {};
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", animation: "fadeIn 0.2s ease" }} onClick={onClose}>
-      <div onClick={e => e.stopPropagation()} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 14, width: "min(90vw, 860px)", maxHeight: "90vh", overflow: "auto", display: "flex", flexDirection: "column" }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 3, width: "min(90vw, 860px)", maxHeight: "90vh", overflow: "auto", display: "flex", flexDirection: "column" }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid var(--border)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -108,12 +108,12 @@ function Lightbox({ result, onClose, results, onNavigate }) {
           <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--muted)", fontSize: 22, cursor: "pointer", padding: 4 }}>✕</button>
         </div>
         {/* Image area */}
-        <div style={{ position: "relative", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 340, padding: 24 }}>
+        <div style={{ position: "relative", background: "#19191a", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 340, padding: 24 }}>
           {/* Nav arrows */}
-          {idx > 0 && <button onClick={() => onNavigate(results[idx - 1])} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 99, width: 40, height: 40, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>◂</button>}
-          {idx < results.length - 1 && <button onClick={() => onNavigate(results[idx + 1])} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 99, width: 40, height: 40, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>▸</button>}
+          {idx > 0 && <button onClick={() => onNavigate(results[idx - 1])} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 3, width: 40, height: 40, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>◂</button>}
+          {idx < results.length - 1 && <button onClick={() => onNavigate(results[idx + 1])} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 3, width: 40, height: 40, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>▸</button>}
           {/* Mock image */}
-          <svg width="560" height="320" viewBox="0 0 560 320" style={{ borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)" }}>
+          <svg width="560" height="320" viewBox="0 0 560 320" style={{ borderRadius: 3, border: "1px solid rgba(255,255,255,0.06)" }}>
             <defs>
               <linearGradient id="imgBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={`hsl(${result.hue},12%,14%)`} /><stop offset="100%" stopColor={`hsl(${result.hue},8%,10%)`} /></linearGradient>
               <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0v20" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" /></pattern>
@@ -121,14 +121,14 @@ function Lightbox({ result, onClose, results, onNavigate }) {
             <rect width="560" height="320" fill="url(#imgBg)" />
             <rect width="560" height="320" fill="url(#grid)" />
             {/* Mock industrial scene */}
-            <rect x="40" y="200" width="480" height="8" rx="4" fill="hsl(210,8%,25%)" />
-            <rect x="100" y="140" width="12" height="68" rx="2" fill="hsl(210,8%,30%)" />
-            <rect x="260" y="120" width="40" height="88" rx="4" fill="hsl(210,8%,22%)" stroke="hsl(210,8%,30%)" />
-            <rect x="400" y="160" width="16" height="48" rx="2" fill="hsl(210,8%,28%)" />
+            <rect x="40" y="200" width="480" height="8" rx="3" fill="hsl(210,8%,25%)" />
+            <rect x="100" y="140" width="12" height="68" rx="3" fill="hsl(210,8%,30%)" />
+            <rect x="260" y="120" width="40" height="88" rx="3" fill="hsl(210,8%,22%)" stroke="hsl(210,8%,30%)" />
+            <rect x="400" y="160" width="16" height="48" rx="3" fill="hsl(210,8%,28%)" />
             <text x="280" y="280" textAnchor="middle" fill="rgba(255,255,255,0.15)" fontSize="11" fontFamily="monospace">模拟工业场景图像 · {result.timestamp}</text>
             {result.isAnomaly && <>
               <rect x="220" y="100" width="120" height="80" rx="3" fill="none" stroke={s.color} strokeWidth="2.5" strokeDasharray="6 3" opacity="0.9" />
-              <rect x="220" y="86" width="120" height="16" rx="2" fill={s.color} opacity="0.85" />
+              <rect x="220" y="86" width="120" height="16" rx="3" fill={s.color} opacity="0.85" />
               <text x="280" y="96" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold" fontFamily="monospace">{result.anomalyType} {(result.confidence * 100).toFixed(1)}%</text>
             </>}
           </svg>
@@ -161,12 +161,13 @@ function TimelineView({ results, onClickFrame }) {
   const total = results.length;
   if (!total) return null;
   return (
-    <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 10, padding: 16, marginBottom: 20 }}>
+    <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 3, padding: 16, marginBottom: 20 }}>
       <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 10, fontWeight: 600 }}>时间轴异常分布</div>
-      <div style={{ display: "flex", gap: 1, height: 28, borderRadius: 4, overflow: "hidden" }}>
+      <div style={{ display: "flex", gap: 1, height: 28, borderRadius: 3, background: "#35393C", padding: 2 }}>
         {results.map((r, i) => {
-          const c = r.isAnomaly ? (SEVERITY_MAP[r.severity]?.color || "#888") : "#1a2a1a";
-          return <div key={i} onClick={() => onClickFrame(r)} title={`${r.timestamp} - ${r.severity}`} style={{ flex: 1, background: c, opacity: r.isAnomaly ? 0.85 : 0.25, cursor: "pointer", transition: "opacity 0.15s", minWidth: 2 }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = r.isAnomaly ? 0.85 : 0.25} />;
+          const isA = r.isAnomaly;
+          const c = isA ? (SEVERITY_MAP[r.severity]?.color || "#888") : "transparent";
+          return <div key={i} onClick={() => onClickFrame(r)} title={`${r.timestamp} - ${r.severity}`} style={{ flex: 1, background: c, opacity: isA ? 0.9 : 1, cursor: "pointer", transition: "all 0.15s", minWidth: 2, borderRadius: isA ? 5 : 0 }} onMouseEnter={e => { e.currentTarget.style.opacity = 1; e.currentTarget.style.transform = isA ? "scaleY(1.15)" : "none"; }} onMouseLeave={e => { e.currentTarget.style.opacity = isA ? 0.9 : 1; e.currentTarget.style.transform = "none"; }} />;
         })}
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: "var(--muted)", fontFamily: "var(--mono)" }}>
@@ -262,9 +263,9 @@ export default function App() {
   // ─── Render ──────────────────────────────────────────────
   return (
     <div style={{
-      "--accent2": "#10b981",
+      "--accent2": "#0fc38f",
       "--mono": "'JetBrains Mono', 'Fira Code', 'SF Mono', monospace",
-      "--sans": "'DM Sans', 'Noto Sans SC', system-ui, sans-serif",
+      "--sans": "'-apple-system','PingFang SC','Microsoft YaHei',sans-serif",
       fontFamily: "var(--sans)", background: "var(--bg)", color: "var(--text)", minHeight: "100vh", fontSize: 14, lineHeight: 1.5,
     }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -272,13 +273,13 @@ export default function App() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-color-base); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb { background: #1e2a36; border-radius: 3px; }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
         @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.5 } }
         input[type="text"], input[type="number"], select {
           background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px;
-          border-radius: 6px; font-size: 13px; font-family: var(--mono); outline: none; transition: border-color 0.2s;
+          border-radius: 3px; font-size: 13px; font-family: var(--mono); outline: none; transition: border-color 0.2s;
         }
         input:focus, select:focus { border-color: var(--accent); }
         button { font-family: var(--sans); }
@@ -287,10 +288,10 @@ export default function App() {
       {/* ─── Header ─── */}
       <header style={{ padding: "0 32px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--border)", background: "rgba(11,16,23,0.9)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #3b82f6, #10b981)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>⬡</div>
+          <div style={{ width: 32, height: 32, borderRadius: 3, background: "linear-gradient(135deg, #00c5f9, #0fc38f)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>⬡</div>
           <span style={{ fontWeight: 700, fontSize: 16, letterSpacing: -0.3 }}>工业视觉智能识别平台</span>
           {scene && step > 0 && (
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 12, padding: "3px 12px", borderRadius: 99, background: scene.color + "18", border: `1px solid ${scene.color}33` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 12, padding: "3px 12px", borderRadius: 3, background: scene.color + "18", border: `1px solid ${scene.color}33` }}>
               <span>{scene.icon}</span>
               <span style={{ fontSize: 12, color: scene.color, fontWeight: 600 }}>{scene.name}</span>
             </div>
@@ -300,7 +301,7 @@ export default function App() {
           {/* Step indicator */}
           {[["场景选择", 0], ["任务配置", 1], ["分析中", 2], ["分析结果", 3]].map(([label, i]) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 22, height: 22, borderRadius: 99, background: step >= i ? "var(--accent)" : "var(--border)", color: step >= i ? "#fff" : "var(--muted)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, transition: "all 0.3s" }}>{i + 1}</div>
+              <div style={{ width: 22, height: 22, borderRadius: 3, background: step >= i ? "var(--accent)" : "var(--border)", color: step >= i ? "#fff" : "var(--muted)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, transition: "all 0.3s" }}>{i + 1}</div>
               <span style={{ fontSize: 12, color: step >= i ? "var(--text)" : "var(--muted)", fontWeight: step === i ? 600 : 400, display: i === 2 && step !== 2 ? "none" : undefined }}>{label}</span>
               {i < 3 && <span style={{ color: "var(--border)", margin: "0 2px" }}>›</span>}
             </div>
@@ -320,11 +321,11 @@ export default function App() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
               {SCENES.map((s, i) => (
                 <div key={s.id} onClick={() => { setScene(s); setStep(1); }}
-                  style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, cursor: "pointer", transition: "all 0.25s", position: "relative", overflow: "hidden", animation: `slideUp 0.4s ease ${i * 0.06}s both` }}
+                  style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 3, padding: 24, cursor: "pointer", transition: "all 0.25s", position: "relative", overflow: "hidden", animation: `slideUp 0.4s ease ${i * 0.06}s both` }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = s.color + "66"; e.currentTarget.style.transform = "translateY(-2px)"; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; }}>
                   <div style={{ position: "absolute", top: 0, right: 0, width: 120, height: 120, background: `radial-gradient(circle at top right, ${s.color}12, transparent 70%)` }} />
-                  <div style={{ width: 44, height: 44, borderRadius: 10, background: s.color + "18", border: `1px solid ${s.color}33`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 14 }}>{s.icon}</div>
+                  <div style={{ width: 44, height: 44, borderRadius: 3, background: s.color + "18", border: `1px solid ${s.color}33`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 14 }}>{s.icon}</div>
                   <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{s.name}</div>
                   <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 8 }}>适用：{s.target}</div>
                   <div style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.6 }}>{s.desc}</div>
@@ -341,7 +342,7 @@ export default function App() {
         {step === 1 && (
           <div style={{ animation: "fadeIn 0.4s ease" }}>
             <div style={{ marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
-              <button onClick={() => setStep(0)} style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 6, padding: "6px 12px", cursor: "pointer", fontSize: 13 }}>← 返回</button>
+              <button onClick={() => setStep(0)} style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 3, padding: "6px 12px", cursor: "pointer", fontSize: 13 }}>← 返回</button>
               <h1 style={{ fontSize: 22, fontWeight: 700 }}>任务配置</h1>
             </div>
 
@@ -351,7 +352,7 @@ export default function App() {
                 {/* Upload area */}
                 {!videoFile ? (
                   <div onClick={() => fileInputRef.current?.click()}
-                    style={{ background: "var(--card)", border: "2px dashed var(--border)", borderRadius: 12, padding: "60px 40px", textAlign: "center", cursor: "pointer", transition: "border-color 0.2s" }}
+                    style={{ background: "var(--card)", border: "2px dashed var(--border)", borderRadius: 3, padding: "60px 40px", textAlign: "center", cursor: "pointer", transition: "border-color 0.2s" }}
                     onMouseEnter={e => e.currentTarget.style.borderColor = "var(--accent)"} onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}>
                     <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.4 }}>📁</div>
                     <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>拖拽视频文件到此处，或点击上传</div>
@@ -359,19 +360,19 @@ export default function App() {
                     <input ref={fileInputRef} type="file" accept="video/mp4" style={{ display: "none" }} onChange={handleFile} />
                   </div>
                 ) : (
-                  <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+                  <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 3, overflow: "hidden" }}>
                     {/* Mock video player */}
-                    <div style={{ background: "var(--bg)", height: 320, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                    <div style={{ background: "#111111", height: 320, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                       <svg width="100%" height="100%" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet">
                         <defs>
-                          <linearGradient id="sceneBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0f1923" /><stop offset="100%" stopColor="#0a0f14" /></linearGradient>
+                          <linearGradient id="sceneBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#24282c" /><stop offset="100%" stopColor="#19191a" /></linearGradient>
                           <pattern id="scanline" width="640" height="2" patternUnits="userSpaceOnUse"><rect width="640" height="1" fill="rgba(255,255,255,0.015)" /></pattern>
                         </defs>
                         <rect width="640" height="320" fill="url(#sceneBg)" />
                         <rect width="640" height="320" fill="url(#scanline)" />
-                        <rect x="60" y="200" width="520" height="10" rx="5" fill="#1a2535" />
+                        <rect x="60" y="200" width="520" height="10" rx="3" fill="#1a2535" />
                         <rect x="180" y="100" width="16" height="110" rx="3" fill="#1e2d3d" />
-                        <rect x="280" y="80" width="80" height="130" rx="6" fill="#15202d" stroke="#1e2d3d" />
+                        <rect x="280" y="80" width="80" height="130" rx="3" fill="#15202d" stroke="#1e2d3d" />
                         <rect x="440" y="140" width="20" height="70" rx="3" fill="#1a2838" />
                         <circle cx="320" cy="160" r="30" fill="none" stroke="rgba(59,130,246,0.3)" strokeWidth="1" />
                         <polygon points="312,148 312,172 332,160" fill="rgba(59,130,246,0.5)" />
@@ -380,8 +381,8 @@ export default function App() {
                       {/* Playback bar */}
                       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "8px 16px", background: "linear-gradient(transparent, rgba(0,0,0,0.7))", display: "flex", alignItems: "center", gap: 10 }}>
                         <button style={{ background: "none", border: "none", color: "#fff", fontSize: 16, cursor: "pointer" }}>▶</button>
-                        <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.15)", borderRadius: 99, position: "relative" }}>
-                          <div style={{ width: "30%", height: "100%", background: "var(--accent)", borderRadius: 99 }} />
+                        <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.15)", borderRadius: 3, position: "relative" }}>
+                          <div style={{ width: "30%", height: "100%", background: "var(--accent)", borderRadius: 3 }} />
                         </div>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", fontFamily: "var(--mono)" }}>01:36 / 05:20</span>
                       </div>
@@ -394,23 +395,23 @@ export default function App() {
                           <span style={{ fontFamily: "var(--mono)", fontWeight: 500 }}>{v}</span>
                         </div>
                       ))}
-                      <button onClick={() => { setVideoFile(null); setVideoMeta(null); }} style={{ marginLeft: "auto", background: "none", border: "none", color: "#ef4444", fontSize: 12, cursor: "pointer" }}>移除视频</button>
+                      <button onClick={() => { setVideoFile(null); setVideoMeta(null); }} style={{ marginLeft: "auto", background: "none", border: "none", color: "#ff5413", fontSize: 12, cursor: "pointer" }}>移除视频</button>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Right: Parameter Panel */}
-              <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, position: "sticky", top: 72 }}>
+              <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 3, padding: 24, position: "sticky", top: 72 }}>
                 <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 20 }}>分析参数</div>
 
                 {/* Time range */}
                 <div style={{ marginBottom: 20 }}>
                   <label style={{ fontSize: 12, color: "var(--muted)", display: "block", marginBottom: 6, fontWeight: 600 }}>分析区间</label>
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <input type="text" value={params.startTime} onChange={e => setParams({ ...params, startTime: e.target.value })} style={{ flex: 1, textAlign: "center" }} />
+                    <input type="text" value={params.startTime} onChange={e => setParams({ ...params, startTime: e.target.value })} style={{ flex: 1, minWidth: 0, textAlign: "center" }} />
                     <span style={{ color: "var(--muted)", fontSize: 12 }}>至</span>
-                    <input type="text" value={params.endTime} onChange={e => setParams({ ...params, endTime: e.target.value })} style={{ flex: 1, textAlign: "center" }} />
+                    <input type="text" value={params.endTime} onChange={e => setParams({ ...params, endTime: e.target.value })} style={{ flex: 1, minWidth: 0, textAlign: "center" }} />
                   </div>
                 </div>
 
@@ -420,7 +421,7 @@ export default function App() {
                   <div style={{ display: "flex", gap: 6 }}>
                     {[1, 2, 5, 10].map(v => (
                       <button key={v} onClick={() => setParams({ ...params, interval: v })}
-                        style={{ flex: 1, padding: "8px 0", borderRadius: 6, border: `1px solid ${params.interval === v ? "var(--accent)" : "var(--border)"}`, background: params.interval === v ? "var(--accent)" + "22" : "transparent", color: params.interval === v ? "var(--accent)" : "var(--muted)", fontSize: 13, fontFamily: "var(--mono)", fontWeight: 600, cursor: "pointer" }}>{v}s</button>
+                        style={{ flex: 1, padding: "8px 0", borderRadius: 3, border: `1px solid ${params.interval === v ? "var(--accent)" : "var(--border)"}`, background: params.interval === v ? "var(--accent)" + "22" : "transparent", color: params.interval === v ? "var(--accent)" : "var(--muted)", fontSize: 13, fontFamily: "var(--mono)", fontWeight: 600, cursor: "pointer" }}>{v}s</button>
                     ))}
                   </div>
                 </div>
@@ -439,8 +440,8 @@ export default function App() {
                 <div style={{ marginBottom: 20 }}>
                   <label style={{ fontSize: 12, color: "var(--muted)", display: "block", marginBottom: 6, fontWeight: 600 }}>图像预处理</label>
                   <div onClick={() => setParams({ ...params, preprocess: !params.preprocess })} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
-                    <div style={{ width: 38, height: 20, borderRadius: 99, background: params.preprocess ? "var(--accent)" : "var(--border)", padding: 2, transition: "background 0.2s" }}>
-                      <div style={{ width: 16, height: 16, borderRadius: 99, background: "#fff", transition: "transform 0.2s", transform: params.preprocess ? "translateX(18px)" : "translateX(0)" }} />
+                    <div style={{ width: 38, height: 20, borderRadius: 3, background: params.preprocess ? "var(--accent)" : "var(--border)", padding: 2, transition: "background 0.2s" }}>
+                      <div style={{ width: 16, height: 16, borderRadius: 3, background: "#fff", transition: "transform 0.2s", transform: params.preprocess ? "translateX(18px)" : "translateX(0)" }} />
                     </div>
                     <span style={{ fontSize: 13, color: params.preprocess ? "var(--text)" : "var(--muted)" }}>自动增强（亮度/对比度/去雾）</span>
                   </div>
@@ -456,14 +457,14 @@ export default function App() {
                 </details>
 
                 {/* Estimate */}
-                <div style={{ padding: "12px 14px", background: "var(--accent)" + "0a", border: `1px solid var(--accent)22`, borderRadius: 8, marginBottom: 20 }}>
+                <div style={{ padding: "12px 14px", background: "var(--accent)" + "0a", border: `1px solid var(--accent)22`, borderRadius: 3, marginBottom: 20 }}>
                   <div style={{ fontSize: 12, color: "var(--accent)", fontWeight: 600 }}>📊 预计抽帧数量</div>
                   <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "var(--mono)", marginTop: 4 }}>约 {Math.round(320 / params.interval)} 帧</div>
                 </div>
 
                 {/* Submit */}
                 <button onClick={startAnalysis} disabled={!videoFile}
-                  style={{ width: "100%", padding: "12px 0", borderRadius: 8, border: "none", background: videoFile ? "linear-gradient(135deg, #3b82f6, #2563eb)" : "var(--border)", color: videoFile ? "#fff" : "var(--muted)", fontSize: 15, fontWeight: 700, cursor: videoFile ? "pointer" : "not-allowed", transition: "all 0.2s", letterSpacing: 0.3 }}>
+                  style={{ width: "100%", padding: "12px 0", borderRadius: 3, border: "none", background: videoFile ? "linear-gradient(135deg, #00c5f9, #009fda)" : "var(--border)", color: videoFile ? "#fff" : "var(--muted)", fontSize: 15, fontWeight: 700, cursor: videoFile ? "pointer" : "not-allowed", transition: "all 0.2s", letterSpacing: 0.3 }}>
                   开始分析
                 </button>
                 {!videoFile && <div style={{ fontSize: 11, color: "var(--muted)", textAlign: "center", marginTop: 8 }}>请先上传视频</div>}
@@ -481,15 +482,15 @@ export default function App() {
               <p style={{ color: "var(--muted)", fontSize: 14 }}>系统正在处理视频，请耐心等待</p>
             </div>
 
-            <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+            <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 3, padding: 28 }}>
               {/* Overall */}
               <div style={{ marginBottom: 24 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
                   <span style={{ fontSize: 14, fontWeight: 600 }}>总进度</span>
                   <span style={{ fontFamily: "var(--mono)", fontSize: 20, fontWeight: 700, color: "var(--accent)" }}>{Math.round(overallPct)}%</span>
                 </div>
-                <div style={{ height: 10, background: "var(--border)", borderRadius: 99, overflow: "hidden" }}>
-                  <div style={{ height: "100%", width: `${overallPct}%`, background: "linear-gradient(90deg, #3b82f6, #10b981)", borderRadius: 99, transition: "width 0.3s" }} />
+                <div style={{ height: 10, background: "var(--border)", borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${overallPct}%`, background: "linear-gradient(90deg, #00c5f9, #0fc38f)", borderRadius: 3, transition: "width 0.3s" }} />
                 </div>
               </div>
 
@@ -512,7 +513,7 @@ export default function App() {
 
             <div style={{ textAlign: "center", marginTop: 20 }}>
               <button onClick={() => { clearInterval(progressRef.current); setStep(1); }}
-                style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 6, padding: "8px 24px", cursor: "pointer", fontSize: 13 }}>取消分析</button>
+                style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 3, padding: "8px 24px", cursor: "pointer", fontSize: 13 }}>取消分析</button>
             </div>
           </div>
         )}
@@ -521,28 +522,31 @@ export default function App() {
         {step === 3 && (
           <div style={{ animation: "fadeIn 0.4s ease" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-              <div>
-                <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>分析结果</h1>
-                <p style={{ color: "var(--muted)", fontSize: 13 }}>{scene?.name} · {videoMeta?.name}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <button onClick={() => setStep(1)} style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 3, padding: "6px 14px", cursor: "pointer", fontSize: 13, height: 32 }}>← 返回</button>
+                <div>
+                  <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>分析结果</h1>
+                  <p style={{ color: "var(--muted)", fontSize: 13, margin: 0 }}>{scene?.name} · {videoMeta?.name}</p>
+                </div>
               </div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => { setStep(0); setVideoFile(null); setVideoMeta(null); setResults([]); setScene(null); }}
-                  style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 6, padding: "8px 16px", cursor: "pointer", fontSize: 13 }}>新建任务</button>
-                <button style={{ background: "var(--accent)", border: "none", color: "#fff", borderRadius: 6, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>导出报告 ↓</button>
+                  style={{ background: "none", border: "1px solid var(--border)", color: "var(--muted)", borderRadius: 3, padding: "8px 16px", cursor: "pointer", fontSize: 13 }}>新建任务</button>
+                <button style={{ background: "var(--accent)", border: "none", color: "#fff", borderRadius: 3, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>导出报告 ↓</button>
               </div>
             </div>
 
             {/* Stats row */}
             <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
               <StatCard label="总分析帧数" value={results.length} />
-              <StatCard label="异常帧数" value={anomalyCount} accent="#ef4444" />
-              <StatCard label="异常检出率" value={(anomalyCount / results.length * 100).toFixed(1) + "%"} accent="#f59e0b" />
-              <StatCard label="严重程度分布" value={`严${sevDistribution["严重"] || 0} / 中${sevDistribution["中等"] || 0} / 轻${sevDistribution["轻微"] || 0}`} sub={
+              <StatCard label="异常帧数" value={anomalyCount} accent="#ff5413" />
+              <StatCard label="异常检出率" value={(anomalyCount / results.length * 100).toFixed(1) + "%"} accent="#ff954d" />
+              <StatCard flex={2.2} label="严重程度分布" value={`严${sevDistribution["严重"] || 0} / 中${sevDistribution["中等"] || 0} / 轻${sevDistribution["轻微"] || 0}`} sub={
                 <div style={{ display: "flex", gap: 4, marginTop: 4 }}>
                   {["严重", "中等", "轻微"].map(s => {
                     const cnt = sevDistribution[s] || 0;
                     const pct = anomalyCount ? cnt / anomalyCount * 100 : 0;
-                    return <div key={s} style={{ height: 4, borderRadius: 99, background: SEVERITY_MAP[s].color, flex: pct || 0.5, opacity: cnt ? 1 : 0.2, transition: "flex 0.3s" }} />;
+                    return <div key={s} style={{ height: 4, borderRadius: 3, background: SEVERITY_MAP[s].color, flex: pct || 0.5, opacity: cnt ? 1 : 0.2, transition: "flex 0.3s" }} />;
                   })}
                 </div>
               } />
@@ -554,7 +558,7 @@ export default function App() {
             {/* Filters */}
             <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
               <div onClick={() => setFilter({ ...filter, onlyAnomaly: !filter.onlyAnomaly })}
-                style={{ padding: "6px 14px", borderRadius: 6, border: `1px solid ${filter.onlyAnomaly ? "var(--accent)" : "var(--border)"}`, background: filter.onlyAnomaly ? "var(--accent)18" : "transparent", color: filter.onlyAnomaly ? "var(--accent)" : "var(--muted)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                style={{ padding: "6px 14px", borderRadius: 3, border: `1px solid ${filter.onlyAnomaly ? "var(--accent)" : "var(--border)"}`, background: filter.onlyAnomaly ? "var(--accent)18" : "transparent", color: filter.onlyAnomaly ? "var(--accent)" : "var(--muted)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                 {filter.onlyAnomaly ? "✓ " : ""}仅异常帧
               </div>
               <select value={filter.severity} onChange={e => { setFilter({ ...filter, severity: e.target.value }); setPage(1); }} style={{ fontSize: 12, padding: "6px 10px" }}>
@@ -573,7 +577,7 @@ export default function App() {
             </div>
 
             {/* Table */}
-            <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
+            <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 3, overflow: "hidden" }}>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
@@ -605,7 +609,7 @@ export default function App() {
                         <td style={{ padding: "10px 12px", fontFamily: "var(--mono)", fontSize: 12 }}>{r.timestamp}</td>
                         <td style={{ padding: "6px 12px" }}><FrameThumbnail result={r} size={42} onClick={() => setLightboxItem(r)} /></td>
                         <td style={{ padding: "10px 12px" }}>
-                          <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: 99, background: r.isAnomaly ? "#ef4444" : "#22c55e", marginRight: 6 }} />
+                          <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: 3, background: r.isAnomaly ? "#ff5413" : "#0fc38f", marginRight: 6 }} />
                           <span style={{ fontSize: 12 }}>{r.isAnomaly ? "是" : "否"}</span>
                         </td>
                         <td style={{ padding: "10px 12px", fontSize: 12 }}>{r.anomalyType}</td>
@@ -614,8 +618,8 @@ export default function App() {
                         <td style={{ padding: "10px 12px", fontSize: 12, color: "var(--muted)", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={r.phenomenon}>{r.phenomenon}</td>
                         <td style={{ padding: "10px 12px" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            <div style={{ width: 44, height: 4, borderRadius: 99, background: "var(--border)", overflow: "hidden" }}>
-                              <div style={{ height: "100%", width: `${r.confidence * 100}%`, background: r.confidence > 0.8 ? "#22c55e" : r.confidence > 0.5 ? "#f59e0b" : "#64748b", borderRadius: 99 }} />
+                            <div style={{ width: 44, height: 4, borderRadius: 3, background: "var(--border)", overflow: "hidden" }}>
+                              <div style={{ height: "100%", width: `${r.confidence * 100}%`, background: r.confidence > 0.8 ? "#0fc38f" : r.confidence > 0.5 ? "#ff954d" : "#64748b", borderRadius: 3 }} />
                             </div>
                             <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--muted)", minWidth: 38 }}>{(r.confidence * 100).toFixed(1)}%</span>
                           </div>
@@ -637,10 +641,10 @@ export default function App() {
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
                   <button disabled={page <= 1} onClick={() => setPage(p => p - 1)}
-                    style={{ padding: "4px 10px", borderRadius: 4, border: "1px solid var(--border)", background: "transparent", color: page <= 1 ? "var(--border)" : "var(--text)", cursor: page <= 1 ? "default" : "pointer", fontSize: 12 }}>‹ 上一页</button>
+                    style={{ padding: "4px 10px", borderRadius: 3, border: "1px solid var(--border)", background: "transparent", color: page <= 1 ? "var(--border)" : "var(--text)", cursor: page <= 1 ? "default" : "pointer", fontSize: 12 }}>‹ 上一页</button>
                   <span style={{ padding: "4px 12px", fontSize: 12, color: "var(--muted)", display: "flex", alignItems: "center" }}>{page} / {totalPages || 1}</span>
                   <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}
-                    style={{ padding: "4px 10px", borderRadius: 4, border: "1px solid var(--border)", background: "transparent", color: page >= totalPages ? "var(--border)" : "var(--text)", cursor: page >= totalPages ? "default" : "pointer", fontSize: 12 }}>下一页 ›</button>
+                    style={{ padding: "4px 10px", borderRadius: 3, border: "1px solid var(--border)", background: "transparent", color: page >= totalPages ? "var(--border)" : "var(--text)", cursor: page >= totalPages ? "default" : "pointer", fontSize: 12 }}>下一页 ›</button>
                 </div>
               </div>
             </div>

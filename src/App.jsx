@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import DiagnosticDemo from './diagnostic-demo'
 import BladeMonitorDashboard from './BladeMonitorDashboard/index'
-import IndustrialVisionPlatform from './industrial-vision-platform'
+import IndustrialVisionPlatform from './industrial-vision-platform/index'
 import SmartAutoModeling from './smart-auto-modeling/index'
 import { defaultTheme, darkTheme, applyTheme } from './theme'
 import './App.less'

@@ -295,7 +295,7 @@ export interface ModelItem {
   progress?: number;
   ptCfg: PtCfgItem[];
   iterHistory: IterHistoryItem[];
-  diag: DiagInfo;
+  diag?: DiagInfo;
 }
 
 export interface DiagInfo {
