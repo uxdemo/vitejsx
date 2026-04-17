@@ -1,76 +1,208 @@
 .app-container {
   width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  min-height: 100vh;
   background: @body-background;
   color: @text-color;
 }
 
-.app-nav {
-  background: linear-gradient(135deg, @primary-color 0%, @blue-color 100%);
-  color: @heading-color;
-  padding: 15px 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: @box-shadow-base;
+// ── TopBar ──────────────────────────────────────────────
+.app-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
-}
-
-.nav-brand {
-  font-size: 18px;
-  font-weight: 600;
+  height: 48px;
+  background: var(--component-background);
+  border-bottom: 1px solid var(--border-color-split);
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: @heading-color;
+  padding: 0 16px;
+  gap: 12px;
 }
 
-.nav-links {
+.app-topbar-hamburger {
+  font-size: 18px;
+  color: var(--text-color);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.app-topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color);
+  flex: 1;
+}
+
+.app-topbar-right {
   display: flex;
+  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
-.nav-link {
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid @border-color-base;
-  border-radius: 6px;
-  color: @heading-color;
+.app-theme-toggle {
+  padding: 0 12px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border-color-base);
+  border-radius: 2px;
+  color: var(--text-color);
   font-size: 12px;
-  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
 }
 
-.nav-link:hover {
-  background: @background-color-light;
-  border-color: @primary-color;
+// ── Drawer ──────────────────────────────────────────────
+.app-drawer-header {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-color-split);
+  flex-shrink: 0;
 }
 
-.nav-link.active {
-  background: @primary-color;
-  border-color: @primary-color;
-  color: #fff;
+.app-drawer-header-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-color);
 }
 
-.theme-toggle {
-  background: @component-background !important;
-  color: @text-color !important;
-  border-color: @border-color-base !important;
+.app-drawer-close {
+  font-size: 14px;
+  color: var(--text-color-secondary);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-color);
+  }
 }
 
+// ── Breadcrumb ──────────────────────────────────────────
+.app-breadcrumb {
+  position: fixed;
+  top: 48px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: var(--component-background);
+  border-bottom: 1px solid var(--border-color-split);
+
+  .ant-breadcrumb {
+    font-size: 13px;
+
+    .ant-breadcrumb-separator {
+      color: var(--text-color-secondary);
+    }
+
+    span:last-child .ant-breadcrumb-link {
+      color: var(--text-color);
+    }
+
+    span:not(:last-child) .ant-breadcrumb-link {
+      color: var(--text-color-secondary);
+    }
+  }
+}
+
+// ── Main Content ─────────────────────────────────────────
 .app-main {
-  flex: 1;
-  overflow: auto;
-  background: @body-background;
+  position: fixed;
+  top: 90px; // topBar(48) + breadcrumb(42)
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--body-background);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.app-page {
+  margin: 20px;
+  min-height: calc(100vh - 130px); // 100vh - topBar(48) - breadcrumb(42) - margin上下(40)
+  background: var(--component-background);
+  box-sizing: border-box;
 }
 
 #root {
   width: 100%;
   height: 100vh;
+}
+
+// ── Ant Design 主题覆盖（Menu / Table）────────────────────
+.ant-menu {
+  background: var(--component-background) !important;
+  color: var(--text-color) !important;
+
+  .ant-menu-item {
+    color: var(--text-color) !important;
+
+    .anticon {
+      color: var(--text-color) !important;
+    }
+
+    &:hover {
+      color: var(--primary-color) !important;
+      background: var(--background-color-light) !important;
+
+      .anticon {
+        color: var(--primary-color) !important;
+      }
+    }
+
+    &.ant-menu-item-selected {
+      background: var(--primary-color-bg) !important;
+      color: var(--primary-color) !important;
+
+      .anticon {
+        color: var(--primary-color) !important;
+      }
+
+      &::after {
+        border-right-color: var(--primary-color) !important;
+      }
+    }
+  }
+}
+
+.ant-table {
+  background: var(--component-background) !important;
+  color: var(--text-color) !important;
+
+  .ant-table-thead > tr > th {
+    background: var(--background-color-light) !important;
+    color: var(--text-color) !important;
+    border-bottom-color: var(--border-color-split) !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    background: var(--component-background) !important;
+    color: var(--text-color) !important;
+    border-bottom-color: var(--border-color-split) !important;
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background: var(--background-color-light) !important;
+  }
+
+  .ant-table-placeholder {
+    background: var(--component-background) !important;
+    color: var(--text-color-secondary) !important;
+  }
 }

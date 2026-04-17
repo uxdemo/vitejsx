@@ -451,6 +451,146 @@ const columns = [
 
 ### 8. 导航规范 Navigation
 
+#### 8.0 顶部导航栏 TopBar + 可折叠侧边菜单
+
+TopBar 高度固定 **48px**，背景 `var(--component-background)`，底部 `1px solid var(--border-color-split)`。
+汉堡按钮（折叠触发器）位于 TopBar **最左侧**，点击展开/收起侧边抽屉菜单。
+
+```jsx
+import React, { useState } from 'react';
+import { Menu, Icon, Drawer } from 'antd';
+const { SubMenu, Item: MenuItem } = Menu;
+
+// ─── 菜单数据（示例）
+const NAV_MENUS = [
+  {
+    key: 'monitor',
+    icon: 'dashboard',
+    title: '监控中心',
+    children: [
+      { key: 'monitor-overview', title: '总览' },
+      { key: 'monitor-alarm',   title: '告警管理' },
+    ],
+  },
+  {
+    key: 'analysis',
+    icon: 'bar-chart',
+    title: '数据分析',
+    children: [
+      { key: 'analysis-trend',  title: '趋势分析' },
+      { key: 'analysis-report', title: '报表中心' },
+    ],
+  },
+  { key: 'settings', icon: 'setting', title: '系统设置' },
+];
+
+// ─── TopBar 组件
+const TopBar = ({ title = '系统名称', activeKey, onSelect }) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  return (
+    <>
+      {/* TopBar */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          height: 48,
+          background: 'var(--component-background)',
+          borderBottom: '1px solid var(--border-color-split)',
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 16px',
+          gap: 12,
+        }}>
+        {/* 汉堡折叠按钮 — 最左侧 */}
+        <Icon
+          type="menu"
+          onClick={() => setDrawerOpen(true)}
+          style={{
+            fontSize: 18,
+            color: 'var(--text-color)',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        />
+
+        {/* 系统标题 */}
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#fff', letterSpacing: 0.5 }}>
+          {title}
+        </span>
+
+        {/* 右侧操作区（自行扩展） */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+          <Icon type="bell" style={{ fontSize: 16, color: 'var(--text-color)', cursor: 'pointer' }} />
+          <Icon type="user" style={{ fontSize: 16, color: 'var(--text-color)', cursor: 'pointer' }} />
+        </div>
+      </div>
+
+      {/* 侧边抽屉菜单 */}
+      <Drawer
+        placement="left"
+        closable={false}
+        visible={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        width={220}
+        bodyStyle={{ padding: 0, background: 'var(--component-background)' }}
+        style={{ top: 48 }}          // 从 TopBar 底部开始
+        maskStyle={{ top: 48 }}      // mask 同样从 48px 开始
+        getContainer={false}         // 挂载在当前 DOM，避免遮挡 TopBar
+        zIndex={999}>
+        <Menu
+          mode="inline"
+          selectedKeys={[activeKey]}
+          defaultOpenKeys={NAV_MENUS.filter((m) => m.children).map((m) => m.key)}
+          onClick={({ key }) => { onSelect && onSelect(key); setDrawerOpen(false); }}
+          style={{
+            background: 'var(--component-background)',
+            border: 'none',
+            color: 'var(--text-color)',
+            height: '100%',
+          }}
+          theme="dark">
+          {NAV_MENUS.map((m) =>
+            m.children ? (
+              <SubMenu
+                key={m.key}
+                title={
+                  <span>
+                    <Icon type={m.icon} />
+                    <span>{m.title}</span>
+                  </span>
+                }>
+                {m.children.map((c) => (
+                  <MenuItem key={c.key}>{c.title}</MenuItem>
+                ))}
+              </SubMenu>
+            ) : (
+              <MenuItem key={m.key}>
+                <Icon type={m.icon} />
+                <span>{m.title}</span>
+              </MenuItem>
+            ),
+          )}
+        </Menu>
+      </Drawer>
+    </>
+  );
+};
+```
+
+**要点：**
+- TopBar `position: fixed; top: 0; height: 48px`，页面内容区需 `marginTop: 48px` 或 `paddingTop: 48px` 留出空间
+- Drawer `style={{ top: 48 }}` + `maskStyle={{ top: 48 }}` 确保抽屉从 TopBar 底部展开，不遮挡导航栏
+- Menu 使用 `theme="dark"`，配合全局 `antchange.less` 深色样式
+- 菜单项选中态背景 `var(--background-color-light)`，文字 `var(--heading-color)`
+- 折叠触发器 `Icon type="menu"` 放置于 TopBar 最左侧，`flexShrink: 0` 防止被压缩
+
+---
+
 #### 8.1 页签栏 Tabs
 
 来自 `antchange.less`：tabs bar 底部线颜色 `var(--border-color-base)`。
@@ -822,6 +962,92 @@ export default Form.create()(EditModal);
 
 ---
 
+### 14. 页面布局规范 Page Layout
+
+页面布局由全局 `Container` 组件控制，生成页面时**必须**与其保持一致。
+
+#### 布局尺寸常量
+
+| 常量           | 值     | 含义                               |
+| -------------- | ------ | ---------------------------------- |
+| `topBarHeight` | `48px` | 顶部导航栏高度                     |
+| `navHeight`    | `42px` | 面包屑 / 二级导航高度              |
+| `noTipHeight`  | `90px` | 无 License 提示条时的总 Header 高度（48 + 42） |
+
+#### 内容区高度公式（来自 `container.tsx`）
+
+```
+// 标准内容区（有面包屑）
+minHeight = calc(100vh - 90px)
+
+// 无面包屑（hideNav=true）
+minHeight = calc(100vh - 48px)
+
+// 带内部 padding 的滚动区（useNew 模式，无 footer）
+minHeight = calc(100vh - 90px - 48px)   →   calc(100vh - 138px)
+
+// 带内部 padding 的滚动区（useNew 模式，有悬浮 footer=60px）
+minHeight = calc(100vh - 90px - 48px - 60px)  →  calc(100vh - 198px)
+```
+
+#### 页面外层 Wrapper 标准写法
+
+```jsx
+// ✅ 标准页面（有顶部栏 + 面包屑）
+// Container 已处理 marginTop 和滚动，页面只需提供内容区
+<div
+  style={{
+    padding: 24,
+    minHeight: 'calc(100vh - 90px)',
+    background: 'var(--body-background)',
+  }}>
+  {/* 页面内容 */}
+</div>
+
+// ✅ hideNav 页面（仅顶部栏，无面包屑）
+<div
+  style={{
+    padding: 24,
+    minHeight: 'calc(100vh - 48px)',
+    background: 'var(--body-background)',
+  }}>
+  {/* 页面内容 */}
+</div>
+
+// ✅ 带悬浮底部操作栏的页面（hasFooter，footer 高度 60px）
+<div
+  style={{
+    padding: 24,
+    minHeight: 'calc(100vh - 90px)',
+    background: 'var(--body-background)',
+    paddingBottom: 84, // 24 内边距 + 60 footer 高度
+  }}>
+  {/* 页面内容 */}
+</div>
+```
+
+#### 左右分栏布局（`Array.isArray(children)`）
+
+Container 传入数组 children 时左右分栏，左侧固定宽度（由 `css.leftWrap` 控制），右侧自适应：
+
+```jsx
+// 使用 Container 左右分栏时（外部已处理，页面无需自写）
+<Container>
+  {[<LeftSidePanel />, <RightContent />]}
+</Container>
+```
+
+生成的单页组件 **不需要** 自写 `marginTop` 或 `position: fixed` 逻辑，这些由 Container 统一处理。
+
+#### 禁止事项
+
+- ❌ 禁止在页面组件内部自写 `marginTop: 90px` 或 `top: 48px` 等 header 偏移
+- ❌ 禁止使用 `height: 100vh` 作为内容区高度（会遮挡 header）
+- ❌ 禁止硬编码 `minHeight: calc(100vh - 120px)` 等与规范不符的值
+- ✅ 始终使用 `minHeight: calc(100vh - 90px)`（标准）或 `calc(100vh - 48px)`（hideNav）
+
+---
+
 ## 页面类型模板
 
 ### 1. 列表页（List Page）
@@ -955,7 +1181,7 @@ class ListPage extends Component {
     };
 
     return (
-      <div style={{ padding: 24, background: 'var(--body-background)', minHeight: '100vh' }}>
+      <div style={{ padding: 24, background: 'var(--body-background)', minHeight: 'calc(100vh - 90px)' }}>
         {/* 搜索区 */}
         <Card
           style={{ marginBottom: 16, background: 'transparent', border: '1px solid var(--border-color-base)' }}
@@ -1057,7 +1283,7 @@ class DetailPage extends Component {
     const safeVal = (val) => (val != null ? val : '—');
 
     return (
-      <div style={{ padding: 24, background: 'var(--body-background)', minHeight: '100vh' }}>
+      <div style={{ padding: 24, background: 'var(--body-background)', minHeight: 'calc(100vh - 90px)' }}>
         <Spin spinning={loading}>
           <Card
             title={<span style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>详情信息</span>}
@@ -1126,7 +1352,7 @@ class StepsPage extends Component {
     ];
 
     return (
-      <div style={{ padding: 24, background: 'var(--body-background)', minHeight: '100vh' }}>
+      <div style={{ padding: 24, background: 'var(--body-background)', minHeight: 'calc(100vh - 90px)' }}>
         <Card style={{ background: 'transparent', border: '1px solid var(--border-color-base)' }}>
           <Steps current={current} style={{ marginBottom: 32 }}>
             {steps.map((s, i) => (
@@ -1164,6 +1390,14 @@ export default StepsPage;
 ## 强制规范 Checklist
 
 输出任何代码前，必须在脑内逐项确认：
+
+### 页面布局
+
+- [ ] 页面外层 wrapper 使用 `minHeight: 'calc(100vh - 90px)'`（标准，有面包屑）
+- [ ] 无面包屑页面（hideNav）使用 `minHeight: 'calc(100vh - 48px)'`
+- [ ] 带悬浮 footer 页面加 `paddingBottom: 84`（24 + 60）
+- [ ] 禁止在页面内部自写 `marginTop` header 偏移（由 Container 统一处理）
+- [ ] 禁止使用 `height: 100vh` 作为内容区高度
 
 ### 规范合规
 
