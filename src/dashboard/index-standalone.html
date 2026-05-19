@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>清洁能源燃机预警诊断系统 - 统计概览</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+/* OFM 规范 CSS 变量 */
+:root {
+  --ofm-primary:          #00C5F9;
+  --ofm-primary-light:    rgba(0, 197, 249, 0.15);
+  --ofm-primary-hover:    #198AB4;
+  --ofm-bg-page:          #171A1A;
+  --ofm-bg-component:     #24282C;
+  --ofm-bg-card:          #24282C;
+  --ofm-bg-dropdown:      #13274A;
+  --ofm-bg-light:         rgba(255, 255, 255, 0.05);
+  --ofm-text-primary:     #FFFFFF;
+  --ofm-text-regular:     rgba(255,255,255,0.6);
+  --ofm-text-secondary:   rgba(255,255,255,0.45);
+  --ofm-text-placeholder: rgba(255,255,255,0.3);
+  --ofm-border:           rgba(255, 255, 255, 0.3);
+  --ofm-border-split:     rgba(255, 255, 255, 0.1);
+  --ofm-success:          #0FC38F;
+  --ofm-warning:          #FF954D;
+  --ofm-error:            #FF5413;
+  --ofm-shadow:           0px 2px 12px -2px rgba(0, 0, 0, 0.4);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--ofm-border-split);border-radius:3px}
+::-webkit-scrollbar-track{background:transparent}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+body{
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--ofm-bg-page);
+  color: var(--ofm-text-regular);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.m{position:relative;z-index:1;padding:12px 20px;flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+.hd{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--ofm-border-split);margin-bottom:16px;flex-shrink:0}
+.hd-t{font-size:24px;font-weight:700;letter-spacing:2px;color:var(--ofm-text-primary)}
+.hd-s{font-size:12px;color:var(--ofm-text-secondary);letter-spacing:1px;margin-top:6px}
+.hd-time{font-size:14px;color:var(--ofm-primary);letter-spacing:1px;font-family:'Orbitron',monospace;margin-bottom:4px}
+.hd-org{font-size:12px;color:var(--ofm-text-placeholder);letter-spacing:1px;margin-top:2px}
+
+/* KPI 容器 */
+.kpi{display:flex;margin-bottom:8px;flex-shrink:0;background:transparent;border:none;overflow:visible;box-shadow:none}
+.kpi-i{flex:1;text-align:center;padding:6px 4px;border-right:none}
+.kpi-i:last-child{border-right:none}
+.kpi-v{display:inline-flex;align-items:baseline;justify-content:center;font-size:30px;font-weight:900;color:#00FCFF;line-height:1;font-family:'SimHei', 'Heiti SC', sans-serif;white-space:nowrap;-webkit-text-stroke:1px currentColor}
+.kpi-u{font-size:14px;color:var(--ofm-text-secondary);margin-left:4px;font-family:'PingFang SC',sans-serif;font-weight:normal;}
+.kpi-l{font-size:12px;color:var(--ofm-text-secondary);margin-top:3px;white-space:nowrap}
+
+/* Tab 栏 */
+.tab-bar{display:flex;gap:8px;margin-bottom:16px;flex-shrink:0;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ofm-border-split)}
+.tab-btn{padding:8px 24px;font-size:14px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ofm-text-secondary);border-bottom:2px solid transparent;transition:all .3s}
+.tab-btn.active{color:var(--ofm-primary);border-bottom:2px solid var(--ofm-primary)}
+
+.tab-content{flex:1;overflow:auto;padding-bottom:16px}
+
+/* 卡片模块 (sec) */
+.sec{background:var(--ofm-bg-card);border:1px solid var(--ofm-border-split);border-radius:4px;padding:12px 16px;box-shadow:var(--ofm-shadow)}
+.sec-h{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:4px;height:16px;border-radius:2px;flex-shrink:0}
+.sec-t{font-size:14px;font-weight:600;color:var(--ofm-text-primary)}
+.sub-lk{margin-left:auto;cursor:pointer;font-size:14px;color:var(--ofm-text-secondary);font-weight:700;line-height:1}
+
+/* 表格重绘 */
+table{width:100%;border-collapse:collapse}
+th{font-weight:600;font-size:11px;color:var(--ofm-text-primary);padding:8px 6px;text-align:center;border-bottom:1px solid var(--ofm-border-split);background:var(--ofm-bg-component);cursor:pointer;user-select:none;white-space:nowrap}
+th:first-child{text-align:left;padding-left:12px}
+th:last-child{padding-right:12px}
+th:hover{color:var(--ofm-primary)}
+th.nosort{cursor:default}
+th.nosort:hover{color:var(--ofm-text-primary)}
+td{padding:8px 6px;font-size:11px;color:var(--ofm-text-regular);text-align:center;border-bottom:1px solid var(--ofm-border-split)}
+td:first-child{text-align:left;padding-left:12px}
+td:last-child{padding-right:12px}
+tr{transition: background .2s}
+tbody tr:hover td{background:rgba(255, 255, 255, 0.05)}
+tbody tr.tr-unack td{background:rgba(255,84,19,0.1)}
+tbody tr.tr-unack:hover td{background:rgba(255,84,19,0.2)}
+
+.si{display:inline-flex;flex-direction:column;margin-left:4px;vertical-align:middle;font-size:8px;line-height:1;gap:0}
+.si .u,.si .d{color:var(--ofm-text-placeholder)}
+th.asc .si .u{color:var(--ofm-primary)}
+th.desc .si .d{color:var(--ofm-primary)}
+
+.rk{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:3px;font-size:11px;font-weight:700;margin-right:6px;flex-shrink:0}
+.rk1{background:rgba(32, 201, 151, 0.5);color:#FFF}.rk2{background:rgba(77, 150, 255, 0.5);color:#FFF}.rk3{background:rgba(255, 217, 61, 0.5);color:#FFF}.rkn{background:var(--ofm-bg-component);color:var(--ofm-text-placeholder)}
+
+.cg{color:var(--ofm-success)!important;font-weight:600!important}
+.cy{color:var(--ofm-warning)!important;font-weight:600!important}
+.cr{color:var(--ofm-error)!important;font-weight:600!important}
+
+/* 控件 */
+.tog{padding:4px 14px;border-radius:3px;font-size:12px;cursor:pointer;border:1px solid var(--ofm-border-split);background:var(--ofm-bg-component);color:var(--ofm-text-regular);transition:all .2s}
+.tog.on{background:var(--ofm-primary-light);color:var(--ofm-primary);border-color:var(--ofm-primary)}
+
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(255,84,19,.15);color:var(--ofm-error);animation:pulse 2s infinite}
+
+.pg{padding:4px 10px;border-radius:3px;font-size:11px;border:1px solid var(--ofm-border-split);cursor:pointer;background:var(--ofm-bg-component);color:var(--ofm-text-regular)}
+.pg:hover{border-color:var(--ofm-primary);color:var(--ofm-primary)}
+.pg.on{background:var(--ofm-primary-light);color:var(--ofm-primary);border-color:var(--ofm-primary)}
+.pg:disabled{opacity:.3;cursor:not-allowed;border-color:var(--ofm-border-split);color:var(--ofm-text-regular)}
+
+.lh{padding:2px 6px;border-radius:3px;font-size:11px;font-weight:600;background:rgba(255,84,19,.15);color:var(--ofm-error)}
+.lm{padding:2px 6px;border-radius:3px;font-size:11px;font-weight:600;background:rgba(255,149,77,.15);color:var(--ofm-warning)}
+.ll{padding:2px 6px;border-radius:3px;font-size:11px;font-weight:600;background:rgba(15,195,143,.15);color:var(--ofm-success)}
+.sd{padding:2px 6px;border-radius:3px;font-size:11px;font-weight:500;background:rgba(15,195,143,.15);color:var(--ofm-success)}
+.sw{padding:2px 6px;border-radius:3px;font-size:11px;font-weight:500;background:rgba(255,149,77,.15);color:var(--ofm-warning)}
+
+.di{background:var(--ofm-bg-component);border:1px solid var(--ofm-border-split);border-radius:3px;color:var(--ofm-text-primary);padding:4px 8px;font-size:12px;outline:none;color-scheme:dark}
+.cut{padding:4px 12px;border-radius:3px;font-size:12px;cursor:pointer;border:1px solid var(--ofm-border-split);background:var(--ofm-bg-component);color:var(--ofm-text-regular);transition:all .2s}
+.cut.on{background:var(--ofm-primary-light);color:var(--ofm-primary);border-color:var(--ofm-primary)}
+
+a.link{color:var(--ofm-primary);text-decoration:none;cursor:pointer}
+a.link:hover{color:var(--ofm-primary-hover);text-decoration:underline}
+
+.ellipsis{max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:middle;cursor:default}
+
+.tooltip{position:relative;display:inline-block}
+.tooltip .tip-text{visibility:hidden;background:var(--ofm-bg-dropdown);color:var(--ofm-text-regular);font-size:11px;padding:8px 12px;border-radius:4px;border:1px solid var(--ofm-border-split);position:absolute;z-index:99;bottom:120%;left:50%;transform:translateX(-50%);white-space:normal;width:240px;line-height:1.5;box-shadow:var(--ofm-shadow)}
+.tooltip:hover .tip-text{visibility:visible}
+
+/* 柱状图 Hover 特效 */
+.bar-hov { transition: filter 0.2s; cursor: pointer; }
+.bar-hov:hover { filter: brightness(1.3); }
+</style>
+</head>
+<body>
+<div id="app" class="m"></div>
+<script>
+// Mock 数据
+var P=["京西热电","京阳热电","京桥热电","高安屯热电","京丰燃气","未来热电","上庄热电","深圳钰湖","钰海电力","京宜热电"];
+var PC=["#0FC38F","#FF6B6B","#00C5F9","#FFD93D","#4D96FF","#CC5DE8","#FF954D","#20C997","#F06595","#74C0FC"];
+var SP=["燃气","锅炉","汽机","电气","公用"];
+var SPC=["#00C5F9","#FF6B6B","#FFD93D","#20C997","#4D96FF"];
+var CUTS=[{l:"近一周",d:7},{l:"近一个月",d:30},{l:"近六个月",d:180},{l:"近一年",d:365},{l:"上线至今",d:189}];
+var BD=new Date(2026,3,15);
+
+function fd(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function R(s){var x=s;return function(){x=(x*16807)%2147483647;return(x-1)/2147483646}}
+
+var scores=(function(){var r=R(42);return P.map(function(n,i){
+  var lf=+(0.2+r()*0.8).toFixed(2),lr=+(35+r()*60).toFixed(1),cr=+(45+r()*50).toFixed(1),nf=+(55+r()*40).toFixed(1),aa=+(50+r()*45).toFixed(1),ar=+(25+r()*70).toFixed(1),acr=+(20+r()*70).toFixed(1),tr=+(40+r()*50).toFixed(1);
+  var amr=+(30+r()*60).toFixed(1);
+  var sc=+(Math.min(lf,1)*20+(lr/100)*20+(cr/100)*20+(nf/100)*10+(aa/100)*10+Math.min(ar/100,1)*10+Math.min(acr/100,1)*10).toFixed(1);
+  return{name:n,color:PC[i],lf:lf,lr:lr,cr:cr,nf:nf,aa:aa,ar:ar,acr:acr,tr:tr,amr:amr,sc:+sc,
+    sm:SP.map(function(){return Math.floor(30+r()*60)}),onlineRate:+(60+r()*35).toFixed(0),
+    sa:SP.map(function(){return Math.floor(15+r()*50)}),saP:+(30+r()*60).toFixed(1),saH:+(40+r()*50).toFixed(1),saA:+(50+r()*40).toFixed(1),
+    ss:SP.map(function(){return Math.floor(5+r()*25)}),ssC:+(20+r()*60).toFixed(1),ssU:+(10+r()*50).toFixed(1),
+    sca:SP.map(function(){return Math.floor(3+r()*18)}),scaC:+(15+r()*60).toFixed(1),scaU:+(5+r()*30).toFixed(1)};
+})})();
+
+var modelNames=["轴温预警","振动预警","压力预警","效率预警","油温预警","排温预警","火检预警","进气预警","泄漏预警","转速预警","温差预警","负荷预警"];
+var faultDescs=["轴承温度持续升高，已超过一级预警阈值，建议检查润滑油系统","振动幅值突增，频谱分析显示1X分量异常偏高","排气温度离散度增大，个别热电偶读数偏差超限","压气机效率下降明显，可能存在叶片结垢或损伤","润滑油温度偏高，冷却系统可能存在异常","火焰检测信号波动，燃烧不稳定风险增加","进气压损增大，滤网可能需要清洗或更换","负荷波动异常，调节系统响应偏慢"];
+
+var alerts=(function(){var r=R(77),a=[];
+for(var i=0;i<40;i++){var d=new Date(2026,3,15,14,0);d.setMinutes(d.getMinutes()-Math.floor(r()*1440));
+  var sp=SP[Math.floor(r()*5)];
+  var isUnack = (new Date(2026,3,15,14,0).getTime() - d.getTime() <= 2*3600*1000) && (r()>.3);
+  a.push({id:i,plant:P[Math.floor(r()*10)],spec:sp,model:modelNames[Math.floor(r()*12)],
+    valChange:(r()>.5?"+":"-")+(r()*20).toFixed(1)+"℃",
+    time:String(d.getMonth()+1).padStart(2,"0")+"/"+String(d.getDate()).padStart(2,"0")+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"),
+    timeSort:d.getTime(),
+    fault:faultDescs[Math.floor(r()*8)],
+    level:r()>.65?"一级":r()>.35?"二级":"三级",
+    isUnack:isUnack});}
+a.sort(function(a,b){return b.timeSort-a.timeSort});return a})();
+
+var caseTypes=["系统生成","用户导入"];
+var caseNames=["轴承磨损分析报告","燃烧室高温诊断","压气机失速分析","润滑油劣化评估","振动频谱异常报告","排气温度偏差分析","启停异常分析报告","效率衰减诊断报告","叶片损伤评估","密封泄漏分析"];
+var sourceNames=["M1023-轴温预警","M2045-振动预警","M3012-压力预警","M4078-效率预警","M5034-油温预警","M6021-排温预警","告警单-20260412-003","告警单-20260413-007","告警单-20260414-001","告警单-20260415-005"];
+
+var cases=(function(){var r=R(55),a=[];
+for(var i=0;i<30;i++){var d=new Date(2026,3,15,14,0);d.setMinutes(d.getMinutes()-Math.floor(r()*10080));
+  var isUnack = (new Date(2026,3,15,14,0).getTime() - d.getTime() <= 2*3600*1000) && (r()>.3);
+  a.push({id:i,plant:P[Math.floor(r()*10)],spec:SP[Math.floor(r()*5)],
+    caseName:caseNames[Math.floor(r()*10)],caseType:caseTypes[Math.floor(r()*2)],
+    source:sourceNames[Math.floor(r()*10)],
+    fault:faultDescs[Math.floor(r()*8)],
+    time:(d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"),
+    timeSort:d.getTime(),
+    status:r()>.3?"已完成":"进行中",
+    isUnack:isUnack});}
+a.sort(function(a,b){return b.timeSort-a.timeSort});return a})();
+
+var st={tab:"status",sk:"sc",sd:"desc",mv:"plant",ap:0,cp:0,csk:"timeSort",csd:"desc",
+  sd0:fd(new Date(BD.getTime()-7*86400000)),ed0:fd(BD),act:"近一周",
+  tsd:fd(new Date(BD.getTime()-7*86400000)),ted:fd(BD),tact:"近一周",tsel:[0,1,2,3,4,5,6,7,8,9],
+  qsd0:fd(new Date(BD.getTime()-7*86400000)),qed0:fd(BD),qtsd:fd(new Date(BD.getTime()-7*86400000)),qted:fd(BD)};
+
+function cc(v){return v>80?"cg":v>60?"cy":"cr"}
+function lc(l){return l==="一级"?"lh":l==="二级"?"lm":"ll"}
+function si(){return'<span class="si"><span class="u">▲</span><span class="d">▼</span></span>'}
+
+// Trend data
+function makeDaily(nd){var r=R(99),arr=[];for(var i=nd-1;i>=0;i--){var d=new Date(BD);d.setDate(d.getDate()-i);var e={date:fd(d),dl:(d.getMonth()+1)+"/"+d.getDate()};for(var j=0;j<10;j++){e["lf_"+j]=+(0.2+r()*0.8).toFixed(2);e["lr_"+j]=+(30+r()*65).toFixed(1);e["tr_"+j]=+(35+r()*55).toFixed(1);e["am_"+j]=+(45+r()*45).toFixed(1);e["cr_"+j]=+(40+r()*55).toFixed(1);e["sc_"+j]=+(45+r()*45).toFixed(1);e["nm_"+j]=Math.floor(r()*5);e["na_"+j]=Math.floor(r()*12);e["nc_"+j]=Math.floor(r()*8);}e.nm=Math.floor(r()*9);e.na=Math.floor(r()*25);e.nc=Math.floor(r()*14);arr.push(e);}return arr;}
+function aggMonth(data,avgF){var mp={};data.forEach(function(d){var k=d.date.slice(0,7);if(!mp[k])mp[k]=[];mp[k].push(d);});var res=[];Object.keys(mp).sort().forEach(function(k){var ents=mp[k],o={date:k,dl:k.slice(5)};avgF.forEach(function(f){var s=0;ents.forEach(function(e){s+=(e[f]||0);});o[f]=+(s/ents.length).toFixed(2);});["nm","na","nc"].forEach(function(f){var s=0;ents.forEach(function(e){s+=(e[f]||0);});o[f]=s;for(var i=0;i<10;i++){var s2=0;ents.forEach(function(e){s2+=(e[f+"_"+i]||0);});o[f+"_"+i]=s2;}});res.push(o);});return res;}
+function xp(i,len,cw,pl){return len<=1?pl+cw/2:pl+(i/(len-1))*cw;}
+var TFS=[{key:"lf",label:"人均登录次数"},{key:"lr",label:"人员登录率"},{key:"cr",label:"告警日清率"},{key:"am",label:"平均模型占比率得分"},{key:"tr",label:"调优模型占比率"},{key:"sc",label:"考核得分"}];
+
+function ptPath(x,y,w,h,r){if(h<r)r=h;return 'M'+x+','+(y+h)+' L'+x+','+(y+r)+' A'+r+','+r+' 0 0 1 '+(x+r)+','+y+' L'+(x+w-r)+','+y+' A'+r+','+r+' 0 0 1 '+(x+w)+','+(y+r)+' L'+(x+w)+','+(y+h)+' Z';}
+
+function multiLineSVG(data,sel,fld,w,h){var pl=36,pr=8,pt=8,pb=22,cw=w-pl-pr,ch=h-pt-pb;var vs=[];data.forEach(function(d){sel.forEach(function(idx){var v=d[fld+"_"+idx];if(v!=null)vs.push(+v);});});if(vs.length===0)return'<div style="color:var(--ofm-text-placeholder);font-size:12px;padding:14px;text-align:center">请选择电厂</div>';var mx=Math.max.apply(null,vs)*1.05,mn=Math.min.apply(null,vs)*0.95,rg=mx-mn||1;var intv=Math.max(1,Math.floor(data.length/7));var s='<svg width="100%" viewBox="0 0 '+w+' '+h+'" style="display:block">';[0,.25,.5,.75,1].forEach(function(t){var y=pt+ch*(1-t);s+='<line x1="'+pl+'" y1="'+y+'" x2="'+(w-pr)+'" y2="'+y+'" stroke="var(--ofm-border-split)" stroke-dasharray="2,2"/>';s+='<text x="'+(pl-4)+'" y="'+(y+3)+'" fill="var(--ofm-text-placeholder)" font-size="8" text-anchor="end">'+(mn+rg*t).toFixed(1)+'</text>';});data.forEach(function(d,i){if(i%intv!==0&&i!==data.length-1)return;s+='<text x="'+xp(i,data.length,cw,pl)+'" y="'+(h-3)+'" fill="var(--ofm-text-placeholder)" font-size="8" text-anchor="middle">'+d.dl+'</text>';});sel.forEach(function(pi){var pts=data.map(function(d,i){var v=d[fld+"_"+pi];if(v==null)return null;return [xp(i,data.length,cw,pl), pt+ch*(1-(+v-mn)/rg)];}).filter(Boolean);if(pts.length>0){var dPath = 'M '+pts[0][0]+','+pts[0][1]; for(var i=0;i<pts.length-1;i++){var p0=pts[i], p1=pts[i+1]; var cx1 = p0[0] + (p1[0]-p0[0])*0.4, cx2 = p1[0] - (p1[0]-p0[0])*0.4; dPath += ' C '+cx1+','+p0[1]+' '+cx2+','+p1[1]+' '+p1[0]+','+p1[1];} s+='<path d="'+dPath+'" fill="none" stroke="'+PC[pi]+'" stroke-width="4" opacity="0.15" stroke-linejoin="round" stroke-linecap="round"/><path d="'+dPath+'" fill="none" stroke="'+PC[pi]+'" stroke-width="1.5" opacity="1" stroke-linejoin="round" stroke-linecap="round"/>';pts.forEach(function(ptCoord){s+='<circle cx="'+ptCoord[0]+'" cy="'+ptCoord[1]+'" r="2.5" fill="'+PC[pi]+'" opacity="1"/>'});}});s+='</svg>';return s;}
+
+function dualChart(items,lines,w,h,barColor){
+  barColor=barColor||'#00C5F9';var gradId='grad_'+barColor.replace('#','');
+  var pl=28,pr=28,pt=8,pb=18,cw=w-pl-pr,ch=h-pt-pb;
+  var maxBar=Math.max.apply(null,items.map(function(d){return d.bar}))||1;
+  var bw=cw/items.length*.65;
+  var s='<svg width="100%" viewBox="0 0 '+w+' '+h+'" style="display:block; overflow:visible">';
+  s+='<defs><linearGradient id="'+gradId+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+barColor+'" stop-opacity="0.9"/><stop offset="100%" stop-color="'+barColor+'" stop-opacity="0.05"/></linearGradient></defs>';
+  [0,.5,1].forEach(function(t){var y=pt+ch*(1-t);s+='<line x1="'+pl+'" y1="'+y+'" x2="'+(w-pr)+'" y2="'+y+'" stroke="var(--ofm-border-split)" stroke-dasharray="2,2"/>';s+='<text x="'+(pl-3)+'" y="'+(y+3)+'" fill="var(--ofm-text-placeholder)" font-size="8" text-anchor="end">'+(maxBar*t).toFixed(0)+'</text>'});
+  [0,.5,1].forEach(function(t){var y=pt+ch*(1-t);s+='<text x="'+(w-pr+3)+'" y="'+(y+3)+'" fill="var(--ofm-text-placeholder)" font-size="8" text-anchor="start">'+(t*100).toFixed(0)+'%</text>'});
+  
+  items.forEach(function(d,i){
+    var gw=cw/items.length,x=pl+i*gw+(gw-bw)/2,bh=(d.bar/maxBar)*ch*.85;
+    s+='<path class="bar-hov" d="'+ptPath(x,pt+ch-bh,bw,bh,4)+'" fill="url(#'+gradId+')"/>';
+    s+='<text x="'+(pl+i*gw+gw/2)+'" y="'+(h-2)+'" fill="var(--ofm-text-secondary)" font-size="8" text-anchor="middle">'+d.name+'</text>';
+    var tipHtml = '<div style="margin-bottom:4px;font-weight:700;color:'+d.color+'">'+d.name+'</div><div style="display:flex;justify-content:space-between;gap:12px;color:var(--ofm-text-secondary)"><span>总计数值</span><span style="font-weight:700;color:var(--ofm-text-primary)">'+d.bar+'</span></div>';
+    lines.forEach(function(line){
+      tipHtml += '<div style="display:flex;justify-content:space-between;gap:12px;color:var(--ofm-text-secondary)"><span><i style="width:8px;height:8px;border-radius:2px;background:'+line.color+';display:inline-block;margin-right:4px"></i>'+(line.label||line.key)+'</span><span style="font-weight:700;color:var(--ofm-text-primary)">'+d[line.key]+'%</span></div>';
+    });
+    var encodedHtml = encodeURIComponent(tipHtml);
+    s+='<rect x="'+(pl+i*gw)+'" y="'+pt+'" width="'+gw+'" height="'+ch+'" fill="transparent" cursor="pointer" onmousemove="showTip(event, \''+encodedHtml+'\')" onmouseleave="hideTip()"/>';
+  });
+  
+  lines.forEach(function(line){
+    var pts=items.map(function(d,i){var gw=cw/items.length,x=pl+i*gw+gw/2,y=pt+ch*(1-d[line.key]/100);return [x,y]});
+    if(pts.length>0){
+      var dPath='M '+pts[0][0]+','+pts[0][1];
+      for(var i=0;i<pts.length-1;i++){var p0=pts[i],p1=pts[i+1];var cx1=p0[0]+(p1[0]-p0[0])*0.4,cx2=p1[0]-(p1[0]-p0[0])*0.4;dPath+=' C '+cx1+','+p0[1]+' '+cx2+','+p1[1]+' '+p1[0]+','+p1[1];}
+      s+='<path d="'+dPath+'" fill="none" stroke="'+line.color+'" stroke-width="4" opacity="0.2" stroke-linejoin="round" stroke-linecap="round" style="pointer-events:none"/>';
+      s+='<path d="'+dPath+'" fill="none" stroke="'+line.color+'" stroke-width="1.5" opacity="1" stroke-linejoin="round" stroke-linecap="round" style="pointer-events:none"/>';
+      pts.forEach(function(ptCoord){s+='<circle cx="'+ptCoord[0]+'" cy="'+ptCoord[1]+'" r="2.5" fill="#FFFFFF" stroke="'+line.color+'" stroke-width="1.5" opacity="1" style="pointer-events:none"/>'})
+    }
+  });
+  s+='</svg>';return s;
+}
+
+function stackedBarWithLine(w,h){
+  var pl=28,pr=28,pt=8,pb=30,cw=w-pl-pr,ch=h-pt-pb;
+  var totals=scores.map(function(p){return p.sm.reduce(function(a,b){return a+b},0);});
+  var maxT=Math.max.apply(null,totals)||1;
+  var bw=cw/scores.length*.65;
+  var s='<svg width="100%" viewBox="0 0 '+w+' '+h+'" style="display:block; overflow:visible">';
+  [0,.25,.5,.75,1].forEach(function(t){var y=pt+ch*(1-t);s+='<line x1="'+pl+'" y1="'+y+'" x2="'+(w-pr)+'" y2="'+y+'" stroke="var(--ofm-border-split)" stroke-dasharray="2,2"/>';s+='<text x="'+(pl-3)+'" y="'+(y+3)+'" fill="var(--ofm-text-placeholder)" font-size="8" text-anchor="end">'+(maxT*t).toFixed(0)+'</text>';});
+  [0,.5,1].forEach(function(t){var y=pt+ch*(1-t);s+='<text x="'+(w-pr+3)+'" y="'+(y+3)+'" fill="var(--ofm-text-placeholder)" font-size="8" text-anchor="start">'+(t*100).toFixed(0)+'%</text>';});
+  scores.forEach(function(p,i){
+    var gw=cw/scores.length,x=pl+i*gw+(gw-bw)/2;
+    var cumH=0;
+    SP.forEach(function(sp,si){
+      var val=p.sm[si];var bh=(val/maxT)*ch*.92;
+      if (bh > 1) {
+        var barY = pt+ch-cumH-bh;
+        s+='<rect class="bar-hov" x="'+x+'" y="'+barY+'" width="'+bw+'" height="'+bh+'" rx="2" fill="'+SPC[si]+'"/>';
+        cumH += bh + 1;
+      }
+    });
+    s+='<text x="'+(x+bw/2)+'" y="'+(pt+ch-cumH-3)+'" fill="var(--ofm-text-secondary)" font-size="8" text-anchor="middle">'+totals[i]+'</text>';
+    var lbl=p.name.length>4?p.name.slice(0,4):p.name;
+    s+='<text x="'+(pl+i*gw+gw/2)+'" y="'+(h-2)+'" fill="var(--ofm-text-secondary)" font-size="8" text-anchor="middle">'+lbl+'</text>';
+
+    var tipHtml = '<div style="margin-bottom:4px;font-weight:700;color:'+p.color+'">'+p.name+'</div><div style="display:flex;justify-content:space-between;gap:12px;color:var(--ofm-text-secondary)"><span>总计模型</span><span style="font-weight:700;color:var(--ofm-text-primary)">'+totals[i]+'</span></div>';
+    SP.forEach(function(sp, si) {
+      tipHtml += '<div style="display:flex;justify-content:space-between;gap:12px;color:var(--ofm-text-secondary)"><span><i style="width:8px;height:8px;border-radius:2px;background:'+SPC[si]+';display:inline-block;margin-right:4px"></i>'+sp+'</span><span style="font-weight:700;color:var(--ofm-text-primary)">'+p.sm[si]+'</span></div>';
+    });
+    tipHtml += '<div style="margin-top:4px;padding-top:4px;border-top:1px solid var(--ofm-border-split);display:flex;justify-content:space-between;gap:12px;color:var(--ofm-text-secondary)"><span>上线率</span><span style="font-weight:700;color:var(--ofm-success)">'+p.onlineRate+'%</span></div>';
+    var encodedHtml = encodeURIComponent(tipHtml);
+    s+='<rect x="'+(pl+i*gw)+'" y="'+pt+'" width="'+gw+'" height="'+ch+'" fill="transparent" cursor="pointer" onmousemove="showTip(event, \''+encodedHtml+'\')" onmouseleave="hideTip()"/>';
+  });
+  // Online rate line
+  var pts=scores.map(function(p,i){var gw=cw/scores.length,x=pl+i*gw+gw/2,y=pt+ch*(1-p.onlineRate/100);return [x,y];});
+  if(pts.length>0){
+    var dPath = 'M '+pts[0][0]+','+pts[0][1];
+    for(var i=0;i<pts.length-1;i++){
+      var p0=pts[i], p1=pts[i+1];
+      var cx1=p0[0]+(p1[0]-p0[0])*0.4, cx2=p1[0]-(p1[0]-p0[0])*0.4;
+      dPath += ' C '+cx1+','+p0[1]+' '+cx2+','+p1[1]+' '+p1[0]+','+p1[1];
+    }
+    s+='<path d="'+dPath+'" fill="none" stroke="var(--ofm-success)" stroke-width="4" opacity="0.2" stroke-linejoin="round" stroke-linecap="round" style="pointer-events:none"/>';
+    s+='<path d="'+dPath+'" fill="none" stroke="var(--ofm-success)" stroke-width="2" opacity="1" stroke-linejoin="round" stroke-linecap="round" style="pointer-events:none"/>';
+    pts.forEach(function(ptCoord){s+='<circle cx="'+ptCoord[0]+'" cy="'+ptCoord[1]+'" r="3" fill="#FFFFFF" stroke="var(--ofm-success)" stroke-width="1.5" opacity="1" style="pointer-events:none"/>'});
+  }
+  s+='</svg>';return s;
+}
+function donutChartSVG(items, w, h) {
+  var cx = w*0.35, cy = h/2, r = Math.min(w*0.8,h)/2 * 0.75;
+  var strokeWidth = 12;
+  var rCenter = r - strokeWidth/2;
+  var total = items.reduce(function(a,b){return a+b.value},0);
+  if(total===0) return '';
+  var s = '<svg width="100%" viewBox="0 0 '+w+' '+h+'" style="display:block; overflow:visible">';
+  
+  var innerR = rCenter - strokeWidth/2 - 6;
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+innerR+'" fill="rgba(255,255,255,0.1)"/>';
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+innerR+'" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3,3"/>';
+
+  var startAngle = 0;
+  var gap = (strokeWidth + 1) / rCenter;
+  items.forEach(function(d) {
+    var pct = d.value / total;
+    var angle = pct * Math.PI * 2;
+    var endAngle = startAngle + angle;
+    
+    var effAngle = Math.max(0.01, angle - gap);
+    var drawStart = startAngle + (angle - effAngle)/2;
+    var drawEnd = drawStart + effAngle;
+    
+    var x1 = cx + rCenter * Math.sin(drawStart), y1 = cy - rCenter * Math.cos(drawStart);
+    var x2 = cx + rCenter * Math.sin(drawEnd), y2 = cy - rCenter * Math.cos(drawEnd);
+    var largeArc = (drawEnd - drawStart) > Math.PI ? 1 : 0;
+    
+    s += '<path d="M '+x1+' '+y1+' A '+rCenter+' '+rCenter+' 0 '+largeArc+' 1 '+x2+' '+y2+'" fill="none" stroke="'+d.color+'" stroke-width="'+strokeWidth+'" stroke-linecap="round"/>';
+    
+    if (pct > 0.02) {
+       var midAngle = startAngle + angle/2;
+       var p1x = cx + (rCenter + strokeWidth/2 + 3) * Math.sin(midAngle);
+       var p1y = cy - (rCenter + strokeWidth/2 + 3) * Math.cos(midAngle);
+       
+       var lineAngle = midAngle;
+       if (d.name === "汽机") {
+           lineAngle = Math.PI - 0.7; // Force it to point diagonally bottom-right
+       }
+       
+       var p2x = cx + (rCenter + strokeWidth/2 + 18) * Math.sin(lineAngle);
+       var p2y = cy - (rCenter + strokeWidth/2 + 18) * Math.cos(lineAngle);
+       var isRight = Math.sin(lineAngle) >= 0;
+       var p3x = p2x + (isRight ? 18 : -18);
+       var p3y = p2y;
+       var align = isRight ? "start" : "end";
+       var textX = p3x + (isRight ? 6 : -6);
+       
+       s += '<g opacity="0.5">';
+       s += '<polyline points="'+p1x+','+p1y+' '+p2x+','+p2y+' '+p3x+','+p3y+'" fill="none" stroke="'+d.color+'" stroke-width="1" stroke-dasharray="2,2"/>';
+       s += '<circle cx="'+p1x+'" cy="'+p1y+'" r="1.5" fill="'+d.color+'"/>';
+       s += '<text x="'+textX+'" y="'+(p3y+4)+'" fill="'+d.color+'" font-size="12" font-weight="700" text-anchor="'+align+'">'+d.value+'</text>';
+       s += '</g>';
+    }
+    startAngle = endAngle;
+  });
+  
+  s += '<text x="'+cx+'" y="'+(cy+2)+'" fill="var(--ofm-text-primary)" font-size="16" font-weight="normal" text-anchor="middle">'+total+'</text>';
+  s += '<text x="'+cx+'" y="'+(cy+16)+'" fill="var(--ofm-text-secondary)" font-size="11" text-anchor="middle">总计</text>';
+  
+  var legX = w - 180;
+  var legY = (h - items.length*22)/2;
+  items.forEach(function(d, i) {
+     var yPos = legY + i*22 + 6;
+     s += '<rect x="'+legX+'" y="'+(yPos-4)+'" width="18" height="8" rx="4" fill="'+d.color+'"/>';
+     s += '<text x="'+(legX+30)+'" y="'+(yPos+4)+'" fill="var(--ofm-text-secondary)" font-size="12">'+d.name+'</text>';
+     s += '<text x="'+(legX+90)+'" y="'+(yPos+4)+'" fill="var(--ofm-text-primary)" font-size="13" font-weight="600">'+(d.value/total*100).toFixed(1)+'%</text>';
+     s += '<line x1="'+legX+'" y1="'+(yPos+11)+'" x2="'+(w-10)+'" y2="'+(yPos+11)+'" stroke="var(--ofm-border-split)" stroke-width="1" stroke-dasharray="2,2"/>';
+  });
+  
+  s += '</svg>';
+  return s;
+}
+
+function radarChartSVG(p, w, h) {
+  var maxLf = Math.max.apply(null, scores.map(function(s){return s.lf})) || 1;
+  var lfNorm = (p.lf / maxLf) * 100;
+  var axes = [
+    { label: "人员登录率", val: p.lr },
+    { label: "告警日清率", val: p.cr },
+    { label: "平均模型占比", val: p.amr },
+    { label: "调优模型占比", val: p.tr },
+    { label: "活跃度", val: lfNorm }
+  ];
+  var cx = w / 2, cy = h / 2, r = Math.min(w, h) / 2 * 0.65;
+  var s = '<svg width="100%" viewBox="0 0 '+w+' '+h+'" style="display:block;margin:0 auto">';
+  var numAxes = axes.length;
+  for(var lvl=4; lvl>=1; lvl--) {
+    var radius = r * (lvl/4), pts = [];
+    for(var i=0; i<numAxes; i++) {
+      var angle = Math.PI * 2 * i / numAxes - Math.PI / 2;
+      pts.push((cx + radius * Math.cos(angle)) + ',' + (cy + radius * Math.sin(angle)));
+    }
+    s += '<polygon points="'+pts.join(' ')+'" fill="rgba(255,255,255,0.03)" stroke="var(--ofm-border-split)" stroke-width="1"/>';
+  }
+  for(var i=0; i<numAxes; i++) {
+    var angle = Math.PI * 2 * i / numAxes - Math.PI / 2;
+    var x2 = cx + r * Math.cos(angle), y2 = cy + r * Math.sin(angle);
+    s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+x2+'" y2="'+y2+'" stroke="var(--ofm-border-split)" stroke-dasharray="2,2"/>';
+    var lx = cx + (r * 1.25) * Math.cos(angle), ly = cy + (r * 1.25) * Math.sin(angle);
+    var align = "middle";
+    if (Math.abs(Math.cos(angle)) > 0.1) align = Math.cos(angle) > 0 ? "start" : "end";
+    s += '<text x="'+lx+'" y="'+(ly+4)+'" fill="var(--ofm-text-secondary)" font-size="11" text-anchor="'+align+'">'+axes[i].label+'</text>';
+  }
+  var dataPts = [];
+  for(var i=0; i<numAxes; i++) {
+    var val = Math.max(0, Math.min(100, axes[i].val));
+    var angle = Math.PI * 2 * i / numAxes - Math.PI / 2;
+    var px = cx + r * (val/100) * Math.cos(angle), py = cy + r * (val/100) * Math.sin(angle);
+    dataPts.push(px + ',' + py);
+  }
+  s += '<polygon points="'+dataPts.join(' ')+'" fill="'+p.color+'" fill-opacity="0.2" stroke="'+p.color+'" stroke-width="2"/>';
+  for(var i=0; i<numAxes; i++) {
+    var pt = dataPts[i].split(',');
+    s += '<circle cx="'+pt[0]+'" cy="'+pt[1]+'" r="3.5" fill="#FFF" stroke="'+p.color+'" stroke-width="1.5"/>';
+  }
+  s += '<text x="'+cx+'" y="'+(cy-8)+'" fill="#FFFFFF" font-size="28" font-weight="700" text-anchor="middle">'+p.sc+'</text>';
+  s += '<text x="'+cx+'" y="'+(cy+14)+'" fill="var(--ofm-text-secondary)" font-size="10" text-anchor="middle">总得分</text>';
+  s += '</svg>';
+  return s;
+}
+
+function mkPager(cur,total,fn){
+  if(total<=1)return'';
+  return'<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px"><button class="pg" onclick="'+fn+'('+(cur>0?cur-1:0)+')"'+(cur===0?' disabled':'')+'>上一页</button><span style="font-size:11px;color:var(--ofm-text-secondary)">第 <span style="color:var(--ofm-primary)">'+(cur+1)+'</span> / '+total+' 页</span><button class="pg" onclick="'+fn+'('+(cur<total-1?cur+1:total-1)+')"'+(cur>=total-1?' disabled':'')+'>下一页</button></div>';
+}
+
+function render(){
+  var now=new Date();
+  var ts=now.getFullYear()+"/"+String(now.getMonth()+1).padStart(2,"0")+"/"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0")+":"+String(now.getSeconds()).padStart(2,"0");
+  var h='';
+  
+  // Header
+  h+='<div class="hd"><div><div class="hd-t">清洁能源燃机预警诊断系统</div><div class="hd-s">统计概览 · 平台运行全景监控</div></div><div style="text-align:right"><div class="hd-time">'+ts+'</div><div class="hd-org">平台公司 · 领导驾驶舱</div></div></div>';
+  
+  // KPI
+  h+='<div class="kpi">';
+  [{l:"接入电厂",v:"10",u:"家"},{l:"燃机台数/运行台数",v:"18/10",u:"台"},{l:"接入测点",v:"16.8万+",u:"个"},{l:"预警模型总数/在线模型数",v:"2432/2100",u:"个"},{l:"累计告警",v:"2319",u:"个"},{l:"累计案例",v:"981",u:"个"},{l:"今日新增告警",v:"23",u:"个"},{l:"本周新增案例",v:"6",u:"个"},{l:"当前登录人数",v:"37",u:"人"},{l:"累计监测天数",v:"189",u:"天"}].forEach(function(k){
+    var vHtml = k.v;
+    var extStyle = "";
+    if (k.l === "预警模型总数/在线模型数") {
+      vHtml = '<span style="color:#00FE27">2432</span>/2100';
+      extStyle = ' style="margin: 0 2vw;"';
+    }
+    if (k.l === "接入测点") {
+      vHtml = '16.8<span style="font-size:20px; font-weight:normal; -webkit-text-stroke:0; margin-left:2px;">万+</span>';
+    }
+    h+='<div class="kpi-i"'+extStyle+'><div class="kpi-v">'+vHtml+'</div><div class="kpi-l">'+k.l+'</div></div>';
+  });
+  h+='</div>';
+  
+  // Tab bar + Controls
+  h+='<div class="tab-bar"><div style="display:flex;gap:4px"><button class="tab-btn'+(st.tab==="status"?" active":"")+'" onclick="setTab(\'status\')">状态统计</button><button class="tab-btn'+(st.tab==="trend"?" active":"")+'" onclick="setTab(\'trend\')">趋势统计</button></div>';
+  if(st.tab==="status"){h+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12px;color:var(--ofm-text-secondary);font-weight:500">统计时间段</span><input type="date" class="di" value="'+st.qsd0+'" onchange="st.qsd0=this.value;st.act=\'\';renderTimeBar()"/><span style="color:var(--ofm-text-placeholder);font-size:12px">—</span><input type="date" class="di" value="'+st.qed0+'" onchange="st.qed0=this.value;st.act=\'\';renderTimeBar()"/>';CUTS.forEach(function(s){h+='<button class="cut'+(st.act===s.l?" on":"")+'" onclick="setCut(\''+s.l+'\','+s.d+')">'+s.l+'</button>'});h+='<button class="tog on" style="margin-left:4px;font-weight:600" onclick="doQuery()">查询</button></div>';}
+  if(st.tab==="trend"){h+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12px;color:var(--ofm-text-secondary);font-weight:500">统计时间段</span><input type="date" class="di" value="'+st.qtsd+'" onchange="st.qtsd=this.value;st.tact=\'\';renderTimeBar()"/><span style="color:var(--ofm-text-placeholder);font-size:12px">—</span><input type="date" class="di" value="'+st.qted+'" onchange="st.qted=this.value;st.tact=\'\';renderTimeBar()"/>';CUTS.forEach(function(s){h+='<button class="cut'+(st.tact===s.l?" on":"")+'" onclick="setTcut(\''+s.l+'\','+s.d+')">'+s.l+'</button>'});h+='<button class="tog on" style="margin-left:4px;font-weight:600" onclick="doTrendQuery()">查询</button></div>';}
+  h+='</div>';
+  h+='<div class="tab-content">';
+
+  if(st.tab==="status"){
+    h+='<div style="display:flex;flex-direction:column;gap:12px">';
+    
+    // ROW 1: 考核指标 (雷达图 + 榜单)
+    var sorted=scores.slice().sort(function(a,b){var av=a[st.sk],bv=b[st.sk];if(typeof av==="string")return st.sd==="asc"?av.localeCompare(bv):bv.localeCompare(av);return st.sd==="asc"?av-bv:bv-av});
+    if(!st.selP) st.selP = sorted[0].name;
+    var selPObj = scores.filter(function(x){return x.name===st.selP})[0] || sorted[0];
+    
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:var(--ofm-primary)"></span><span class="sec-t">考核指标与能力画像</span><span class="sub-lk" style="font-size:12px;font-weight:normal;color:var(--ofm-text-placeholder)">点击右侧排名查看对应电厂画像</span></div>';
+    h+='<div style="display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:center">';
+    
+    // Left: Radar
+    h+='<div style="text-align:center;position:relative">';
+    h+='<div style="position:absolute;top:0;left:0;font-size:16px;font-weight:700;color:'+selPObj.color+'">'+selPObj.name+'</div>';
+    h+=radarChartSVG(selPObj, 320, 260);
+    h+='</div>';
+
+    // Right: List (Clickable table)
+    var scols=[{k:"name",l:"电厂",sort:false},{k:"lf",l:"人均登录次数",sort:true},{k:"lr",l:"人员登录率",sort:true},{k:"cr",l:"告警日清率",sort:true},{k:"amr",l:"平均模型数量占比率",sort:true},{k:"tr",l:"调优模型占比率",sort:true},{k:"sc",l:"考核得分",sort:true}];
+    h+='<div style="overflow-x:auto; height:260px; overflow-y:auto; border:1px solid var(--ofm-border-split); border-radius:4px">';
+    h+='<table style="line-height:1.6; width:100%; margin:0"><thead><tr>';
+    scols.forEach(function(c){if(c.sort){var cls=st.sk===c.k?st.sd:"";h+='<th class="'+cls+'" onclick="doSort(\''+c.k+'\')" style="position:sticky;top:0;z-index:2;box-shadow:0 1px 0 var(--ofm-border-split)">'+c.l+si()+'</th>';}else{h+='<th class="nosort" style="position:sticky;top:0;z-index:2;box-shadow:0 1px 0 var(--ofm-border-split)">'+c.l+'</th>';}});
+    h+='</tr></thead><tbody>';
+    sorted.forEach(function(p,i){
+      var rk=i+1,rc=rk<=3?["rk1","rk2","rk3"][rk-1]:"rkn";
+      var isSel = (p.name === st.selP);
+      var trStyle = isSel ? 'background:rgba(255,255,255,0.08);cursor:pointer' : 'cursor:pointer';
+      h+='<tr style="'+trStyle+'" onclick="setSelP(\''+p.name+'\')">';
+      h+='<td><span class="rk '+rc+'">'+rk+'</span><span style="color:'+(isSel?p.color:'var(--ofm-text-primary)')+';font-weight:'+(isSel?'700':'normal')+'">'+p.name+'</span></td>';
+      h+='<td>'+p.lf+'</td><td>'+p.lr+'%</td>';
+      h+='<td class="'+cc(+p.cr)+'">'+p.cr+'%</td>';
+      h+='<td>'+p.amr+'%</td><td>'+p.tr+'%</td>';
+      h+='<td style="font-size:12px;font-weight:700;color:'+p.color+'">'+p.sc+'</td></tr>';
+    });
+    h+='</tbody></table></div>';
+    h+='</div></div>';
+
+    // ROW 2: 模型统计 和 告警统计 (一行展示)
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    // 模型统计
+    h+='<div class="sec" style="display:flex;flex-direction:column;"><div class="sec-h" style="flex-shrink:0;"><span class="dot" style="background:var(--ofm-primary)"></span><span class="sec-t">模型统计</span>';
+    h+='<div style="margin-left:auto;display:flex;gap:8px">';
+    SP.forEach(function(sp,si){h+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--ofm-text-secondary)"><i style="width:8px;height:8px;border-radius:2px;background:'+SPC[si]+';display:inline-block"></i>'+sp+'</span>';});
+    h+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--ofm-text-secondary)"><i style="width:12px;height:2px;background:var(--ofm-success);display:inline-block"></i>上线率</span>';
+    h+='</div></div>';
+    h+='<div style="flex:1; display:flex; align-items:center; justify-content:center; width:100%;">' + stackedBarWithLine(480,120) + '</div>';
+    h+='</div>';
+    // 告警统计
+    var aI=scores.map(function(p){return{name:p.name.length>4?p.name.slice(0,4):p.name,bar:p.sa.reduce(function(a,b){return a+b},0),color:p.color,saP:+p.saP,saH:+p.saH,saA:+p.saA}});
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#FF6B6B"></span><span class="sec-t">告警统计</span><div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">';[{c:"#00C5F9",l:"告警总数"},{c:"#00E5FF",l:"平均告警数占比率"},{c:"#E020A1",l:"告警处理率"},{c:"#FFD93D",l:"告警准确率"}].forEach(function(x){h+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--ofm-text-secondary)"><i style="width:8px;height:3px;border-radius:1px;background:'+x.c+';display:inline-block"></i>'+x.l+'</span>'});h+='</div></div>';h+=dualChart(aI,[{key:"saP",color:"#00E5FF"},{key:"saH",color:"#E020A1"},{key:"saA",color:"#FFD93D"}],480,120, '#00C5F9');h+='</div>';
+    h+='</div>';
+
+    // ROW 3: 告警单统计 和 案例统计 (一行展示)
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    var sI=scores.map(function(p){return{name:p.name.length>4?p.name.slice(0,4):p.name,bar:p.ss.reduce(function(a,b){return a+b},0),color:p.color,ssC:+p.ssC,ssU:+p.ssU}});
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#FFD93D"></span><span class="sec-t">告警单统计</span><div style="margin-left:auto;display:flex;gap:6px">';[{c:"#FF954D",l:"告警单数"},{c:"#0FC38F",l:"转换率"},{c:"#CC5DE8",l:"机组平均占比"}].forEach(function(x){h+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--ofm-text-secondary)"><i style="width:8px;height:3px;border-radius:1px;background:'+x.c+';display:inline-block"></i>'+x.l+'</span>'});h+='</div></div>';h+=dualChart(sI,[{key:"ssC",color:"#0FC38F"},{key:"ssU",color:"#CC5DE8"}],480,120, '#4D96FF');h+='</div>';
+    var cI=scores.map(function(p){return{name:p.name.length>4?p.name.slice(0,4):p.name,bar:p.sca.reduce(function(a,b){return a+b},0),color:p.color,scaC:+p.scaC,scaU:+p.scaU}});
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#CC5DE8"></span><span class="sec-t">案例统计</span><div style="margin-left:auto;display:flex;gap:6px">';[{c:"#FF954D",l:"案例数量"},{c:"#0FC38F",l:"转化率"},{c:"#CC5DE8",l:"机组平均占比"}].forEach(function(x){h+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--ofm-text-secondary)"><i style="width:8px;height:3px;border-radius:1px;background:'+x.c+';display:inline-block"></i>'+x.l+'</span>'});h+='</div></div>';h+=dualChart(cI,[{key:"scaC",color:"#0FC38F"},{key:"scaU",color:"#CC5DE8"}],480,120, '#FF954D');h+='</div>';
+    h+='</div>';
+
+    // NEW ROW: Pie charts
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    var spModels = SP.map(function(sp, i) { return { name: sp, value: scores.reduce(function(a, p) { return a + p.sm[i]; }, 0), color: SPC[i] }; });
+    var spCases = SP.map(function(sp, i) { return { name: sp, value: scores.reduce(function(a, p) { return a + p.sca[i]; }, 0), color: SPC[i] }; });
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#0FC38F"></span><span class="sec-t">各专业模型数量统计</span></div>';
+    h+=donutChartSVG(spModels, 480, 140);
+    h+='</div>';
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#FF954D"></span><span class="sec-t">各专业案例数量统计</span></div>';
+    h+=donutChartSVG(spCases, 480, 140);
+    h+='</div>';
+    h+='</div>';
+
+    // ROW 3
+    var PS=10;
+    var pA=alerts.slice(st.ap*PS,st.ap*PS+PS);
+    var sortedCases=cases.slice().sort(function(a,b){return st.csd==="asc"?a.timeSort-b.timeSort:b.timeSort-a.timeSort;});
+    var pC=sortedCases.slice(st.cp*PS,st.cp*PS+PS);
+    var aPg=Math.ceil(alerts.length/PS),cPg=Math.ceil(cases.length/PS);
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    
+    // Alerts
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#FF6B6B"></span><span class="sec-t">实时告警列表</span><span class="sub-lk">›</span><span class="badge" style="margin-left:8px">LIVE</span></div>';
+    h+='<table><thead><tr><th class="nosort">级别</th><th class="nosort">电厂</th><th class="nosort">专业</th><th class="nosort">模型名称</th><th class="nosort">数值变化</th><th class="nosort">故障现象</th><th class="nosort">最近预警时间</th></tr></thead><tbody>';
+    pA.forEach(function(a){
+      var cls = a.isUnack ? ' class="tr-unack"' : '';
+      h+='<tr'+cls+'><td><span class="'+lc(a.level)+'">'+a.level+'</span></td>';
+      h+='<td style="color:var(--ofm-text-primary)">'+a.plant+'</td>';
+      h+='<td>'+a.spec+'</td>';
+      h+='<td style="color:var(--ofm-text-primary)">'+a.model+'</td>';
+      h+='<td style="color:'+(a.valChange.charAt(0)==="+"?"var(--ofm-error)":"var(--ofm-success)")+'">'+a.valChange+'</td>';
+      h+='<td><a class="link" href="#alert-'+a.id+'" target="_blank" style="font-size:11px">'+(a.fault.length>12?a.fault.slice(0,12)+"...":a.fault)+'</a></td>';
+      h+='<td style="font-family:monospace;font-size:11px;color:var(--ofm-text-secondary)">'+a.time+'</td></tr>';
+    });
+    h+='</tbody></table>';h+=mkPager(st.ap,aPg,"setAp");h+='</div>';
+
+    // Cases
+    var cskCls=st.csk==="timeSort"?st.csd:"";
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#CC5DE8"></span><span class="sec-t">本周案例列表</span><span class="sub-lk">›</span></div>';
+    h+='<table><thead><tr><th class="nosort">电厂</th><th class="nosort">专业</th><th class="nosort">案例名称</th><th class="nosort">案例类型</th><th class="nosort">来源名称</th><th class="nosort">故障现象</th><th class="'+cskCls+'" onclick="doCaseSort()">生成时间'+si()+'</th></tr></thead><tbody>';
+    pC.forEach(function(c){
+      var cls = c.isUnack ? ' class="tr-unack"' : '';
+      h+='<tr'+cls+'><td style="color:var(--ofm-text-primary)">'+c.plant+'</td>';
+      h+='<td>'+c.spec+'</td>';
+      h+='<td><a class="link" href="#case-'+c.id+'" target="_blank">'+c.caseName+'</a></td>';
+      h+='<td><span class="'+(c.caseType==="系统生成"?"sd":"sw")+'">'+c.caseType+'</span></td>';
+      h+='<td><a class="link" href="#source-'+c.id+'" target="_blank" style="font-size:11px">'+c.source+'</a></td>';
+      h+='<td><span class="tooltip"><span class="ellipsis" style="color:var(--ofm-text-regular)">'+c.fault+'</span><span class="tip-text">'+c.fault+'</span></span></td>';
+      h+='<td style="font-size:11px;color:var(--ofm-text-secondary);white-space:nowrap">'+c.time+'</td></tr>';
+    });
+    h+='</tbody></table>';h+=mkPager(st.cp,cPg,"setCp");h+='</div>';
+    h+='</div>';
+    h+='</div>';
+
+  }else{
+    // TREND TAB
+    var tdd=Math.max(1,Math.round((new Date(st.ted)-new Date(st.tsd))/86400000));var tRaw=makeDaily(tdd);var tMo=tdd>31;var tData=tRaw;
+    if(tMo){var tfs=[];TFS.forEach(function(f){for(var i=0;i<10;i++)tfs.push(f.key+"_"+i);});tData=aggMonth(tRaw,tfs);}
+    var tpLabel=tMo?"按月统计":"按日统计";var tsel=st.tsel;
+    h+='<div style="display:flex;flex-direction:column;gap:12px">';
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--ofm-bg-component);border-radius:4px;border:1px solid var(--ofm-border-split);flex-wrap:wrap">';
+    h+='<span style="font-size:12px;color:var(--ofm-text-secondary);font-weight:600">统计电厂</span><span style="width:1px;height:14px;background:var(--ofm-border-split)"></span>';
+    P.forEach(function(p,i){var on=tsel.indexOf(i)>=0;h+='<span onclick="toggleTsel('+i+')" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px;background:'+(on?PC[i]+"15":"transparent")+';border:1px solid '+(on?PC[i]+"50":"var(--ofm-border-split)")+';color:'+(on?PC[i]:"var(--ofm-text-regular)")+'"><span style="width:6px;height:6px;border-radius:2px;background:'+(on?PC[i]:"var(--ofm-text-placeholder)")+'"></span>'+p+'</span>';});
+    h+='<span style="width:1px;height:14px;background:var(--ofm-border-split)"></span><button class="cut on" onclick="setTselAll()">全选</button><button class="cut" onclick="setTselNone()">清空</button>';
+    h+='<span style="margin-left:auto;font-size:11px;color:var(--ofm-text-secondary);padding:4px 10px;border-radius:3px;background:var(--ofm-bg-card)">'+tpLabel+' · 共 '+tData.length+' 个数据点</span></div>';
+    
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">';
+    TFS.forEach(function(f,fi){h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:'+PC[fi%10]+'"></span><span class="sec-t">'+f.label+' 趋势</span></div>'+multiLineSVG(tData,tsel,f.key,480,180)+'</div>';});
+    h+='</div>';
+    
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">';
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#4D96FF"></span><span class="sec-t">新增模型趋势</span></div>'+multiLineSVG(tData,tsel,"nm",480,180)+'</div>';
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#FF6B6B"></span><span class="sec-t">新增告警趋势</span></div>'+multiLineSVG(tData,tsel,"na",480,180)+'</div>';
+    h+='<div class="sec"><div class="sec-h"><span class="dot" style="background:#FFD93D"></span><span class="sec-t">新增案例趋势</span></div>'+multiLineSVG(tData,tsel,"nc",480,180)+'</div>';
+    h+='</div></div>';
+  }
+  h+='</div>';
+  document.getElementById("app").innerHTML=h;
+}
+
+function setSelP(name){st.selP=name;render()}
+function setTab(t){st.tab=t;render()}
+function doSort(k){if(st.sk===k){st.sd=st.sd==="desc"?"asc":"desc"}else{st.sk=k;st.sd="desc"}render()}
+function doCaseSort(){st.csd=st.csd==="desc"?"asc":"desc";render()}
+function setMv(v){st.mv=v;render()}
+function setAp(p){st.ap=p;render()}
+function setCp(p){st.cp=p;render()}
+function renderTimeBar(){render()}
+function doQuery(){st.sd0=st.qsd0;st.ed0=st.qed0;render()}
+function doTrendQuery(){st.tsd=st.qtsd;st.ted=st.qted;render()}
+function setCut(l,d){st.act=l;var dt=new Date(BD);dt.setDate(dt.getDate()-d);st.qsd0=fd(dt);st.qed0=fd(BD);st.sd0=st.qsd0;st.ed0=st.qed0;render()}
+function setTcut(l,d){st.tact=l;var dt=new Date(BD);dt.setDate(dt.getDate()-d);st.qtsd=fd(dt);st.qted=fd(BD);st.tsd=st.qtsd;st.ted=st.qted;render()}
+function toggleTsel(i){var idx=st.tsel.indexOf(i);if(idx>=0){st.tsel=st.tsel.filter(function(x){return x!==i})}else{st.tsel=st.tsel.concat([i])}render()}
+function setTselAll(){st.tsel=[0,1,2,3,4,5,6,7,8,9];render()}
+function setTselNone(){st.tsel=[];render()}
+
+window.showTip = function(e, encodedHtml) {
+  var html = decodeURIComponent(encodedHtml);
+  var t = document.getElementById('chart-tip');
+  if(!t) {
+    t = document.createElement('div');
+    t.id = 'chart-tip';
+    t.style.position = 'fixed';
+    t.style.background = 'var(--ofm-bg-card)';
+    t.style.border = '1px solid var(--ofm-border-split)';
+    t.style.color = 'var(--ofm-text-primary)';
+    t.style.padding = '12px 16px';
+    t.style.borderRadius = '6px';
+    t.style.fontSize = '12px';
+    t.style.pointerEvents = 'none';
+    t.style.zIndex = '9999';
+    t.style.boxShadow = '0 8px 24px rgba(0,0,0,0.6)';
+    t.style.lineHeight = '1.8';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = html;
+  t.style.display = 'block';
+  var x = e.clientX + 15;
+  var y = e.clientY + 15;
+  if (x + t.offsetWidth > window.innerWidth) x = e.clientX - t.offsetWidth - 15;
+  if (y + t.offsetHeight > window.innerHeight) y = e.clientY - t.offsetHeight - 15;
+  t.style.left = x + 'px';
+  t.style.top = y + 'px';
+};
+window.hideTip = function() {
+  var t = document.getElementById('chart-tip');
+  if(t) t.style.display = 'none';
+};
+
+render();
+</script>
+</body>
+</html>

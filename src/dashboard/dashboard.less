@@ -1,0 +1,837 @@
+@keyframes dashboard-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+// ── Root ──────────────────────────────────────────────────────────────────
+.dashboard-root {
+  font-family:
+    'PingFang SC',
+    'Microsoft YaHei',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  background: @body-background;
+  color: @text-color;
+  height: calc(100vh - 90px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: @border-color-split;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+// ── Main wrapper ──────────────────────────────────────────────────────────
+.db-m {
+  position: relative;
+  z-index: 1;
+  padding: 12px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.db-hd {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid @border-color-split;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+
+  &-right {
+    text-align: right;
+  }
+}
+.db-hd-t {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: @heading-color;
+}
+.db-hd-s {
+  font-size: 12px;
+  color: @text-color-secondary;
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+.db-hd-time {
+  font-size: 14px;
+  color: @primary-color;
+  letter-spacing: 1px;
+  font-family: 'Orbitron', monospace;
+  margin-bottom: 4px;
+}
+.db-hd-org {
+  font-size: 12px;
+  color: @disabled-color;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+// ── KPI bar ───────────────────────────────────────────────────────────────
+.db-kpi {
+  display: flex;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.db-kpi-i {
+  flex: 1;
+  text-align: center;
+  padding: 6px 4px;
+  &--wide {
+    margin: 0 2vw;
+  }
+}
+.db-kpi-v {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 900;
+  color: @primary-color;
+  line-height: 1;
+  font-family: 'SimHei', 'Heiti SC', sans-serif;
+  white-space: nowrap;
+}
+.db-kpi-v-suffix {
+  font-size: 20px;
+  font-weight: normal;
+  margin-left: 2px;
+  font-family: 'PingFang SC', sans-serif;
+  color: @text-color-secondary;
+}
+.db-kpi-online-count {
+  color: @success-color;
+}
+.db-kpi-u {
+  font-size: 14px;
+  color: @text-color-secondary;
+  margin-left: 4px;
+  font-family: 'PingFang SC', sans-serif;
+  font-weight: normal;
+}
+.db-kpi-l {
+  font-size: 12px;
+  color: @text-color-secondary;
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
+// ── Tab bar ───────────────────────────────────────────────────────────────
+.db-tab-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid @border-color-split;
+}
+.db-tab-btns {
+  display: flex;
+  gap: 4px;
+}
+.db-tab-btn {
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: @text-color-secondary;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+  &.active {
+    color: @primary-color;
+    border-bottom-color: @primary-color;
+  }
+}
+.db-tab-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.db-tab-date-label {
+  font-size: 12px;
+  color: @text-color-secondary;
+  font-weight: 500;
+}
+.db-tab-date-sep {
+  color: @disabled-color;
+  font-size: 12px;
+}
+.db-tab-content {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: 16px;
+}
+
+// ── Section card ──────────────────────────────────────────────────────────
+.db-sec {
+  background: @component-background;
+  border: 1px solid @border-color-split;
+  border-radius: 4px;
+  padding: 12px 16px;
+  box-shadow: @box-shadow-base;
+  &-flex {
+    display: flex;
+    flex-direction: column;
+    .db-sec-h {
+      flex-shrink: 0;
+    }
+    &__body {
+      flex: 1;
+    }
+  }
+}
+.db-sec-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.db-sec-h-end {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.db-sec-note {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: normal;
+  color: @disabled-color;
+}
+.db-sec-t {
+  font-size: 14px;
+  font-weight: 600;
+  color: @heading-color;
+}
+.db-sub-lk {
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 14px;
+  color: @text-color-secondary;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.db-dot {
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  &--primary {
+    background: @primary-color;
+  }
+  &--alert {
+    background: #ff6b6b;
+  }
+  &--warning {
+    background: #ffd93d;
+  }
+  &--success {
+    background: @success-color;
+  }
+  &--case {
+    background: #cc5de8;
+  }
+  &--info {
+    background: #4d96ff;
+  }
+  &--accent {
+    background: @warning-color;
+  }
+  &--dyn {
+    background: var(--dc);
+  }
+}
+
+// ── Legend ────────────────────────────────────────────────────────────────
+.db-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: @text-color-secondary;
+}
+.db-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+  background: var(--lc);
+  flex-shrink: 0;
+}
+.db-legend-line {
+  width: 12px;
+  height: 2px;
+  display: inline-block;
+  background: var(--lc);
+  flex-shrink: 0;
+}
+
+// ── Tables ────────────────────────────────────────────────────────────────
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    font-weight: 600;
+    font-size: 11px;
+    color: @heading-color;
+    padding: 8px 6px;
+    text-align: center;
+    border-bottom: 1px solid @border-color-split;
+    background: @background-color-light;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    &:first-child {
+      text-align: left;
+      padding-left: 12px;
+    }
+    &:last-child {
+      padding-right: 12px;
+    }
+    &:hover {
+      color: @primary-color;
+    }
+    &.nosort {
+      cursor: default;
+      &:hover {
+        color: @heading-color;
+      }
+    }
+  }
+  td {
+    padding: 8px 6px;
+    font-size: 11px;
+    color: @text-color;
+    text-align: center;
+    border-bottom: 1px solid @border-color-split;
+    &:first-child {
+      text-align: left;
+      padding-left: 12px;
+    }
+    &:last-child {
+      padding-right: 12px;
+    }
+  }
+  tbody tr {
+    transition: background 0.2s;
+    &:hover td {
+      background: @background-color-light;
+    }
+    &.tr-unack td {
+      background: @error-color-bg;
+    }
+    &.tr-unack:hover td {
+      filter: brightness(1.15);
+    }
+  }
+}
+.db-si {
+  display: inline-flex;
+  flex-direction: column;
+  margin-left: 4px;
+  vertical-align: middle;
+  font-size: 8px;
+  line-height: 1;
+  gap: 0;
+  .u,
+  .d {
+    color: @disabled-color;
+  }
+}
+.db-table th.asc .db-si .u {
+  color: @primary-color;
+}
+.db-table th.desc .db-si .d {
+  color: @primary-color;
+}
+
+.db-rk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.db-rk1 {
+  background: rgba(32, 201, 151, 0.5);
+  color: #fff;
+}
+.db-rk2 {
+  background: rgba(77, 150, 255, 0.5);
+  color: #fff;
+}
+.db-rk3 {
+  background: rgba(255, 217, 61, 0.5);
+  color: #fff;
+}
+.db-rkn {
+  background: @background-color-light;
+  color: @disabled-color;
+}
+
+.db-cg {
+  color: @success-color !important;
+  font-weight: 600 !important;
+}
+.db-cy {
+  color: @warning-color !important;
+  font-weight: 600 !important;
+}
+.db-cr {
+  color: @error-color !important;
+  font-weight: 600 !important;
+}
+
+.db-val-up {
+  color: @error-color;
+}
+.db-val-down {
+  color: @success-color;
+}
+
+// ── Score table ───────────────────────────────────────────────────────────
+.db-score-wrap {
+  overflow: auto;
+  height: 260px;
+  border: 1px solid @border-color-split;
+  border-radius: 4px;
+  .db-table {
+    line-height: 1.6;
+  }
+  .db-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    box-shadow: 0 1px 0 @border-color-split;
+  }
+}
+.db-score-row {
+  cursor: pointer;
+}
+.db-score-row--sel {
+  background: @background-color-light;
+}
+.db-score-plant-name {
+  color: @heading-color;
+}
+.db-score-plant-name--sel {
+  color: var(--pc);
+  font-weight: 700;
+}
+
+.db-cell-primary {
+  color: @heading-color;
+}
+.db-alert-time {
+  font-family: monospace;
+  font-size: 11px;
+  color: @text-color-secondary;
+}
+.db-case-time {
+  font-size: 11px;
+  color: @text-color-secondary;
+  white-space: nowrap;
+}
+
+// ── Controls ──────────────────────────────────────────────────────────────
+.db-tog {
+  padding: 4px 14px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid @border-color-split;
+  background: @background-color-light;
+  color: @text-color;
+  transition: all 0.2s;
+  &.on {
+    background: @primary-color-bg;
+    color: @primary-color;
+    border-color: @primary-color;
+  }
+  &--query {
+    margin-left: 4px;
+    font-weight: 600;
+  }
+}
+.db-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: @error-color-bg;
+  color: @error-color;
+  animation: dashboard-pulse 2s infinite;
+  &--ml {
+    margin-left: 8px;
+  }
+}
+.db-pg {
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  border: 1px solid @border-color-split;
+  cursor: pointer;
+  background: @background-color-light;
+  color: @text-color;
+  &:hover {
+    border-color: @primary-color;
+    color: @primary-color;
+  }
+  &.on {
+    background: @primary-color-bg;
+    color: @primary-color;
+    border-color: @primary-color;
+  }
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+.db-lh {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  background: @error-color-bg;
+  color: @error-color;
+}
+.db-lm {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  background: @warning-color-bg;
+  color: @warning-color;
+}
+.db-ll {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  background: @success-color-bg;
+  color: @success-color;
+}
+.db-sd {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  background: @success-color-bg;
+  color: @success-color;
+}
+.db-sw {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  background: @warning-color-bg;
+  color: @warning-color;
+}
+.db-di {
+  background: @background-color-light;
+  border: 1px solid @border-color-split;
+  border-radius: 3px;
+  color: @heading-color;
+  padding: 4px 8px;
+  font-size: 12px;
+  outline: none;
+}
+.db-cut {
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid @border-color-split;
+  background: @background-color-light;
+  color: @text-color;
+  transition: all 0.2s;
+  &.on {
+    background: @primary-color-bg;
+    color: @primary-color;
+    border-color: @primary-color;
+  }
+}
+.db-link {
+  color: @primary-color;
+  text-decoration: none;
+  cursor: pointer;
+  &:hover {
+    color: @primary-color-hover-bg;
+    text-decoration: underline;
+  }
+}
+.db-link--sm {
+  font-size: 11px;
+}
+.db-ellipsis {
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: default;
+}
+.db-tooltip {
+  position: relative;
+  display: inline-block;
+}
+.db-tip-text {
+  visibility: hidden;
+  background: @component-background;
+  color: @text-color;
+  font-size: 11px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid @border-color-split;
+  position: absolute;
+  z-index: 99;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: normal;
+  width: 240px;
+  line-height: 1.5;
+  box-shadow: @box-shadow-base;
+}
+.db-tooltip:hover .db-tip-text {
+  visibility: visible;
+}
+
+// ── Pager ─────────────────────────────────────────────────────────────────
+.db-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.db-pager-info {
+  font-size: 11px;
+  color: @text-color-secondary;
+}
+.db-pager-cur {
+  color: @primary-color;
+}
+
+// ── Layout helpers ────────────────────────────────────────────────────────
+.db-status-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.db-trend-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.db-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.db-grid-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+// ── Radar section ─────────────────────────────────────────────────────────
+.db-radar-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+.db-radar-col {
+  text-align: center;
+  position: relative;
+}
+.db-radar-plant-name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--pc);
+}
+.db-radar-outer {
+  position: relative;
+}
+.db-radar-center {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.db-radar-center-score {
+  font-size: 28px;
+  font-weight: 700;
+  color: @heading-color;
+  line-height: 1;
+}
+.db-radar-center-label {
+  font-size: 10px;
+  color: @text-color-secondary;
+  margin-top: 4px;
+}
+
+// ── Donut center ──────────────────────────────────────────────────────────
+.db-donut-outer {
+  position: relative;
+}
+.db-donut-center {
+  position: absolute;
+  left: 35%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.db-donut-center-num {
+  font-size: 16px;
+  font-weight: 700;
+  color: @heading-color;
+  line-height: 1.2;
+}
+.db-donut-center-label {
+  font-size: 11px;
+  color: @text-color-secondary;
+  margin-top: 2px;
+}
+
+// ── Chart containers ──────────────────────────────────────────────────────
+.db-chart {
+  width: 100%;
+  &--h120 {
+    height: 120px;
+  }
+  &--h140 {
+    height: 140px;
+  }
+  &--h180 {
+    height: 180px;
+  }
+  &--h260 {
+    height: 260px;
+  }
+}
+.db-chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: @disabled-color;
+  font-size: 12px;
+}
+
+// ── Plant selector (Trend tab) ────────────────────────────────────────────
+.db-plant-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: @background-color-light;
+  border-radius: 4px;
+  border: 1px solid @border-color-split;
+}
+.db-plant-selector-label {
+  font-size: 12px;
+  color: @text-color-secondary;
+  font-weight: 600;
+}
+.db-plant-selector-divider {
+  width: 1px;
+  height: 14px;
+  background: @border-color-split;
+  flex-shrink: 0;
+}
+.db-plant-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  background: transparent;
+  border: 1px solid @border-color-split;
+  color: @text-color;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+
+  &--on {
+    border-color: var(--pc);
+    color: var(--pc);
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--pc);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .db-plant-tag-dot {
+      background: var(--pc);
+    }
+  }
+}
+.db-plant-tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: @disabled-color;
+  flex-shrink: 0;
+}
+.db-trend-info {
+  margin-left: auto;
+  font-size: 11px;
+  color: @text-color-secondary;
+  padding: 4px 10px;
+  border-radius: 3px;
+  background: @component-background;
+  white-space: nowrap;
+}
