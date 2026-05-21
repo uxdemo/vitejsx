@@ -19,6 +19,7 @@
 
   --rose-500: #D9421E;
   --rose-100: #FAE0D8;
+  
 
   --emerald-500: #1B9E6B;
   --emerald-100: #D5F0E3;
@@ -705,7 +706,7 @@ input { font-family: inherit; }
   height: 2px; background: var(--steel-500);
 }
 
-.sys-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.sys-right { margin-left: auto; display: flex; align-items: center; gap: 12px; position: relative; }
 .icon-btn {
   width: 34px; height: 34px;
   border-radius: 8px;
@@ -1320,6 +1321,223 @@ input { font-family: inherit; }
   border: 1px solid var(--ink-200);
   border-radius: 3px;
   color: var(--ink-700);
+}
+
+/* ============ Inline Style Replacements ============ */
+
+/* Work crumbs active item */
+.crumbsActive {
+  color: var(--ink-900);
+  font-weight: 600;
+}
+/* TOC route keys mono styling */
+.tocRouteMono {
+  font-size: 11px;
+  color: var(--ink-500);
+  line-height: 1.7;
+}
+
+/* Sub navigation bar */
+.subNav {
+  background: white;
+  border-bottom: 1px solid var(--ink-100);
+  padding: 0 24px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+.subNavLabel {
+  color: var(--ink-500);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 12px;
+}
+.subNavActive {
+  padding: 6px 12px;
+  border-radius: 5px;
+  color: var(--navy-900);
+  font-weight: 700;
+  background: var(--navy-50);
+  cursor: pointer;
+}
+.subNavLink {
+  padding: 6px 12px;
+  border-radius: 5px;
+  color: var(--ink-700);
+  cursor: pointer;
+}
+.subNavSuffix {
+  margin-left: auto;
+  color: var(--ink-500);
+  font-size: 11px;
+}
+.subNavTreeText {
+  color: var(--ink-700);
+}
+
+/* Color swatches row */
+.colorSwatchRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.colorSwatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.colorSwatchSelected {
+  border: 2px solid white;
+}
+
+/* Expression rows */
+.exprCol {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.exprRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.exprAndRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.exprAndHint {
+  font-size: 11px;
+  color: var(--ink-500);
+}
+.addExprBtn {
+  margin-top: 6px;
+  align-self: flex-start;
+  font-size: 12px;
+  padding: 5px 10px;
+  border: 1px dashed var(--ink-300);
+  border-radius: 5px;
+  color: var(--ink-500);
+  background: white;
+  cursor: pointer;
+}
+
+/* Form control full width */
+.formControlFull {
+  max-width: none;
+}
+
+/* Existing mode tags row */
+.modeTagRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.modeTagSteel {
+  background: var(--steel-100);
+  color: var(--navy-800);
+  border: 1px solid var(--steel-400);
+}
+.modeTagAmber {
+  background: var(--amber-100);
+  color: #8B5A11;
+}
+.modeTagAdd {
+  background: var(--ink-50);
+  color: var(--ink-700);
+  cursor: pointer;
+}
+.modeTagImport {
+  background: white;
+  color: var(--ink-700);
+  border: 1px dashed var(--ink-300);
+  cursor: pointer;
+}
+
+/* Kbd-pill variants */
+.kbdPillWhite {
+  background: white;
+  color: var(--navy-800);
+  border-color: var(--navy-100);
+}
+.kbdPillDark {
+  background: var(--navy-900);
+  color: white;
+  border-color: var(--navy-900);
+}
+.kbdPillAnd {
+  background: var(--amber-100);
+  color: #8B5A11;
+  border-color: var(--amber-400);
+  font-weight: 700;
+}
+.kbdPillUnit {
+  background: white;
+  font-family: var(--font-mono);
+  color: var(--ink-500);
+}
+
+/* Sys tip */
+.sysTip {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--ink-500);
+  font-size: 12px;
+}
+.sysTipLink {
+  color: var(--steel-500);
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+/* Drawer tab panels */
+.drawerTabPanel {
+  display: none;
+}
+.drawerTabPanelVisible {
+  display: block;
+}
+
+/* Drawer video section */
+.drawerVideoBg {
+  background: var(--navy-800);
+  border-radius: 8px;
+  padding: 12px;
+}
+.drawerChLabel {
+  font-size: 10px;
+  color: var(--ink-400);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.drawerChLabelSpacing {
+  font-size: 10px;
+  color: var(--ink-400);
+  letter-spacing: 0.08em;
+  margin: 14px 0 8px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Play btn sizes */
+.playBtnSmall {
+  width: 48px;
+  height: 48px;
+}
+
+/* Recommended label spacing */
+.recommendedLabelSpacing {
+  margin-top: 4px;
 }
 
 /* Scrollbar */
