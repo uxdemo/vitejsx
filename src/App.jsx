@@ -5,6 +5,7 @@ import BladeMonitorDashboard from './BladeMonitorDashboard/index'
 import IndustrialVisionPlatform from './industrial-vision-platform/index'
 import SmartAutoModeling from './smart-auto-modeling/index'
 import StatsDashboard from './dashboard/index'
+import HelpCenter from './helpCenter/index'
 import { defaultTheme, darkTheme, applyTheme } from './theme'
 import './App.less'
 
@@ -17,6 +18,7 @@ const NAV_MENUS = [
   { key: 'dashboard', icon: 'dashboard', title: '叶片监测仪表板' },
   { key: 'diagnostic', icon: 'tool', title: '故障诊断系统' },
   { key: 'overview', icon: 'bar-chart', title: '统计概览' },
+  { key: 'helpCenter', icon: 'question-circle', title: '在线帮助中心' },
 ]
 
 const App = () => {
@@ -108,9 +110,9 @@ const App = () => {
       </div>
 
       <main className="app-main">
-        {currentPage === 'overview' ? (
-          <StatsDashboard />
-        ) : (
+        {currentPage === 'overview' && <StatsDashboard />}
+        {currentPage === 'helpCenter' && <HelpCenter />}
+        {!['overview', 'helpCenter'].includes(currentPage) && (
           <div className="app-page">
             {currentPage === 'modeling' && <SmartAutoModeling />}
             {currentPage === 'vision' && <IndustrialVisionPlatform />}

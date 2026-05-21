@@ -71,7 +71,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className={styles.root}>
       <div className={styles.main}>
-        <DashboardHeader />
+        {/* <DashboardHeader /> */}
         <KpiBar />
 
         <div className={styles.tabBar}>

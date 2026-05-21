@@ -1,0 +1,2377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>西门子能源有限公司 · 故障预警及诊断平台 · 在线帮助中心(原型)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ Design Tokens ============ */
+:root {
+  --navy-900: #0C2340;
+  --navy-800: #15304F;
+  --navy-700: #1E4068;
+  --navy-600: #2C5482;
+  --navy-100: #E8EEF6;
+  --navy-50:  #F4F7FB;
+
+  --steel-500: #2D7DD2;
+  --steel-400: #4A95E0;
+  --steel-100: #DCEAF7;
+
+  --amber-500: #E89B3C;
+  --amber-400: #F0AE5A;
+  --amber-100: #FCEFD9;
+
+  --rose-500: #D9421E;
+  --rose-100: #FAE0D8;
+
+  --emerald-500: #1B9E6B;
+  --emerald-100: #D5F0E3;
+
+  --ink-900: #0C2340;
+  --ink-700: #2A3F58;
+  --ink-500: #5B6E84;
+  --ink-400: #7E8FA3;
+  --ink-300: #A8B6C6;
+  --ink-200: #CFD8E3;
+  --ink-100: #E5E9F0;
+  --ink-50:  #F2F5F8;
+
+  --bg-page: #F7F8FA;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #FBFCFE;
+
+  --shadow-sm: 0 1px 2px rgba(12,35,64,0.04), 0 1px 1px rgba(12,35,64,0.03);
+  --shadow-md: 0 6px 16px rgba(12,35,64,0.08), 0 2px 4px rgba(12,35,64,0.04);
+  --shadow-lg: 0 24px 48px -16px rgba(12,35,64,0.22), 0 8px 16px -8px rgba(12,35,64,0.10);
+  --shadow-drawer: -24px 0 48px -16px rgba(12,35,64,0.18);
+
+  --radius-sm: 4px;
+  --radius:    6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  --font-sans: 'Manrope', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-900);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+a { color: inherit; text-decoration: none; }
+input { font-family: inherit; }
+
+/* ============ Demo App Shell ============ */
+.demo-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--navy-900);
+  color: white;
+  padding: 10px 24px;
+  display: flex; align-items: center; gap: 24px;
+  border-bottom: 1px solid var(--navy-700);
+}
+.demo-bar .demo-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 13px;
+  letter-spacing: 0.02em;
+}
+.demo-bar .demo-brand .dot {
+  width: 8px; height: 8px; background: var(--amber-500); border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(232,155,60,0.25);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+.demo-bar .demo-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-300);
+  letter-spacing: 0.04em;
+}
+
+.demo-tabs {
+  margin-left: auto;
+  display: flex; gap: 4px;
+  background: rgba(255,255,255,0.06);
+  padding: 4px; border-radius: 8px;
+}
+.demo-tab {
+  padding: 6px 14px;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px; font-weight: 600;
+  border-radius: 5px;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+.demo-tab.active {
+  background: var(--steel-500);
+  color: white;
+}
+.demo-tab:hover:not(.active) { color: white; background: rgba(255,255,255,0.08); }
+
+.demo-tip {
+  padding: 4px 10px;
+  background: rgba(232,155,60,0.15);
+  color: var(--amber-400);
+  font-size: 11px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  border: 1px solid rgba(232,155,60,0.3);
+}
+
+/* ============ View Container ============ */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ============ View 1: Help Center ============ */
+.hc-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: calc(100vh - 41px);
+  background: var(--bg-page);
+}
+
+/* ---- HC Header ---- */
+.hc-header {
+  background: white;
+  border-bottom: 1px solid var(--ink-100);
+  padding: 0 32px;
+  height: 64px;
+  display: flex; align-items: center; gap: 32px;
+}
+.hc-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800;
+}
+.hc-logo .logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--navy-900), var(--steel-500));
+  border-radius: 8px;
+  display: grid; place-items: center;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+.hc-logo .logo-icon svg { width: 18px; height: 18px; color: white; }
+.hc-logo .logo-text { font-size: 14px; line-height: 1.2; }
+.hc-logo .logo-text small {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 500;
+  color: var(--ink-500);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: block;
+}
+.hc-search {
+  flex: 1; max-width: 560px;
+  position: relative;
+}
+.hc-search input {
+  width: 100%;
+  height: 38px;
+  padding: 0 14px 0 40px;
+  border: 1px solid var(--ink-200);
+  border-radius: 8px;
+  background: var(--bg-page);
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.hc-search input:focus {
+  outline: none;
+  border-color: var(--steel-500);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(45,125,210,0.12);
+}
+.hc-search .search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-400); width: 14px; height: 14px;
+}
+.hc-search .kbd {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 6px;
+  background: white;
+  border: 1px solid var(--ink-200);
+  border-radius: 3px;
+  color: var(--ink-500);
+}
+
+.hc-nav-top {
+  display: flex; gap: 4px;
+  margin-left: auto;
+}
+.hc-nav-top a {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink-700);
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.hc-nav-top a:hover { background: var(--ink-50); color: var(--ink-900); }
+.hc-nav-top a.active { color: var(--steel-500); font-weight: 600; }
+
+.hc-actions {
+  display: flex; gap: 8px; align-items: center;
+}
+.hc-actions .badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 3px 8px;
+  background: var(--navy-50);
+  color: var(--navy-700);
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ---- HC Body Layout ---- */
+.hc-body {
+  display: grid;
+  grid-template-columns: 264px 1fr 240px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ---- HC Sidebar (tree) ---- */
+.hc-sidebar {
+  padding: 24px 16px 48px 32px;
+  border-right: 1px solid var(--ink-100);
+  background: var(--bg-page);
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 105px);
+  overflow-y: auto;
+}
+.hc-sidebar::-webkit-scrollbar { width: 6px; }
+.hc-sidebar::-webkit-scrollbar-thumb { background: var(--ink-200); border-radius: 3px; }
+
+.sb-section {
+  margin-bottom: 6px;
+}
+.sb-group {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+.sb-group:hover { color: var(--ink-900); }
+.sb-group .caret {
+  width: 10px; height: 10px;
+  transition: transform 0.2s;
+}
+.sb-group.open .caret { transform: rotate(90deg); }
+.sb-group .count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--ink-100);
+  color: var(--ink-500);
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.sb-group.has-video {
+  position: relative;
+}
+.sb-group.has-video::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%; transform: translateY(-50%);
+  width: 2px; height: 14px;
+  background: var(--amber-500);
+  border-radius: 2px;
+}
+
+.sb-items { display: none; padding: 2px 0 6px; }
+.sb-items.open { display: block; }
+.sb-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px 6px 24px;
+  font-size: 13px;
+  color: var(--ink-700);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.12s;
+  position: relative;
+}
+.sb-item:hover {
+  background: white;
+  color: var(--ink-900);
+}
+.sb-item.active {
+  background: white;
+  color: var(--steel-500);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+.sb-item.active::before {
+  content: '';
+  position: absolute;
+  left: 12px; top: 50%; transform: translateY(-50%);
+  width: 4px; height: 4px; background: var(--steel-500); border-radius: 50%;
+}
+.sb-item .video-pill {
+  margin-left: auto;
+  font-size: 9px;
+  padding: 1px 5px;
+  background: var(--amber-100);
+  color: var(--amber-500);
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ---- HC Main Article ---- */
+.hc-main {
+  padding: 32px 48px 80px;
+  background: white;
+  min-width: 0;
+}
+.crumbs {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--ink-500);
+  margin-bottom: 16px;
+}
+.crumbs span:not(:last-child)::after {
+  content: '/';
+  margin-left: 8px;
+  color: var(--ink-300);
+}
+.crumbs span:last-child { color: var(--ink-900); font-weight: 600; }
+
+.article-head h1 {
+  font-size: 32px; font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+.meta-row {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.meta-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--ink-50);
+  color: var(--ink-700);
+  border: 1px solid var(--ink-100);
+  font-weight: 500;
+}
+.meta-tag.role { background: var(--steel-100); color: var(--navy-800); border-color: transparent; }
+.meta-tag.video { background: var(--amber-100); color: #8B5A11; border-color: transparent; }
+.meta-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.meta-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ---- Article body styles ---- */
+.article-body { font-size: 15px; color: var(--ink-700); line-height: 1.75; max-width: 760px; }
+.article-body p { margin: 14px 0; }
+.article-body h2 {
+  font-size: 22px; font-weight: 700; margin: 40px 0 12px;
+  color: var(--ink-900); padding-top: 8px;
+  position: relative;
+}
+.article-body h2::before {
+  content: ''; position: absolute; left: -16px; top: 18px;
+  width: 4px; height: 18px; background: var(--steel-500); border-radius: 2px;
+}
+.article-body h3 { font-size: 17px; font-weight: 700; margin: 28px 0 8px; color: var(--ink-900); }
+.article-body ol, .article-body ul { padding-left: 22px; margin: 12px 0; }
+.article-body li { margin: 6px 0; }
+.article-body code {
+  font-family: var(--font-mono); font-size: 0.88em;
+  background: var(--ink-50); padding: 2px 6px; border-radius: 4px;
+  color: var(--rose-500);
+}
+.article-body .lede {
+  font-size: 16px;
+  line-height: 1.7;
+  padding: 16px 20px;
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--steel-500);
+  margin: 0 0 24px;
+  color: var(--ink-700);
+  border-radius: 0 6px 6px 0;
+}
+
+.callout {
+  display: flex; gap: 12px;
+  padding: 14px 16px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid;
+}
+.callout .icon { flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px; }
+.callout-warn { background: var(--amber-100); border-color: var(--amber-400); color: #6B3F08; }
+.callout-info { background: var(--steel-100); border-color: var(--steel-400); color: var(--navy-800); }
+.callout strong { display: block; margin-bottom: 2px; font-size: 13px; }
+
+/* ---- Mock screenshot (SVG) ---- */
+.shot {
+  margin: 20px 0;
+  border-radius: 10px;
+  border: 1px solid var(--ink-100);
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+.shot-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: var(--ink-50);
+  border-bottom: 1px solid var(--ink-100);
+}
+.shot-bar .dots { display: flex; gap: 4px; }
+.shot-bar .dots i { display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--ink-200); }
+.shot-bar .url {
+  flex: 1;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--ink-500);
+  text-align: center;
+}
+.shot-body { padding: 16px; }
+.shot-caption {
+  font-size: 12px; color: var(--ink-500); text-align: center;
+  padding: 6px 12px 10px;
+}
+
+/* ---- Video Card ---- */
+.video-card {
+  margin: 28px 0;
+  background: var(--navy-900);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-md);
+}
+.video-poster {
+  aspect-ratio: 16/9;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(45,125,210,0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(232,155,60,0.25) 0%, transparent 50%),
+    linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+  display: grid; place-items: center;
+  position: relative;
+  cursor: pointer;
+}
+.video-poster::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.play-btn {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: white;
+  display: grid; place-items: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  position: relative; z-index: 2;
+  transition: transform 0.2s;
+}
+.video-poster:hover .play-btn { transform: scale(1.08); }
+.play-btn svg { color: var(--navy-900); margin-left: 4px; }
+.video-meta {
+  position: absolute; bottom: 16px; left: 16px;
+  z-index: 2; color: white;
+}
+.video-meta .title { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+.video-meta .sub {
+  font-family: var(--font-mono); font-size: 11px;
+  color: rgba(255,255,255,0.7); letter-spacing: 0.04em;
+}
+.video-chapters {
+  padding: 12px 16px;
+  background: var(--navy-800);
+  border-top: 1px solid var(--navy-700);
+}
+.video-chapters .ch-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  color: var(--ink-400); letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.chapter-list { display: flex; flex-direction: column; gap: 2px; }
+.chapter {
+  display: flex; align-items: center; gap: 12px;
+  padding: 7px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.85);
+  font-size: 12px;
+  transition: background 0.15s;
+}
+.chapter:hover { background: rgba(255,255,255,0.06); }
+.chapter.active { background: rgba(45,125,210,0.25); color: white; }
+.chapter .ts {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--amber-400);
+  min-width: 38px;
+}
+
+/* ---- Steps List ---- */
+.steps { counter-reset: step; margin: 16px 0; padding: 0; list-style: none; }
+.steps > li {
+  counter-increment: step;
+  padding: 12px 16px 12px 48px;
+  margin: 8px 0;
+  background: var(--bg-subtle);
+  border-radius: 8px;
+  border: 1px solid var(--ink-100);
+  position: relative;
+}
+.steps > li::before {
+  content: counter(step);
+  position: absolute; left: 14px; top: 14px;
+  width: 22px; height: 22px;
+  background: var(--navy-900);
+  color: white;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+}
+
+/* ---- Related & Feedback ---- */
+.related-block {
+  margin: 40px 0 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--ink-100);
+}
+.related-block h3 {
+  font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-500); margin-bottom: 14px;
+}
+.related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.related-card {
+  padding: 14px 16px;
+  border: 1px solid var(--ink-100);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: white;
+}
+.related-card:hover { border-color: var(--steel-500); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.related-card .rc-meta {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--steel-500); text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 6px;
+}
+.related-card .rc-title { font-weight: 600; font-size: 14px; color: var(--ink-900); }
+.related-card .rc-sub { font-size: 12px; color: var(--ink-500); margin-top: 4px; }
+
+.feedback-bar {
+  margin-top: 40px;
+  padding: 20px 24px;
+  background: var(--bg-subtle);
+  border-radius: 10px;
+  display: flex; align-items: center; gap: 16px;
+  border: 1px solid var(--ink-100);
+}
+.feedback-bar .fb-text { flex: 1; }
+.feedback-bar .fb-q { font-weight: 600; font-size: 14px; color: var(--ink-900); }
+.feedback-bar .fb-hint { font-size: 12px; color: var(--ink-500); margin-top: 2px; }
+.feedback-bar button {
+  padding: 8px 14px;
+  font-size: 12px; font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--ink-200);
+  background: white;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.15s;
+}
+.feedback-bar button:hover { border-color: var(--steel-500); color: var(--steel-500); }
+.feedback-bar button.good:hover { border-color: var(--emerald-500); color: var(--emerald-500); }
+.feedback-bar button.bad:hover { border-color: var(--rose-500); color: var(--rose-500); }
+
+.pager {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-top: 24px;
+}
+.pager .pg {
+  padding: 14px 18px;
+  border: 1px solid var(--ink-100);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pager .pg:hover { border-color: var(--steel-500); }
+.pager .pg .pg-dir { font-size: 11px; color: var(--ink-500); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.pager .pg .pg-title { margin-top: 2px; font-weight: 600; font-size: 14px; }
+.pager .pg.next { text-align: right; }
+
+/* ---- HC TOC (right) ---- */
+.hc-toc {
+  padding: 32px 24px 32px 24px;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 105px);
+  overflow-y: auto;
+}
+.toc-label {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-500);
+  margin-bottom: 14px;
+}
+.toc-list { list-style: none; padding: 0; border-left: 1px solid var(--ink-100); }
+.toc-list li {
+  padding: 5px 0 5px 14px;
+  margin-left: -1px;
+  font-size: 12px;
+  color: var(--ink-500);
+  cursor: pointer;
+  transition: color 0.15s;
+  border-left: 2px solid transparent;
+}
+.toc-list li:hover { color: var(--ink-900); }
+.toc-list li.active {
+  color: var(--steel-500);
+  font-weight: 600;
+  border-left-color: var(--steel-500);
+}
+
+.toc-side-card {
+  margin-top: 32px;
+  padding: 16px;
+  background: var(--bg-subtle);
+  border-radius: 10px;
+  border: 1px solid var(--ink-100);
+}
+.toc-side-card h4 {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-500); margin-bottom: 10px;
+}
+.toc-side-card a {
+  display: block;
+  padding: 6px 0;
+  font-size: 12px;
+  color: var(--ink-700);
+  border-bottom: 1px dashed var(--ink-100);
+}
+.toc-side-card a:last-child { border-bottom: none; }
+.toc-side-card a:hover { color: var(--steel-500); }
+
+
+/* ============================================ */
+/* ============ View 2: System Integration ====== */
+/* ============================================ */
+
+.sys-shell {
+  min-height: calc(100vh - 41px);
+  background: var(--bg-page);
+}
+.sys-header {
+  background: white;
+  border-bottom: 1px solid var(--ink-100);
+  padding: 0 24px;
+  height: 56px;
+  display: flex; align-items: center; gap: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.sys-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 13px;
+}
+.sys-logo .logo-icon {
+  width: 28px; height: 28px;
+  background: var(--navy-900);
+  border-radius: 6px;
+  display: grid; place-items: center;
+}
+.sys-logo .logo-icon svg { width: 14px; height: 14px; color: var(--amber-500); }
+.sys-logo .name { line-height: 1.1; }
+.sys-logo .name small { display: block; font-size: 10px; color: var(--ink-500); font-weight: 500; font-family: var(--font-mono); }
+
+.sys-nav {
+  display: flex; gap: 2px;
+  margin-left: 20px;
+}
+.sys-nav a {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink-700);
+  border-radius: 5px;
+  font-weight: 500;
+  transition: all 0.15s;
+  position: relative;
+}
+.sys-nav a:hover { background: var(--ink-50); }
+.sys-nav a.active { color: var(--navy-900); font-weight: 700; }
+.sys-nav a.active::after {
+  content: ''; position: absolute; left: 12px; right: 12px; bottom: -17px;
+  height: 2px; background: var(--steel-500);
+}
+
+.sys-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.icon-btn {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  color: var(--ink-700);
+  transition: all 0.15s;
+  position: relative;
+}
+.icon-btn:hover { background: var(--ink-50); color: var(--ink-900); }
+.icon-btn .dot-red {
+  position: absolute; top: 6px; right: 6px;
+  width: 6px; height: 6px; background: var(--rose-500); border-radius: 50%;
+  box-shadow: 0 0 0 2px white;
+}
+.icon-btn .help-badge {
+  position: absolute; top: 4px; right: 4px;
+  background: var(--amber-500); color: white;
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 1px 4px; border-radius: 6px;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px white;
+}
+
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--steel-500), var(--navy-900));
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  display: grid; place-items: center;
+}
+
+/* ---- System Workspace ---- */
+.sys-work {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 24px 32px 64px;
+}
+.work-crumbs {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--ink-500);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.work-crumbs .sep { color: var(--ink-300); }
+.work-crumbs .route-chip {
+  margin-left: auto;
+  padding: 2px 8px;
+  background: var(--navy-50);
+  color: var(--navy-700);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.work-header {
+  display: flex; align-items: flex-start; gap: 16px;
+  margin-bottom: 20px;
+}
+.work-header h1 {
+  font-size: 24px; font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.work-header .subtitle {
+  font-size: 13px; color: var(--ink-500); margin-top: 2px;
+}
+.work-actions { margin-left: auto; display: flex; gap: 8px; }
+.btn {
+  padding: 8px 14px;
+  font-size: 13px; font-weight: 600;
+  border-radius: 6px;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn-secondary { background: white; color: var(--ink-700); border-color: var(--ink-200); }
+.btn-secondary:hover { border-color: var(--ink-300); color: var(--ink-900); }
+.btn-primary { background: var(--navy-900); color: white; }
+.btn-primary:hover { background: var(--navy-800); }
+
+.help-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px 6px 8px;
+  border: 1px solid var(--steel-400);
+  background: var(--steel-100);
+  color: var(--navy-800);
+  border-radius: 6px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.help-btn:hover {
+  background: var(--steel-500);
+  color: white;
+  border-color: var(--steel-500);
+  box-shadow: 0 0 0 4px rgba(45,125,210,0.16);
+}
+.help-btn .q {
+  width: 18px; height: 18px;
+  background: var(--steel-500);
+  color: white;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+.help-btn:hover .q { background: white; color: var(--steel-500); }
+.help-btn .count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* Pulse ring around help button to draw eye */
+.help-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 8px;
+  border: 2px solid var(--steel-500);
+  opacity: 0;
+  animation: ring-pulse 2.4s infinite;
+  pointer-events: none;
+}
+@keyframes ring-pulse {
+  0%   { opacity: 0; transform: scale(1); }
+  35%  { opacity: 0.5; }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+
+/* ---- Mock model config form ---- */
+.work-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+}
+.work-side {
+  background: white;
+  border: 1px solid var(--ink-100);
+  border-radius: 10px;
+  padding: 16px;
+  height: fit-content;
+  position: sticky; top: 80px;
+}
+.work-side h4 {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-500);
+  margin-bottom: 10px;
+}
+.work-side .step-nav { display: flex; flex-direction: column; gap: 2px; }
+.work-side .step-nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--ink-700);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.work-side .step-nav a:hover { background: var(--ink-50); }
+.work-side .step-nav a.active {
+  background: var(--navy-50); color: var(--navy-900); font-weight: 600;
+}
+.work-side .step-nav .num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  font-family: var(--font-mono); font-size: 10px;
+  font-weight: 700;
+  display: grid; place-items: center;
+  background: var(--ink-100); color: var(--ink-500);
+}
+.work-side .step-nav a.active .num { background: var(--navy-900); color: white; }
+.work-side .step-nav a.done .num { background: var(--emerald-100); color: var(--emerald-500); }
+
+.work-card {
+  background: white;
+  border: 1px solid var(--ink-100);
+  border-radius: 10px;
+  padding: 28px 32px;
+  min-height: 600px;
+}
+.work-card h2 {
+  font-size: 17px; font-weight: 700;
+  margin-bottom: 4px;
+}
+.work-card .section-hint { font-size: 12px; color: var(--ink-500); margin-bottom: 24px; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--ink-100);
+}
+.form-row:last-of-type { border-bottom: none; }
+.form-label {
+  font-size: 13px; font-weight: 600; color: var(--ink-700);
+  display: flex; align-items: center; gap: 6px;
+  padding-top: 6px;
+}
+.form-label .req { color: var(--rose-500); }
+
+/* Info icon with popover */
+.info-i {
+  width: 14px; height: 14px;
+  background: var(--ink-200);
+  color: white;
+  border-radius: 50%;
+  display: inline-grid; place-items: center;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  cursor: help;
+  transition: all 0.15s;
+  position: relative;
+}
+.info-i:hover { background: var(--steel-500); }
+.info-i.has-popover { background: var(--amber-500); color: white; }
+.info-i.has-popover:hover { background: var(--amber-400); }
+
+.popover {
+  position: absolute;
+  left: 24px; top: -12px;
+  width: 320px;
+  background: white;
+  border: 1px solid var(--ink-200);
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  display: none;
+  font-weight: 400;
+  cursor: default;
+}
+.info-i:hover .popover, .info-i:focus-within .popover { display: block; }
+.popover .pop-title {
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 8px;
+}
+.popover .pop-title svg { color: var(--amber-500); }
+.popover p { font-size: 12px; line-height: 1.6; color: var(--ink-700); margin-bottom: 8px; }
+.popover .pop-img {
+  background: var(--bg-subtle);
+  border: 1px solid var(--ink-100);
+  border-radius: 6px;
+  padding: 10px;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--ink-500);
+  margin: 8px 0;
+}
+.popover .pop-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px;
+  color: var(--steel-500);
+  font-weight: 600;
+  cursor: pointer;
+}
+.popover .pop-link:hover { text-decoration: underline; }
+
+.form-control input, .form-control select, .form-control textarea {
+  width: 100%; max-width: 400px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--ink-200);
+  border-radius: 5px;
+  background: white;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.form-control input:focus, .form-control select:focus {
+  outline: none; border-color: var(--steel-500);
+  box-shadow: 0 0 0 3px rgba(45,125,210,0.12);
+}
+.form-control .hint { font-size: 11px; color: var(--ink-500); margin-top: 4px; }
+.form-control .switch {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--ink-700);
+}
+.toggle {
+  position: relative;
+  width: 36px; height: 20px;
+  background: var(--ink-200);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.toggle.on { background: var(--steel-500); }
+.toggle.on::after { transform: translateX(16px); }
+
+/* Empty state */
+.empty-state {
+  margin: 28px 0;
+  padding: 36px 24px;
+  text-align: center;
+  background: var(--bg-subtle);
+  border: 1px dashed var(--ink-200);
+  border-radius: 12px;
+}
+.empty-state .empty-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 14px;
+  background: white;
+  border: 1px solid var(--ink-100);
+  border-radius: 12px;
+  display: grid; place-items: center;
+  color: var(--ink-400);
+  box-shadow: var(--shadow-sm);
+}
+.empty-state h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.empty-state p { font-size: 13px; color: var(--ink-500); margin-bottom: 16px; }
+.empty-state .empty-cta {
+  display: inline-flex; gap: 8px; align-items: center;
+}
+
+/* ============ Drawer (M2) ============ */
+.drawer-overlay {
+  position: fixed; inset: 0;
+  background: rgba(12,35,64,0);
+  pointer-events: none;
+  transition: background 0.2s;
+  z-index: 200;
+}
+.drawer-overlay.open { background: rgba(12,35,64,0.0); /* non-modal */ }
+
+.drawer {
+  position: fixed;
+  top: 0; right: 0;
+  height: 100vh;
+  width: 520px;
+  max-width: 92vw;
+  background: white;
+  box-shadow: var(--shadow-drawer);
+  z-index: 210;
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(.2,.85,.25,1);
+  display: flex; flex-direction: column;
+  border-left: 1px solid var(--ink-100);
+}
+.drawer.open { transform: translateX(0); }
+.drawer-head {
+  padding: 16px 20px 0;
+  border-bottom: 1px solid var(--ink-100);
+}
+.drawer-head .dh-top {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+}
+.drawer-head .dh-top h3 {
+  font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.drawer-head .dh-top h3 .help-icon {
+  width: 22px; height: 22px;
+  background: var(--steel-500); color: white;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 700;
+}
+.dh-route {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--ink-50);
+  color: var(--ink-700);
+  border-radius: 3px;
+}
+.dh-actions { margin-left: auto; display: flex; gap: 4px; }
+.dh-icon-btn {
+  width: 28px; height: 28px; border-radius: 5px;
+  display: grid; place-items: center;
+  color: var(--ink-500);
+  transition: all 0.15s;
+}
+.dh-icon-btn:hover { background: var(--ink-50); color: var(--ink-900); }
+.dh-icon-btn.pinned { color: var(--amber-500); }
+
+.drawer-tabs { display: flex; gap: 2px; }
+.drawer-tab {
+  padding: 10px 14px;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink-500);
+  position: relative;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.drawer-tab:hover { color: var(--ink-900); }
+.drawer-tab.active { color: var(--navy-900); }
+.drawer-tab.active::after {
+  content: ''; position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px; background: var(--steel-500);
+}
+.drawer-tab .cnt {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 1px 5px; background: var(--ink-100);
+  color: var(--ink-700); border-radius: 8px;
+  font-weight: 700;
+}
+.drawer-tab.active .cnt { background: var(--steel-100); color: var(--steel-500); }
+
+.drawer-body {
+  flex: 1; overflow-y: auto;
+  padding: 20px;
+}
+
+.recommended-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-500);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.recommended-label .ai-chip {
+  font-family: var(--font-mono);
+  background: linear-gradient(90deg, var(--steel-500), var(--steel-400));
+  color: white; padding: 2px 6px; border-radius: 3px;
+  font-size: 9px;
+}
+
+.help-doc-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.help-doc-item {
+  padding: 12px 14px;
+  border: 1px solid var(--ink-100);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: white;
+}
+.help-doc-item:hover {
+  border-color: var(--steel-500);
+  box-shadow: 0 4px 12px rgba(45,125,210,0.08);
+  transform: translateX(-2px);
+}
+.help-doc-item .hd-meta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px;
+  color: var(--ink-500);
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.help-doc-item .hd-meta .pill {
+  background: var(--ink-50); color: var(--ink-700);
+  padding: 1px 6px; border-radius: 3px;
+}
+.help-doc-item .hd-meta .pill.engineer { background: var(--steel-100); color: var(--navy-800); }
+.help-doc-item .hd-title { font-size: 14px; font-weight: 600; color: var(--ink-900); line-height: 1.4; }
+.help-doc-item .hd-sub { font-size: 12px; color: var(--ink-500); margin-top: 4px; }
+
+.help-video-card {
+  background: var(--navy-900);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.help-video-card .hv-poster {
+  aspect-ratio: 16/9;
+  background:
+    radial-gradient(circle at 30% 50%, rgba(45,125,210,0.5) 0%, transparent 60%),
+    radial-gradient(circle at 75% 40%, rgba(232,155,60,0.3) 0%, transparent 60%),
+    var(--navy-900);
+  position: relative;
+  display: grid; place-items: center;
+}
+.help-video-card .hv-poster::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.help-video-card .hv-info {
+  padding: 12px 14px;
+  color: white;
+}
+.help-video-card .hv-info .t { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.help-video-card .hv-info .s {
+  font-size: 11px; color: rgba(255,255,255,0.6);
+  font-family: var(--font-mono); letter-spacing: 0.04em;
+}
+
+.drawer-foot {
+  padding: 12px 20px;
+  border-top: 1px solid var(--ink-100);
+  background: var(--bg-subtle);
+  display: flex; gap: 8px; align-items: center;
+  font-size: 12px; color: var(--ink-500);
+}
+.drawer-foot .ff-action {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--steel-500);
+  font-weight: 600;
+  cursor: pointer;
+}
+.drawer-foot .ff-action:hover { text-decoration: underline; }
+
+/* What's New popover */
+.whats-new {
+  position: absolute;
+  top: 48px; right: 64px;
+  width: 340px;
+  background: white;
+  border: 1px solid var(--ink-100);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  z-index: 150;
+  display: none;
+  overflow: hidden;
+}
+.whats-new.open { display: block; animation: fadeUp 0.2s; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.wn-head {
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--navy-900), var(--navy-700));
+  color: white;
+}
+.wn-head h4 {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700;
+}
+.wn-head .ver-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  background: var(--amber-500); color: white;
+  padding: 1px 6px; border-radius: 3px;
+  font-weight: 700;
+}
+.wn-head p { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+.wn-list { padding: 6px 0; }
+.wn-item {
+  display: flex; gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.wn-item:hover { background: var(--ink-50); }
+.wn-item .wn-bullet {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--amber-500);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.wn-item .wn-text { font-size: 12px; color: var(--ink-700); flex: 1; }
+.wn-item .wn-link { font-size: 11px; color: var(--steel-500); font-weight: 600; }
+
+/* Tour overlay (M5) */
+.tour-overlay {
+  position: fixed; inset: 0;
+  background: rgba(12,35,64,0.55);
+  z-index: 300;
+  display: none;
+  backdrop-filter: blur(2px);
+}
+.tour-overlay.open { display: block; animation: fadeIn 0.2s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tour-card {
+  position: absolute;
+  width: 360px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow-lg);
+  top: 240px; left: calc(50% - 180px);
+}
+.tour-card .tour-step {
+  font-family: var(--font-mono); font-size: 10px;
+  font-weight: 700; color: var(--steel-500);
+  letter-spacing: 0.06em; margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.tour-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.tour-card p { font-size: 13px; color: var(--ink-700); margin-bottom: 16px; line-height: 1.6; }
+.tour-actions { display: flex; align-items: center; gap: 8px; }
+.tour-dots { display: flex; gap: 5px; }
+.tour-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-200); display: block; }
+.tour-dots i.active { background: var(--steel-500); width: 20px; border-radius: 3px; }
+.tour-actions .tour-spacer { flex: 1; }
+
+/* Snackbar */
+.snack {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--navy-900); color: white;
+  padding: 10px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  z-index: 400;
+  display: flex; align-items: center; gap: 10px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.snack.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.snack svg { color: var(--emerald-500); }
+
+/* Helpers */
+.flex-row { display: flex; gap: 10px; align-items: center; }
+.muted { color: var(--ink-500); }
+.mono { font-family: var(--font-mono); }
+.kbd-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 5px;
+  background: var(--ink-50);
+  border: 1px solid var(--ink-200);
+  border-radius: 3px;
+  color: var(--ink-700);
+}
+
+/* Scrollbar */
+.drawer-body::-webkit-scrollbar, .hc-toc::-webkit-scrollbar { width: 6px; }
+.drawer-body::-webkit-scrollbar-thumb, .hc-toc::-webkit-scrollbar-thumb { background: var(--ink-200); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ============ Demo Bar ============ -->
+<div class="demo-bar">
+  <div class="demo-brand">
+    <span class="dot"></span>
+    <span>原型演示 · Online Manual Integration</span>
+  </div>
+  <span class="demo-meta">PROTOTYPE · V2.0 · 基于 7 份真实模块手册</span>
+  <div class="demo-tabs" id="demoTabs">
+    <button class="demo-tab active" data-view="hc">📖 帮助中心(独立)</button>
+    <button class="demo-tab" data-view="sys">🖥 系统内集成 ?抽屉</button>
+  </div>
+  <span class="demo-tip">点击切换两种集成模式</span>
+</div>
+
+<!-- ============ View 1: Help Center ============ -->
+<div class="view active" id="view-hc">
+<div class="hc-shell">
+
+  <header class="hc-header">
+    <div class="hc-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2 L12 6 M12 18 L12 22 M2 12 L6 12 M18 12 L22 12 M5 5 L8 8 M16 16 L19 19 M19 5 L16 8 M8 16 L5 19"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div>西门子能源 · 故障预警及诊断平台</div>
+        <small>HELP CENTER · v3.2</small>
+      </div>
+    </div>
+
+    <div class="hc-search">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+      </svg>
+      <input id="hcSearchInput" placeholder="搜索文档、视频、术语... 试试「多工况」「计算测点」" />
+      <span class="kbd">Ctrl K</span>
+    </div>
+
+    <nav class="hc-nav-top">
+      <a class="active">操作指南</a>
+      <a>视频专区</a>
+      <a>FAQ</a>
+      <a>What's New</a>
+    </nav>
+
+    <div class="hc-actions">
+      <span class="badge">v3.2</span>
+    </div>
+  </header>
+
+  <div class="hc-body">
+    <!-- ===== Left Sidebar Tree ===== -->
+    <aside class="hc-sidebar">
+      <div class="sb-section">
+        <div class="sb-group open" data-toggle="g1">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>1 · 产品概览</span><span class="count">3</span>
+        </div>
+        <div class="sb-items open" id="g1">
+          <div class="sb-item">产品介绍</div>
+          <div class="sb-item">核心概念</div>
+          <div class="sb-item">术语表</div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group" data-toggle="g2">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>2 · 快速入门</span><span class="count">2</span>
+        </div>
+        <div class="sb-items" id="g2">
+          <div class="sb-item">5 分钟跑通完整流程</div>
+          <div class="sb-item">角色与权限</div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group open has-video" data-toggle="g3">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>3 · 模型配置</span><span class="count">6</span>
+        </div>
+        <div class="sb-items open" id="g3">
+          <div class="sb-item">如何创建一个模型(基本信息与算法选择) <span class="video-pill">V1·0:00</span></div>
+          <div class="sb-item">如何为模型选取测点</div>
+          <div class="sb-item active">如何配置工况模式 <span class="video-pill">V1·2:30</span></div>
+          <div class="sb-item">如何配置测点参数(IO 类型与告警策略) <span class="video-pill">V1·5:00</span></div>
+          <div class="sb-item">如何选取训练样本并训练模型 <span class="video-pill">V1·7:30</span></div>
+          <div class="sb-item">多工况模型与单工况的差异 <span class="video-pill">V1·10:30</span></div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group has-video" data-toggle="g4">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>4 · 规则配置</span><span class="count">4</span>
+        </div>
+        <div class="sb-items" id="g4">
+          <div class="sb-item">规则类型介绍(普通规则 vs 高级规则) <span class="video-pill">V2·0:00</span></div>
+          <div class="sb-item">如何配置一条普通规则 <span class="video-pill">V2·1:00</span></div>
+          <div class="sb-item">如何编写高级规则 Python 脚本 <span class="video-pill">V2·4:00</span></div>
+          <div class="sb-item">规则的延迟预警与上线</div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group has-video" data-toggle="g5">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>5 · 计算测点</span><span class="count">3</span>
+        </div>
+        <div class="sb-items" id="g5">
+          <div class="sb-item">如何创建一个普通计算测点 <span class="video-pill">V3·0:00</span></div>
+          <div class="sb-item">如何编写高级计算测点脚本 <span class="video-pill">V3·3:00</span></div>
+          <div class="sb-item">计算测点的引用、编辑与删除规则</div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group has-video" data-toggle="g6">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>6 · 全局触发器</span><span class="count">2</span>
+        </div>
+        <div class="sb-items" id="g6">
+          <div class="sb-item">如何创建一个全局触发器 <span class="video-pill">V4·0:00</span></div>
+          <div class="sb-item">触发器的 6 级时间粒度与预览</div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group has-video" data-toggle="g7">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>7 · 趋势监测</span><span class="count">4</span>
+        </div>
+        <div class="sb-items" id="g7">
+          <div class="sb-item">如何查看实时模型监测 <span class="video-pill">V5·0:00</span></div>
+          <div class="sb-item">三色曲线解读(实际/预测/残差)</div>
+          <div class="sb-item">如何回放历史告警(历史仿真) <span class="video-pill">V5·2:00</span></div>
+          <div class="sb-item">如何查看规则监测与指标监测 <span class="video-pill">V5·4:00</span></div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group has-video" data-toggle="g8">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>8 · 告警管理</span><span class="count">5</span>
+        </div>
+        <div class="sb-items" id="g8">
+          <div class="sb-item">告警四态(待办/处理中/挂起/归档) <span class="video-pill">V6·0:00</span></div>
+          <div class="sb-item">如何查看告警详情(故障诊断+告警分析) <span class="video-pill">V6·1:30</span></div>
+          <div class="sb-item">如何归档一条告警(误报/忽略/关闭) <span class="video-pill">V6·3:00</span></div>
+          <div class="sb-item">如何挂起一条告警</div>
+          <div class="sb-item">如何对告警进行批量处理</div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group has-video" data-toggle="g9">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>9 · 告警单管理</span><span class="count">3</span>
+        </div>
+        <div class="sb-items" id="g9">
+          <div class="sb-item">我的数据 vs 告警单中心 <span class="video-pill">V7·0:00</span></div>
+          <div class="sb-item">告警单的处理流程(状态轴 + 流程图) <span class="video-pill">V7·1:30</span></div>
+          <div class="sb-item">如何关闭告警单并更新案例库 <span class="video-pill">V7·3:30</span></div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group has-video" data-toggle="g10">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>10 · 知识库</span><span class="count">4</span>
+        </div>
+        <div class="sb-items" id="g10">
+          <div class="sb-item">FMEA 库:案例查看与新建 <span class="video-pill">V7·5:00</span></div>
+          <div class="sb-item">FMEA 库:激活规则与模型联动</div>
+          <div class="sb-item">案例库:案例查看与导入 <span class="video-pill">V7·6:30</span></div>
+          <div class="sb-item">知识库与告警单的双向联动</div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-group" data-toggle="g11">
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+          <span>11 · 常见问题</span><span class="count">8</span>
+        </div>
+        <div class="sb-items" id="g11">
+          <div class="sb-item">模型上线后多久能看到第一批告警?</div>
+          <div class="sb-item">残差曲线一直贴着上限是怎么回事?</div>
+          <div class="sb-item">为什么我的模式频繁切换?</div>
+          <div class="sb-item">查看更多 →</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== Main Article ===== -->
+    <main class="hc-main">
+      <div class="crumbs">
+        <span>操作指南</span>
+        <span>模型配置</span>
+        <span>如何配置工况模式</span>
+      </div>
+
+      <header class="article-head">
+        <h1>如何配置工况模式</h1>
+        <div class="meta-row">
+          <span class="meta-tag role"><span class="dot"></span>专业工程师</span>
+          <span class="meta-tag">阅读 · 4 分钟</span>
+          <span class="meta-tag video">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            含 V1 · 2:30–5:00 视频片段
+          </span>
+          <span class="meta-time">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            更新于 2026-05-12
+          </span>
+        </div>
+      </header>
+
+      <div class="article-body">
+        <p class="lede">读完本文,您将能为同一台设备配置「运行」「并网」「停机」等多个工况模式,并理解模式的两个核心作用 —— 限定样本选取范围、控制 AI 计算的生效时段。</p>
+
+        <h2 id="s1">什么是「模式」</h2>
+        <p>模式(Mode)是平台中用于<strong>判定当前是否属于某种运行工况</strong>的一组表达式。不同模式以不同颜色的矩形框区分,在模型配置页中部展示。模式有两个核心作用:</p>
+        <ul>
+          <li><strong>限定样本选取范围</strong> —— 选取训练样本时,只有落在模式条件成立的时段内的数据才会被使用;</li>
+          <li><strong>控制 AI 计算的生效时段</strong> —— 模型上线后,只有在模式条件满足时,系统才会执行 AI 计算和预测。设备停机后模式不再满足,AI 计算会自动停止,<strong>无需手动下线模型</strong>。</li>
+        </ul>
+
+        <h2 id="s2">操作步骤</h2>
+        <ol class="steps">
+          <li>进入 <code>建模平台 → 配置中心 → 模型</code>,选择目标模型,在中部模式配置区点击「<strong>新增模式</strong>」。</li>
+          <li>填写<strong>模式名称</strong>(建议简洁状态描述,如「运行」「并网」),设置<strong>优先级</strong>(1–5,数字越小优先级越高),选择<strong>标识色</strong>。</li>
+          <li>点击加号定义模式表达式:选择测点类型 → 选择具体测点 → 选择运算符(≥/≤/&gt;/&lt;/=/≠ 共 6 种)→ 填入阈值。</li>
+          <li>需要多条件时继续添加,并选择<strong>逻辑关系 AND / OR</strong>;系统严格按从上到下顺序判断,关键条件放前面。</li>
+          <li>点击保存。也可以选择<strong>导入全局模式</strong>(多个模型共用相同工况时,可一键导入)。</li>
+        </ol>
+
+        <div class="callout callout-warn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          <div>
+            <strong>注意</strong>
+            <strong>AND 和 OR 之间没有优先级</strong>,系统严格按从上到下顺序依次判断。如果配置 <code>A AND B OR C</code>,实际执行的是 <code>(A AND B) OR C</code>,而不是 <code>A AND (B OR C)</code>。请把关键条件放在最前。
+          </div>
+        </div>
+
+        <!-- Video Card -->
+        <div class="video-card">
+          <div class="video-poster" onclick="showSnack('▶ 视频已在演示中(原型不带真实视频源)')">
+            <div class="play-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-meta">
+              <div class="title">V1 · 模型配置 — 单元二:配置工况模式</div>
+              <div class="sub">章节 2/5 · 02:30 · 共 12min</div>
+            </div>
+          </div>
+          <div class="video-chapters">
+            <div class="ch-label">章节(根据「画面X」自动切分)</div>
+            <div class="chapter-list">
+              <div class="chapter"><span class="ts">00:00</span><span>单元一 · 创建模型与基础配置</span></div>
+              <div class="chapter active"><span class="ts">02:30</span><span>单元二 · 配置工况模式 ◀ 当前</span></div>
+              <div class="chapter"><span class="ts">05:00</span><span>单元三 · 测点参数配置</span></div>
+              <div class="chapter"><span class="ts">07:30</span><span>单元四 · 样本选取与模型训练</span></div>
+              <div class="chapter"><span class="ts">10:30</span><span>单元五 · 多工况模型</span></div>
+            </div>
+          </div>
+        </div>
+
+        <h2 id="s3">优先级的含义</h2>
+        <p>当<strong>多个模式条件同时满足</strong>(也就是判断规则出现重叠)时,系统会选择<strong>优先级最高的模式</strong>生效。建议:</p>
+        <ul>
+          <li>把最精确、最严格的工况设置为<strong>高优先级(数字小)</strong>;</li>
+          <li>把宽泛、兜底的工况设置为低优先级。</li>
+        </ul>
+
+        <div class="callout callout-info">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div>
+            <strong>建议</strong>
+            如果您正在为<strong>多工况模型</strong>配置模式,请注意:每个工况下都需要单独训练,只有<strong>所有工况都通过训练</strong>之后,多工况模型的【上线】按钮才会变为可用。
+          </div>
+        </div>
+
+        <h2 id="s4">在主系统中打开此功能</h2>
+        <p>点击下方按钮可在新页签中直接跳到「模型配置 → 工况模式」页:</p>
+        <div style="margin: 12px 0;">
+          <a class="btn btn-secondary" onclick="showSnack('已跳转到 /modeling/config/model/mode(原型演示)')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+            打开模型配置页面
+          </a>
+        </div>
+
+        <!-- Related -->
+        <div class="related-block">
+          <h3>相关文档</h3>
+          <div class="related-grid">
+            <div class="related-card">
+              <div class="rc-meta">模型配置 · 文档</div>
+              <div class="rc-title">如何选取训练样本并训练模型</div>
+              <div class="rc-sub">样本必须代表正常工况,单模型总有效点 ≤ 5 万</div>
+            </div>
+            <div class="related-card">
+              <div class="rc-meta">模型配置 · 文档</div>
+              <div class="rc-title">如何配置测点参数</div>
+              <div class="rc-sub">IO 类型(输入/输出/输入输出)、残差阈值、延迟策略</div>
+            </div>
+            <div class="related-card">
+              <div class="rc-meta">规则配置 · 文档</div>
+              <div class="rc-title">规则模型中如何导入全局模式</div>
+              <div class="rc-sub">规则模型与诊断模型可共用全局模式</div>
+            </div>
+            <div class="related-card">
+              <div class="rc-meta">FAQ · 常见</div>
+              <div class="rc-title">为什么我的模式频繁切换?</div>
+              <div class="rc-sub">检查判别条件中是否需要加入滞回缓冲</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback -->
+        <div class="feedback-bar">
+          <div class="fb-text">
+            <div class="fb-q">这篇文档对您有帮助吗?</div>
+            <div class="fb-hint">您的反馈将用于改进文档质量,我们会在 48 小时内回复(若您留下邮箱)。</div>
+          </div>
+          <button class="good" onclick="showSnack('感谢您的反馈 👍')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7"/></svg>
+            有用
+          </button>
+          <button class="bad" onclick="showSnack('感谢您的反馈,我们会优化此文档')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V2M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H17"/></svg>
+            没用
+          </button>
+        </div>
+
+        <!-- Pager -->
+        <div class="pager">
+          <div class="pg">
+            <div class="pg-dir">← 上一篇</div>
+            <div class="pg-title">如何为模型选取测点</div>
+          </div>
+          <div class="pg next">
+            <div class="pg-dir">下一篇 →</div>
+            <div class="pg-title">如何配置测点参数(IO 类型与告警策略)</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== Right TOC ===== -->
+    <aside class="hc-toc">
+      <div class="toc-label">本文目录</div>
+      <ul class="toc-list">
+        <li>什么是「模式」</li>
+        <li class="active">操作步骤</li>
+        <li>优先级的含义</li>
+        <li>在主系统中打开此功能</li>
+      </ul>
+
+      <div class="toc-side-card">
+        <h4>本页相关</h4>
+        <a>▶ V1 · 模型配置 — 单元二(2:30)</a>
+        <a>📄 如何选取训练样本并训练模型</a>
+        <a>📄 如何配置测点参数</a>
+        <a>📋 FAQ:模式频繁切换</a>
+        <a>🔗 跳到主系统对应页</a>
+      </div>
+
+      <div class="toc-side-card">
+        <h4>本文路由(Route Keys)</h4>
+        <div class="mono" style="font-size:11px;color:var(--ink-500);line-height:1.7;">
+          /modeling/config<br/>
+          /modeling/config/model<br/>
+          /modeling/config/model/mode
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+</div>
+
+<!-- ============ View 2: System Integration ============ -->
+<div class="view" id="view-sys">
+<div class="sys-shell">
+
+  <header class="sys-header">
+    <div class="sys-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2 L12 6 M12 18 L12 22 M2 12 L6 12 M18 12 L22 12 M5 5 L8 8 M16 16 L19 19 M19 5 L16 8 M8 16 L5 19"/>
+        </svg>
+      </div>
+      <div class="name">
+        故障预警及诊断平台
+        <small>西门子能源有限公司 · v3.2</small>
+      </div>
+    </div>
+
+    <nav class="sys-nav">
+      <a class="active">建模平台</a>
+      <a>趋势预警</a>
+      <a>故障诊断</a>
+      <a>知识库</a>
+    </nav>
+
+    <div class="sys-right" style="position:relative;">
+      <!-- Global ? (M1) -->
+      <button class="icon-btn" title="帮助中心 (?)" onclick="openDrawer('global')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </button>
+
+      <!-- What's New -->
+      <button class="icon-btn" title="What's New" onclick="toggleWhatsNew(event)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="dot-red"></span>
+      </button>
+
+      <div class="avatar">王</div>
+
+      <!-- What's New popover -->
+      <div class="whats-new" id="whatsNew">
+        <div class="wn-head">
+          <h4>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            v3.2 新功能
+            <span class="ver-tag">NEW</span>
+          </h4>
+          <p>5 月 12 日更新 · 3 项新功能 · 2 项优化</p>
+        </div>
+        <div class="wn-list">
+          <div class="wn-item" onclick="openDrawer('global')">
+            <span class="wn-bullet"></span>
+            <div class="wn-text">
+              <strong>全局模式批量导入</strong> 多个模型可一键复用全局模式表达式,节省配置时间。
+              <div class="wn-link">查看教程 →</div>
+            </div>
+          </div>
+          <div class="wn-item" onclick="openDrawer('global')">
+            <span class="wn-bullet"></span>
+            <div class="wn-text">
+              <strong>高级规则脚本调试</strong> Python 编辑器新增智能提示与全屏模式,支持绘图代码可视化预览。
+              <div class="wn-link">查看教程 →</div>
+            </div>
+          </div>
+          <div class="wn-item" onclick="openDrawer('global')">
+            <span class="wn-bullet"></span>
+            <div class="wn-text">
+              <strong>告警单 → 案例库自动归档</strong> 关闭告警单时勾选「更新至案例库」,自动沉淀为可复用知识。
+              <div class="wn-link">查看教程 →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sub navigation for 建模平台 → 配置中心 -->
+  <div style="background:white;border-bottom:1px solid var(--ink-100);padding:0 24px;height:42px;display:flex;align-items:center;gap:4px;font-size:12px;">
+    <span style="color:var(--ink-500);font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;margin-right:12px;">配置中心 ›</span>
+    <a style="padding:6px 12px;border-radius:5px;color:var(--navy-900);font-weight:700;background:var(--navy-50);cursor:pointer;">模型</a>
+    <a style="padding:6px 12px;border-radius:5px;color:var(--ink-700);cursor:pointer;">规则模型</a>
+    <a style="padding:6px 12px;border-radius:5px;color:var(--ink-700);cursor:pointer;">计算测点</a>
+    <a style="padding:6px 12px;border-radius:5px;color:var(--ink-700);cursor:pointer;">全局触发器</a>
+    <span style="margin-left:auto;color:var(--ink-500);font-size:11px;">
+      左侧目录树:<span class="mono" style="color:var(--ink-700);">西门子能源智能电厂 › 1号机组 › 燃机专业 › 燃烧系统</span>
+    </span>
+  </div>
+
+  <div class="sys-work">
+
+    <div class="work-crumbs">
+      <span>建模平台</span><span class="sep">/</span>
+      <span>配置中心</span><span class="sep">/</span>
+      <span>模型</span><span class="sep">/</span>
+      <span>西门子能源智能电厂</span><span class="sep">/</span>
+      <span>1号机组</span><span class="sep">/</span>
+      <span>燃烧系统</span><span class="sep">/</span>
+      <span style="color:var(--ink-900);font-weight:600;">demo模型 · 修改模型</span>
+      <span class="route-chip">routeKey: /modeling/config/model/mode</span>
+    </div>
+
+    <div class="work-header">
+      <div>
+        <h1>demo模型 · 工况模式配置</h1>
+        <div class="subtitle">机理算法(MMLA)· 单工况 · 由 工程师·王 锁定编辑</div>
+      </div>
+      <div class="work-actions">
+        <!-- M2: page-level ? button -->
+        <button class="help-btn" onclick="openDrawer('page')">
+          <span class="q">?</span>
+          <span>本页帮助</span>
+          <span class="count">· 4 篇 / 1 视频</span>
+        </button>
+        <button class="btn btn-secondary">取消</button>
+        <button class="btn btn-primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+          保存模式
+        </button>
+      </div>
+    </div>
+
+    <div class="work-grid">
+      <!-- Left step nav -->
+      <aside class="work-side">
+        <h4>配置步骤</h4>
+        <div class="step-nav">
+          <a class="done"><span class="num">✓</span> 基本信息</a>
+          <a class="done"><span class="num">✓</span> 测点选取</a>
+          <a class="active"><span class="num">3</span> 工况模式</a>
+          <a><span class="num">4</span> 测点参数</a>
+          <a><span class="num">5</span> 样本选取</a>
+          <a><span class="num">6</span> 模型训练</a>
+        </div>
+      </aside>
+
+      <!-- Form card -->
+      <section class="work-card">
+        <h2>新增模式</h2>
+        <div class="section-hint">为模型添加一个工况判定模式。模式有两个核心作用:限定样本选取范围、控制 AI 计算的生效时段。</div>
+
+        <div class="form-row">
+          <div class="form-label">
+            模式名称 <span class="req">*</span>
+            <span class="info-i" tabindex="0" title="建议使用简洁的状态描述,例如「运行」「并网」「停机」">i</span>
+          </div>
+          <div class="form-control">
+            <input type="text" value="运行" />
+            <div class="hint">建议用简洁状态描述,如「运行」「并网」「停机」,便于一眼识别。</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            优先级 <span class="req">*</span>
+            <!-- M3: real tooltip from actual doc content -->
+            <span class="info-i has-popover" tabindex="0">
+              i
+              <div class="popover">
+                <div class="pop-title">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+                  优先级如何起作用?
+                </div>
+                <p>取值范围 1–5,<strong>数字越小优先级越高</strong>。当多个模式的判断规则出现重叠(条件同时满足)时,系统会选择优先级最高的模式生效。</p>
+                <div class="pop-img">建议:精确严格的工况 → 高优先级<br/>宽泛兜底的工况 → 低优先级</div>
+                <span class="pop-link" onclick="event.stopPropagation();openDrawer('page')">查看完整教程 →</span>
+              </div>
+            </span>
+          </div>
+          <div class="form-control">
+            <select>
+              <option>1 — 最高(最精确的工况)</option>
+              <option selected>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5 — 最低(兜底工况)</option>
+            </select>
+            <div class="hint">数字越小优先级越高。多模式条件重叠时,优先级高者生效。</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            标识色
+          </div>
+          <div class="form-control" style="max-width:none;">
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span style="width:24px;height:24px;background:var(--steel-500);border-radius:5px;border:2px solid white;box-shadow:0 0 0 2px var(--steel-500);"></span>
+              <span style="width:24px;height:24px;background:var(--amber-500);border-radius:5px;cursor:pointer;"></span>
+              <span style="width:24px;height:24px;background:var(--emerald-500);border-radius:5px;cursor:pointer;"></span>
+              <span style="width:24px;height:24px;background:var(--rose-500);border-radius:5px;cursor:pointer;"></span>
+              <span style="width:24px;height:24px;background:#7C3AED;border-radius:5px;cursor:pointer;"></span>
+            </div>
+            <div class="hint">用于在模型配置页中区分不同模式的矩形框颜色。</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            模式表达式 <span class="req">*</span>
+            <span class="info-i has-popover" tabindex="0">
+              i
+              <div class="popover">
+                <div class="pop-title">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z M3 9h18 M9 21V9"/></svg>
+                  AND / OR 的执行顺序
+                </div>
+                <p><strong>AND 和 OR 之间没有优先级</strong>,系统严格按从上到下顺序依次判断,因此要将关键条件放在前面。</p>
+                <div class="pop-img">如 A AND B OR C<br/>实际执行 = (A AND B) OR C</div>
+                <span class="pop-link" onclick="event.stopPropagation();openDrawer('page')">查看完整教程 →</span>
+              </div>
+            </span>
+          </div>
+          <div class="form-control" style="max-width:none;">
+            <!-- mock expression rows -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;gap:6px;align-items:center;font-size:12px;flex-wrap:wrap;">
+                <span class="kbd-pill">原始测点</span>
+                <span class="kbd-pill" style="background:white;color:var(--navy-800);border-color:var(--navy-100);">主轴转速 SHAFT_SPEED</span>
+                <span class="kbd-pill" style="background:var(--navy-900);color:white;border-color:var(--navy-900);">≥</span>
+                <span class="kbd-pill" style="background:white;color:var(--navy-800);border-color:var(--navy-100);">3000</span>
+                <span class="kbd-pill" style="background:white;font-family:var(--font-mono);color:var(--ink-500);">rpm</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <span class="kbd-pill" style="background:var(--amber-100);color:#8B5A11;border-color:var(--amber-400);font-weight:700;">AND</span>
+                <span style="font-size:11px;color:var(--ink-500);">↓ 从上到下顺序执行</span>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center;font-size:12px;flex-wrap:wrap;">
+                <span class="kbd-pill">原始测点</span>
+                <span class="kbd-pill" style="background:white;color:var(--navy-800);border-color:var(--navy-100);">燃料流量 FUEL_FLOW</span>
+                <span class="kbd-pill" style="background:var(--navy-900);color:white;border-color:var(--navy-900);">&gt;</span>
+                <span class="kbd-pill" style="background:white;color:var(--navy-800);border-color:var(--navy-100);">10</span>
+                <span class="kbd-pill" style="background:white;font-family:var(--font-mono);color:var(--ink-500);">t/h</span>
+              </div>
+              <button style="margin-top:6px;align-self:flex-start;font-size:12px;padding:5px 10px;border:1px dashed var(--ink-300);border-radius:5px;color:var(--ink-500);background:white;cursor:pointer;">+ 添加表达式</button>
+            </div>
+            <div class="hint">运算符共 6 种:≥ / ≤ / &gt; / &lt; / = / ≠。</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            已有模式
+          </div>
+          <div class="form-control" style="max-width: none;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="meta-tag" style="background:var(--steel-100);color:var(--navy-800);border:1px solid var(--steel-400);"><span class="dot"></span>运行 · 优先级 2(本次编辑)</span>
+              <span class="meta-tag" style="background:var(--amber-100);color:#8B5A11;"><span class="dot"></span>并网 · 优先级 1</span>
+              <span class="meta-tag" style="background:var(--ink-50);color:var(--ink-700);cursor:pointer;">+ 新增模式</span>
+              <span class="meta-tag" style="background:white;color:var(--ink-700);border:1px dashed var(--ink-300);cursor:pointer;">⤵ 导入全局模式</span>
+            </div>
+            <div class="hint">全局模式适用于多个模型共用相同工况的场景,导入后可快速完成配置。</div>
+          </div>
+        </div>
+
+        <!-- Empty state (M4) - uses real terminology -->
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <h3>下一步:为「运行」模式选取训练样本</h3>
+          <p>模式定义了 AI 计算的生效时段。保存后请进入「样本选取」,选择该模式下的正常运行时段作为训练样本。</p>
+          <div class="empty-cta">
+            <button class="btn btn-primary" onclick="openDrawer('page')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+              查看「样本选取」教程
+            </button>
+            <button class="btn btn-secondary">直接进入样本选取 →</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Hint at bottom -->
+    <div style="margin-top:24px;text-align:center;color:var(--ink-500);font-size:12px;">
+      💡 提示:点击页面右上角 <span class="kbd-pill">? 本页帮助</span> 可在不离开本页的情况下查看相关教程;按 <span class="kbd-pill">Shift + /</span> 也可快速打开。
+      <a style="color:var(--steel-500);font-weight:600;cursor:pointer;" onclick="startTour()">▶ 重新观看新手引导</a>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ Drawer (M2) ============ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="dh-top">
+      <h3>
+        <span class="help-icon">?</span>
+        <span id="drawerTitle">本页帮助</span>
+      </h3>
+      <span class="dh-route" id="drawerRoute">routeKey: /modeling/config/model/mode</span>
+      <div class="dh-actions">
+        <button class="dh-icon-btn" id="pinBtn" title="钉住(切换页面时仍保持打开)" onclick="this.classList.toggle('pinned')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17.5V22M9 4h6l-1 7 4 3v2H6v-2l4-3-1-7z"/></svg>
+        </button>
+        <button class="dh-icon-btn" title="在新页打开完整帮助中心" onclick="switchView('hc')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+        </button>
+        <button class="dh-icon-btn" title="关闭" onclick="closeDrawer()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="drawer-tabs" id="drawerTabs">
+      <button class="drawer-tab active" data-dtab="doc">📄 文档 <span class="cnt">4</span></button>
+      <button class="drawer-tab" data-dtab="video">🎬 视频 <span class="cnt">1</span></button>
+      <button class="drawer-tab" data-dtab="faq">❓ FAQ <span class="cnt">3</span></button>
+    </div>
+  </div>
+
+  <div class="drawer-body">
+    <!-- DOC tab -->
+    <div class="dpane" data-dpane="doc">
+      <div class="recommended-label">
+        <span>⚡ 与本页最相关</span>
+        <span class="ai-chip">AUTO-MATCHED</span>
+      </div>
+      <div class="help-doc-list">
+        <div class="help-doc-item" onclick="showSnack('已打开《如何配置工况模式》')">
+          <div class="hd-meta">
+            <span class="pill engineer">工程师</span>
+            <span>模型配置</span>
+            <span>· 4 min</span>
+          </div>
+          <div class="hd-title">如何配置工况模式</div>
+          <div class="hd-sub">优先级 1–5、6 种运算符、AND/OR 从上到下顺序、导入全局模式</div>
+        </div>
+        <div class="help-doc-item" onclick="showSnack('已打开《如何创建一个模型》')">
+          <div class="hd-meta">
+            <span class="pill engineer">工程师</span>
+            <span>模型配置</span>
+            <span>· 3 min</span>
+          </div>
+          <div class="hd-title">如何创建一个模型(基本信息与算法选择)</div>
+          <div class="hd-sub">三种算法对比:MMLA 机理 / NRDA 时序关联 / PBA 非时序</div>
+        </div>
+        <div class="help-doc-item" onclick="showSnack('已打开《如何配置测点参数》')">
+          <div class="hd-meta">
+            <span class="pill engineer">工程师</span>
+            <span>模型配置</span>
+            <span>· 5 min</span>
+          </div>
+          <div class="hd-title">如何配置测点参数</div>
+          <div class="hd-sub">IO 类型(输入/输出/输入输出/不使用)、残差告警阈值、3 种延迟策略</div>
+        </div>
+        <div class="help-doc-item" onclick="showSnack('已打开《如何选取训练样本并训练模型》')">
+          <div class="hd-meta">
+            <span class="pill engineer">工程师</span>
+            <span>模型配置</span>
+            <span>· 4 min</span>
+          </div>
+          <div class="hd-title">如何选取训练样本并训练模型</div>
+          <div class="hd-sub">样本须代表正常工况,单模型有效点 ≤ 5 万,三色曲线解读</div>
+        </div>
+      </div>
+
+      <div class="recommended-label" style="margin-top: 4px;">📺 推荐视频</div>
+      <div class="help-video-card" onclick="showSnack('▶ 自动跳到 V1 · 02:30 单元二 — 配置工况模式')">
+        <div class="hv-poster">
+          <div class="play-btn" style="width:48px;height:48px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="hv-info">
+          <div class="t">V1 · 模型配置(全流程)</div>
+          <div class="s">12:00 · 5 个单元章节 · 自动跳到 02:30「配置工况模式」</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO tab -->
+    <div class="dpane" data-dpane="video" style="display:none;">
+      <div class="recommended-label">🎬 本页相关视频</div>
+      <div class="help-video-card" onclick="showSnack('▶ 跳到 02:30 · 单元二 配置工况模式')">
+        <div class="hv-poster">
+          <div class="play-btn" style="width:48px;height:48px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="hv-info">
+          <div class="t">V1 · 模型配置</div>
+          <div class="s">12:00 · 自动跳到 02:30「单元二 · 配置工况模式」</div>
+        </div>
+      </div>
+      <div style="background:var(--navy-800);border-radius:8px;padding:12px;">
+        <div class="ch-label" style="font-size:10px;color:var(--ink-400);letter-spacing:0.08em;margin-bottom:8px;text-transform:uppercase;font-weight:700;">单元章节(点击跳转)</div>
+        <div class="chapter-list">
+          <div class="chapter"><span class="ts">00:00</span><span>单元一 · 创建模型与基础配置</span></div>
+          <div class="chapter active"><span class="ts">02:30</span><span>单元二 · 配置工况模式 ◀ 本页</span></div>
+          <div class="chapter"><span class="ts">05:00</span><span>单元三 · 测点参数配置</span></div>
+          <div class="chapter"><span class="ts">07:30</span><span>单元四 · 样本选取与模型训练</span></div>
+          <div class="chapter"><span class="ts">10:30</span><span>单元五 · 多工况模型</span></div>
+        </div>
+        <div class="ch-label" style="font-size:10px;color:var(--ink-400);letter-spacing:0.08em;margin:14px 0 8px;text-transform:uppercase;font-weight:700;">单元二 子章节(6 画面)</div>
+        <div class="chapter-list">
+          <div class="chapter"><span class="ts">02:30</span><span>画面 1 · 进入模式配置区域</span></div>
+          <div class="chapter"><span class="ts">03:00</span><span>画面 2 · 填写模式基本信息</span></div>
+          <div class="chapter active"><span class="ts">03:30</span><span>画面 3 · 定义模式表达式 ◀</span></div>
+          <div class="chapter"><span class="ts">04:00</span><span>画面 4 · 多条件组合与 AND/OR</span></div>
+          <div class="chapter"><span class="ts">04:30</span><span>画面 5 · 保存与查看模式</span></div>
+          <div class="chapter"><span class="ts">05:00</span><span>画面 6 · 模式的两个核心作用</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ tab -->
+    <div class="dpane" data-dpane="faq" style="display:none;">
+      <div class="recommended-label">❓ 高频问题</div>
+      <div class="help-doc-list">
+        <div class="help-doc-item">
+          <div class="hd-meta"><span class="pill">FAQ</span><span>模型配置</span></div>
+          <div class="hd-title">为什么我的模式频繁切换?</div>
+          <div class="hd-sub">检查表达式中是否需要加入滞回(hysteresis)缓冲,建议留 3–5% 死区</div>
+        </div>
+        <div class="help-doc-item">
+          <div class="hd-meta"><span class="pill">FAQ</span><span>模型配置</span></div>
+          <div class="hd-title">AND 在 OR 之后是不是优先级更高?</div>
+          <div class="hd-sub">不是。AND/OR 没有优先级之分,系统严格按从上到下顺序判断,把关键条件放最前</div>
+        </div>
+        <div class="help-doc-item">
+          <div class="hd-meta"><span class="pill">FAQ</span><span>模型配置</span></div>
+          <div class="hd-title">我没创建任何模式,模型能上线吗?</div>
+          <div class="hd-sub">不能。模式控制 AI 计算的生效时段,缺失模式会导致模型上线后不执行任何计算</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-foot">
+    <span>没找到想要的?</span>
+    <span class="ff-action" onclick="showSnack('已记录,运营会在 24 小时内回复')">
+      💬 提交反馈
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </span>
+  </div>
+</aside>
+
+<!-- ============ Tour overlay (M5) ============ -->
+<div class="tour-overlay" id="tourOverlay">
+  <div class="tour-card" id="tourCard">
+    <div class="tour-step">新手引导 · 步骤 <span id="tourStep">1</span> / 3</div>
+    <h4 id="tourTitle">欢迎来到「工况模式配置」</h4>
+    <p id="tourText">当前页是模型配置的第 3 步。左侧导航显示 6 步配置流程,完成后才能上线模型。模式有两个核心作用:限定样本选取范围、控制 AI 计算生效时段。</p>
+    <div class="tour-actions">
+      <button class="btn btn-secondary" onclick="endTour()">跳过</button>
+      <div class="tour-spacer"></div>
+      <div class="tour-dots">
+        <i id="td1" class="active"></i><i id="td2"></i><i id="td3"></i>
+      </div>
+      <button class="btn btn-primary" id="tourNext" onclick="nextTour()">下一步 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Snackbar -->
+<div class="snack" id="snack">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+  <span id="snackText"></span>
+</div>
+
+<script>
+// ====== Tab switch ======
+const tabs = document.querySelectorAll('.demo-tab');
+tabs.forEach(t => t.addEventListener('click', () => switchView(t.dataset.view)));
+function switchView(v) {
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.toggle('active', t.dataset.view === v));
+  document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === `view-${v}`));
+  closeDrawer();
+  window.scrollTo(0, 0);
+  if (v === 'sys') {
+    setTimeout(() => {
+      if (!localStorage.getItem('demo_tour_seen')) {
+        // auto-show tour on first visit to sys
+        // localStorage.setItem('demo_tour_seen', '1'); // keep commented to always show in demo
+      }
+    }, 100);
+  }
+}
+
+// ====== Sidebar tree toggle ======
+document.querySelectorAll('.sb-group').forEach(g => {
+  g.addEventListener('click', () => {
+    g.classList.toggle('open');
+    const id = g.dataset.toggle;
+    if (id) document.getElementById(id).classList.toggle('open');
+  });
+});
+
+// Sidebar item active state
+document.querySelectorAll('.sb-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+// ====== Drawer ======
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+function openDrawer(type) {
+  if (type === 'global') {
+    document.getElementById('drawerTitle').textContent = '帮助中心 · 全局';
+    document.getElementById('drawerRoute').textContent = '全平台 (M1 模式)';
+  } else {
+    document.getElementById('drawerTitle').textContent = '本页帮助';
+    document.getElementById('drawerRoute').textContent = 'routeKey: /modeling/config/model/mode';
+  }
+  drawer.classList.add('open');
+  drawerOverlay.classList.add('open');
+  document.getElementById('whatsNew').classList.remove('open');
+}
+function closeDrawer() {
+  if (document.getElementById('pinBtn').classList.contains('pinned')) return;
+  drawer.classList.remove('open');
+  drawerOverlay.classList.remove('open');
+}
+
+// Drawer tabs
+document.querySelectorAll('.drawer-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.drawer-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const target = t.dataset.dtab;
+    document.querySelectorAll('.dpane').forEach(p => p.style.display = p.dataset.dpane === target ? 'block' : 'none');
+  });
+});
+
+// ====== What's New ======
+function toggleWhatsNew(e) {
+  e.stopPropagation();
+  document.getElementById('whatsNew').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const wn = document.getElementById('whatsNew');
+  if (!wn.contains(e.target)) wn.classList.remove('open');
+});
+
+// ====== Tour ======
+const tourSteps = [
+  { title: '欢迎来到「工况模式配置」', text: '当前页是模型配置的第 3 步。左侧导航显示 6 步配置流程,完成后才能上线模型。模式有两个核心作用:限定样本选取范围、控制 AI 计算生效时段。' },
+  { title: '点击 ? 获取本页教程', text: '右上角橙色"?"按钮打开侧抽屉,显示与本页强相关的 4 篇文档 + V1 视频(自动跳到 02:30「配置工况模式」章节)。' },
+  { title: '专有术语有 ⓘ 提示', text: '看到字段旁的 ⓘ 图标时,悬停即可看到术语解释。例如「优先级」「AND/OR 顺序」这些都附带示意和"查看完整教程"链接。' }
+];
+let tourIdx = 0;
+function startTour() {
+  tourIdx = 0;
+  updateTour();
+  document.getElementById('tourOverlay').classList.add('open');
+}
+function updateTour() {
+  document.getElementById('tourStep').textContent = tourIdx + 1;
+  document.getElementById('tourTitle').textContent = tourSteps[tourIdx].title;
+  document.getElementById('tourText').textContent = tourSteps[tourIdx].text;
+  ['td1','td2','td3'].forEach((id, i) => {
+    document.getElementById(id).classList.toggle('active', i === tourIdx);
+  });
+  document.getElementById('tourNext').textContent = tourIdx === tourSteps.length - 1 ? '完成 ✓' : '下一步 →';
+}
+function nextTour() {
+  if (tourIdx === tourSteps.length - 1) {
+    endTour();
+    showSnack('引导已完成,可随时通过页面底部链接重新查看');
+  } else {
+    tourIdx++;
+    updateTour();
+  }
+}
+function endTour() { document.getElementById('tourOverlay').classList.remove('open'); }
+
+// ====== Snackbar ======
+function showSnack(text) {
+  const s = document.getElementById('snack');
+  document.getElementById('snackText').textContent = text;
+  s.classList.add('show');
+  clearTimeout(window._snackTimer);
+  window._snackTimer = setTimeout(() => s.classList.remove('show'), 2400);
+}
+
+// ====== Keyboard shortcuts ======
+document.addEventListener('keydown', (e) => {
+  // Shift + / = ? -> open page-level help in sys view
+  if (e.shiftKey && e.key === '?') {
+    if (document.getElementById('view-sys').classList.contains('active')) {
+      openDrawer('page');
+      e.preventDefault();
+    }
+  }
+  // Ctrl/Cmd + K -> focus search in hc view
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    if (document.getElementById('view-hc').classList.contains('active')) {
+      document.getElementById('hcSearchInput').focus();
+      e.preventDefault();
+    }
+  }
+  if (e.key === 'Escape') {
+    closeDrawer();
+    endTour();
+    document.getElementById('whatsNew').classList.remove('open');
+  }
+});
+
+// ====== HC Search demo (just visual filter feedback) ======
+const searchInput = document.getElementById('hcSearchInput');
+searchInput.addEventListener('input', (e) => {
+  const q = e.target.value.trim();
+  if (q.length > 1) {
+    document.querySelectorAll('.sb-item').forEach(i => {
+      const match = i.textContent.toLowerCase().includes(q.toLowerCase());
+      i.style.opacity = match ? '1' : '0.3';
+    });
+  } else {
+    document.querySelectorAll('.sb-item').forEach(i => i.style.opacity = '1');
+  }
+});
+
+// Show tour after a short delay on first sys view (demo)
+let firstSysVisit = true;
+document.querySelectorAll('.demo-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    if (t.dataset.view === 'sys' && firstSysVisit) {
+      firstSysVisit = false;
+      setTimeout(startTour, 600);
+    }
+  });
+});
+</script>
+</body>
+</html>
