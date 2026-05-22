@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { Menu, Icon, Drawer, Breadcrumb } from 'antd'
 import DiagnosticDemo from './diagnostic-demo'
 import BladeMonitorDashboard from './BladeMonitorDashboard/index'
@@ -13,18 +14,21 @@ const { Item: MenuItem } = Menu
 const { Item: BreadcrumbItem } = Breadcrumb
 
 const NAV_MENUS = [
-  { key: 'modeling', icon: 'robot', title: '智能自动建模' },
-  { key: 'vision', icon: 'eye', title: '工业视觉平台' },
-  { key: 'dashboard', icon: 'dashboard', title: '叶片监测仪表板' },
-  { key: 'diagnostic', icon: 'tool', title: '故障诊断系统' },
-  { key: 'overview', icon: 'bar-chart', title: '统计概览' },
-  { key: 'helpCenter', icon: 'question-circle', title: '在线帮助中心' },
+  { key: 'modeling',    path: '/modeling',    icon: 'robot',           title: '智能自动建模'   },
+  { key: 'vision',      path: '/vision',      icon: 'eye',             title: '工业视觉平台'   },
+  { key: 'dashboard',   path: '/dashboard',   icon: 'dashboard',       title: '叶片监测仪表板' },
+  { key: 'diagnostic',  path: '/diagnostic',  icon: 'tool',            title: '故障诊断系统'   },
+  { key: 'overview',    path: '/overview',    icon: 'bar-chart',       title: '统计概览'       },
+  { key: 'helpCenter',  path: '/help',        icon: 'question-circle', title: '在线帮助中心'   },
 ]
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('modeling')
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark')
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const currentMenu = NAV_MENUS.find(m => location.pathname.startsWith(m.path))
 
   useEffect(() => {
     const currentTheme = localStorage.getItem('theme') || 'dark'
@@ -41,11 +45,10 @@ const App = () => {
   }
 
   const onMenuClick = ({ key }) => {
-    setCurrentPage(key)
+    const menu = NAV_MENUS.find(m => m.key === key)
+    if (menu) navigate(menu.path)
     setDrawerOpen(false)
   }
-
-  const currentMenu = NAV_MENUS.find(m => m.key === currentPage)
 
   return (
     <div className="app-container">
@@ -69,9 +72,7 @@ const App = () => {
         visible={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         width={220}
-        bodyStyle={{ padding: 0, background: 'var(--component-background)', display: 'flex', flexDirection: 'column' }}
-        style={{ top: 48 }}
-        maskStyle={{ top: 48 }}
+        wrapClassName="app-drawer"
         zIndex={999}
       >
         <div className="app-drawer-header">
@@ -84,9 +85,9 @@ const App = () => {
         </div>
         <Menu
           mode="inline"
-          selectedKeys={[currentPage]}
+          selectedKeys={currentMenu ? [currentMenu.key] : []}
           onClick={onMenuClick}
-          style={{ background: 'var(--component-background)', border: 'none', flex: 1 }}
+          className="app-nav-menu"
         >
           {NAV_MENUS.map(m => (
             <MenuItem key={m.key}>
@@ -102,7 +103,7 @@ const App = () => {
           <BreadcrumbItem>工业监测平台</BreadcrumbItem>
           {currentMenu && (
             <BreadcrumbItem>
-              <Icon type={currentMenu.icon} style={{ marginRight: 4 }} />
+              <Icon type={currentMenu.icon} className="app-breadcrumb-icon" />
               {currentMenu.title}
             </BreadcrumbItem>
           )}
@@ -110,16 +111,16 @@ const App = () => {
       </div>
 
       <main className="app-main">
-        {currentPage === 'overview' && <StatsDashboard />}
-        {currentPage === 'helpCenter' && <HelpCenter />}
-        {!['overview', 'helpCenter'].includes(currentPage) && (
-          <div className="app-page">
-            {currentPage === 'modeling' && <SmartAutoModeling />}
-            {currentPage === 'vision' && <IndustrialVisionPlatform />}
-            {currentPage === 'dashboard' && <BladeMonitorDashboard />}
-            {currentPage === 'diagnostic' && <DiagnosticDemo />}
-          </div>
-        )}
+        <Routes>
+          <Route path="/"           element={<Navigate to="/modeling" replace />} />
+          <Route path="/modeling"   element={<div className="app-page"><SmartAutoModeling /></div>} />
+          <Route path="/vision"     element={<div className="app-page"><IndustrialVisionPlatform /></div>} />
+          <Route path="/dashboard"  element={<div className="app-page"><BladeMonitorDashboard /></div>} />
+          <Route path="/diagnostic" element={<div className="app-page"><DiagnosticDemo /></div>} />
+          <Route path="/overview"   element={<StatsDashboard />} />
+          <Route path="/help"       element={<HelpCenter />} />
+          <Route path="*"           element={<Navigate to="/modeling" replace />} />
+        </Routes>
       </main>
     </div>
   )
