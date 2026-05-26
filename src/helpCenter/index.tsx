@@ -86,9 +86,15 @@ export default function HelpCenter() {
         .map((line) => line.replace(/^## /, ''))
     : [];
 
+  const HEADER_H = 64;
+  const APP_MAIN_TOP = 90;
+
   return (
     <div className={css.hcShell}>
-      <header className={css.hcHeader}>
+      <header
+        className={css.hcHeader}
+        style={{ height: HEADER_H, flexShrink: 0 }}
+      >
         <div className={css.hcLogo}>
           <div className={css.logoIcon}>
             <Icon type="smile" theme="outlined" />
@@ -119,7 +125,10 @@ export default function HelpCenter() {
         </div>
       </header>
 
-      <div className={css.hcBody}>
+      <div
+        className={css.hcBody}
+        style={{ height: `calc(100vh - ${APP_MAIN_TOP}px - ${HEADER_H}px)`, overflowY: 'auto' }}
+      >
         <HcSidebar
           openGroups={openGroups}
           activeItemId={activeItemId}
