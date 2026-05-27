@@ -31,8 +31,8 @@ function makeImgRenderer(mdPath: string) {
 }
 
 export default function HelpCenter() {
-  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['overview', 'modelConfig']));
-  const [activeItemId, setActiveItemId] = useState('create-model');
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['overview']));
+  const [activeItemId, setActiveItemId] = useState('product-intro');
   const [toastMessage, setToastMessage] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,10 +73,11 @@ export default function HelpCenter() {
   })();
 
   const renderedMd = activeItemData?.item.mdPath
-    ? String(marked.parse(
-        (mdModules[`./md/${activeItemData.item.mdPath}`] ?? '').replace(/^#[^#][^\n]*\n?/, ''),
-        { renderer: makeImgRenderer(activeItemData.item.mdPath) },
-      ))
+    ? String(
+        marked.parse((mdModules[`./md/${activeItemData.item.mdPath}`] ?? '').replace(/^#[^#][^\n]*\n?/, ''), {
+          renderer: makeImgRenderer(activeItemData.item.mdPath),
+        }),
+      )
     : '';
 
   const tocHeadings = activeItemData?.item.mdPath
@@ -91,10 +92,7 @@ export default function HelpCenter() {
 
   return (
     <div className={css.hcShell}>
-      <header
-        className={css.hcHeader}
-        style={{ height: HEADER_H, flexShrink: 0 }}
-      >
+      <header className={css.hcHeader} style={{ height: HEADER_H, flexShrink: 0 }}>
         <div className={css.hcLogo}>
           <div className={css.logoIcon}>
             <Icon type="smile" theme="outlined" />
@@ -127,8 +125,7 @@ export default function HelpCenter() {
 
       <div
         className={css.hcBody}
-        style={{ height: `calc(100vh - ${APP_MAIN_TOP}px - ${HEADER_H}px)`, overflowY: 'auto' }}
-      >
+        style={{ height: `calc(100vh - ${APP_MAIN_TOP}px - ${HEADER_H}px)`, overflowY: 'auto' }}>
         <HcSidebar
           openGroups={openGroups}
           activeItemId={activeItemId}
@@ -136,16 +133,8 @@ export default function HelpCenter() {
           onToggleGroup={toggleGroup}
           onSelectItem={setActiveItemId}
         />
-        <HcArticle
-          activeItemData={activeItemData}
-          renderedMd={renderedMd}
-          onToast={showToast}
-        />
-        <HcToc
-          tocHeadings={tocHeadings}
-          activeItemData={activeItemData}
-          onToast={showToast}
-        />
+        <HcArticle activeItemData={activeItemData} renderedMd={renderedMd} onToast={showToast} />
+        <HcToc tocHeadings={tocHeadings} activeItemData={activeItemData} onToast={showToast} />
       </div>
 
       <div className={clsx(css.snack, toastVisible && css.show)}>
