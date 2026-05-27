@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import styles from './style/index.modules.less';
 import { scores, alerts, cases, makeDaily, aggMonth, BASE_DATE, TIME_CUTS, TFS, fd } from './mockData';
 import type { SortDir } from './types';
-import DashboardHeader from './components/DashboardHeader';
+// import DashboardHeader from './components/DashboardHeader';
 import KpiBar from './components/KpiBar';
 import StatusTab from './components/StatusTab';
 import TrendTab from './components/TrendTab';

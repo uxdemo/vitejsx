@@ -12,6 +12,8 @@ import fs from 'fs'
  */
 function modulesLessPlugin() {
   const realPaths = new Map()
+  /** 统一使用正斜杠，避免 Windows 下 path.resolve 返回反斜杠导致 Map 查找失败 */
+  const toPosix = (p) => p.replace(/\\/g, '/')
   return {
     name: 'vite-modules-less',
     enforce: 'pre',
@@ -24,7 +26,7 @@ function modulesLessPlugin() {
         : process.cwd()
       const realPath = path.resolve(importerDir, cleanSource)
       // ?used 告知 Vite 该模块被 JS 引用（需导出类名映射），而非仅注入 CSS
-      const virtualId = realPath.replace(/\.modules\.less$/, '.module.less') + '?used'
+      const virtualId = toPosix(realPath).replace(/\.modules\.less$/, '.module.less') + '?used'
       realPaths.set(virtualId, realPath)
       return virtualId
     },
