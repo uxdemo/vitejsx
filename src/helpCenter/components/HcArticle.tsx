@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, forwardRef } from 'react';
 import clsx from 'clsx';
 import { NavItem, NavGroup } from '../constant';
 import { Icon } from '../shared';
@@ -13,11 +13,28 @@ interface Props {
   activeItemData: ActiveItemData | null;
   renderedMd: string;
   onToast: (msg: string) => void;
+  onNavigateToItem?: (itemId: string) => void;
 }
 
-export default function HcArticle({ activeItemData, renderedMd, onToast }: Props) {
+export default forwardRef<HTMLDivElement, Props>(function HcArticle({ activeItemData, renderedMd, onToast, onNavigateToItem }, ref) {
+  /** 拦截文章内 #链接 点击，匹配路由跳转 */
+  const handleArticleClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!onNavigateToItem) return;
+      const target = (e.target as HTMLElement).closest('a');
+      if (!target) return;
+      const href = target.getAttribute('href') || '';
+      if (!href.startsWith('#')) return;
+
+      e.preventDefault();
+      const fragment = decodeURIComponent(href.slice(1));
+      onNavigateToItem(fragment);
+    },
+    [onNavigateToItem],
+  );
+
   return (
-    <main className={css.hcMain}>
+    <main ref={ref} className={css.hcMain}>
       <div className={css.crumbs}>
         <span>操作指南</span>
         {activeItemData && (
@@ -38,7 +55,7 @@ export default function HcArticle({ activeItemData, renderedMd, onToast }: Props
         )}
       </header>
 
-      <div className={css.articleBody}>
+      <div className={css.articleBody} onClick={handleArticleClick}>
         {renderedMd ? (
           <div dangerouslySetInnerHTML={{ __html: renderedMd }} />
         ) : (
@@ -66,4 +83,4 @@ export default function HcArticle({ activeItemData, renderedMd, onToast }: Props
       </div>
     </main>
   );
-}
+});
